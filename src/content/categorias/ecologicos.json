@@ -1,0 +1,13 @@
+{
+  "nome": "Brindes Ecológicos",
+  "slug": "ecologicos",
+  "ordem": 5,
+  "tituloSeo": "Brindes Ecológicos Personalizados em Goiânia | Ápice Brindes",
+  "descricaoSeo": "Brindes ecológicos e sustentáveis personalizados em Goiânia: bambu, algodão, materiais reciclados. Gravação a laser. Peça orçamento no WhatsApp.",
+  "h1": "Brindes ecológicos: sua marca associada à sustentabilidade",
+  "intro": "Brinde ecológico comunica posicionamento antes mesmo do logo: mostra que sua empresa se importa. Trabalhamos com linhas em bambu, fibra de coco, algodão cru e materiais reciclados — canetas, cadernos, copos, ecobags e kits completos. A gravação a laser em bambu, feita na nossa produção em Goiânia, tem acabamento natural e sofisticado que combina perfeitamente com a proposta sustentável. Forte para ESG, eventos corporativos e empresas com política ambiental ativa.",
+  "tecnicas": ["ambas"],
+  "imagemCapa": "categorias/ecologicos.jpg",
+  "destaqueHome": true,
+  "faqSlugs": ["quantidade-minima", "laser-ou-silk"]
+}

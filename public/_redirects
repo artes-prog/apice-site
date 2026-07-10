@@ -1,0 +1,30 @@
+# =============================================================================
+# REDIRECTS 301 — Cloudflare Pages
+# =============================================================================
+# CRÍTICO antes do go-live: mapear TODAS as URLs antigas indexadas do site
+# WordPress para as novas rotas, preservando o histórico de SEO.
+#
+# COMO LEVANTAR as URLs antigas (fazer isto antes de publicar):
+#   1) Google Search Console -> Páginas -> exportar as URLs indexadas.
+#   2) Ou buscar no Google:  site:apicebrindes.com
+#   3) Ou usar o sitemap antigo: apicebrindes.com/sitemap.xml (WordPress/Yoast).
+#
+# Formato:  /caminho-antigo   /caminho-novo   301
+# O destino deve existir nas novas rotas (ver tabela de rotas do projeto).
+# =============================================================================
+
+# ---- EXEMPLOS (descomente e ajuste conforme as URLs reais do site antigo) ----
+# /produto/canecas-personalizadas/        /brindes/canecas/                     301
+# /categoria-produto/canecas/             /brindes/canecas/                     301
+# /produtos/                              /brindes-personalizados/              301
+# /brindes/                               /brindes-personalizados/              301
+# /gravacao-laser/                        /gravacao-a-laser/                    301
+# /serigrafia/                            /silk-screen/                         301
+# /quem-somos/                            /sobre/                               301
+# /fale-conosco/                          /contato/                             301
+# /orcamentos/                            /orcamento/                           301
+
+# ---- Higiene de URLs comuns do WordPress ----
+/index.php      /      301
+/home           /      301
+/inicio         /      301

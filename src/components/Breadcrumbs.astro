@@ -1,0 +1,75 @@
+---
+/*
+  Trilha de navegação: renderiza o breadcrumb visual E o JSON-LD BreadcrumbList.
+  Passe os itens do mais geral ao mais específico. O último item é a página atual
+  (sem href). Ex.: [{name:'Início',href:'/'},{name:'Canecas'}]
+*/
+interface Crumb {
+  name: string;
+  href?: string;
+}
+interface Props {
+  items: Crumb[];
+  class?: string;
+}
+const { items, class: klass = '' } = Astro.props;
+
+const jsonld = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: items.map((c, i) => {
+    const el: Record<string, unknown> = {
+      '@type': 'ListItem',
+      position: i + 1,
+      name: c.name,
+    };
+    if (c.href) el.item = new URL(c.href, Astro.site).href;
+    return el;
+  }),
+};
+---
+<nav aria-label="Você está aqui" class={`crumbs ${klass}`}>
+  <ol>
+    {items.map((c, i) => (
+      <li>
+        {c.href && i < items.length - 1 ? (
+          <a href={c.href}>{c.name}</a>
+        ) : (
+          <span aria-current="page">{c.name}</span>
+        )}
+        {i < items.length - 1 && <span class="sep" aria-hidden="true">/</span>}
+      </li>
+    ))}
+  </ol>
+</nav>
+<script type="application/ld+json" set:html={JSON.stringify(jsonld)} is:inline />
+
+<style>
+  .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--color-ink-soft);
+  }
+  .crumbs li {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .crumbs a:hover {
+    color: var(--color-apice-blue);
+    text-decoration: underline;
+  }
+  .crumbs [aria-current='page'] {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+  .crumbs .sep {
+    color: var(--color-line);
+  }
+</style>

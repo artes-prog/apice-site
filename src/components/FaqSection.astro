@@ -1,0 +1,78 @@
+---
+import type { Faq } from '../lib/content';
+
+/*
+  Bloco de FAQ: acordeão nativo (<details>) — acessível por teclado e sem JS —
+  e o JSON-LD FAQPage (candidato a rich result no Google).
+  Passe `jsonld={false}` se a mesma pergunta já emitir schema em outro ponto da página.
+*/
+interface Props {
+  faqs: Faq[];
+  title?: string;
+  jsonld?: boolean;
+  class?: string;
+}
+const { faqs, title = 'Perguntas frequentes', jsonld = true, class: klass = '' } = Astro.props;
+
+const data = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.data.pergunta,
+    acceptedAnswer: { '@type': 'Answer', text: f.data.resposta },
+  })),
+};
+---
+{faqs.length > 0 && (
+  <section class={`faq ${klass}`} aria-labelledby="faq-title">
+    <h2 id="faq-title" class="faq__title">{title}</h2>
+    <div class="faq__list">
+      {faqs.map((f, i) => (
+        <details class="faq__item" open={i === 0}>
+          <summary>
+            <span>{f.data.pergunta}</span>
+            <svg class="faq__chevron" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" d="M6 9l6 6 6-6"/></svg>
+          </summary>
+          <div class="faq__answer"><p>{f.data.resposta}</p></div>
+        </details>
+      ))}
+    </div>
+    {jsonld && <script type="application/ld+json" set:html={JSON.stringify(data)} is:inline />}
+  </section>
+)}
+
+<style>
+  .faq__title {
+    font-size: clamp(1.4rem, 3.5vw, 1.9rem);
+    margin-bottom: 1.4rem;
+  }
+  .faq__list { display: grid; gap: 0.75rem; }
+  .faq__item {
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    background: var(--color-paper);
+    overflow: hidden;
+  }
+  .faq__item summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    cursor: pointer;
+    list-style: none;
+    padding: 1.05rem 1.2rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--color-apice-blue);
+  }
+  .faq__item summary::-webkit-details-marker { display: none; }
+  .faq__chevron { flex: none; color: var(--color-apice-red); transition: transform 0.2s ease; }
+  .faq__item[open] .faq__chevron { transform: rotate(180deg); }
+  .faq__answer {
+    padding: 0 1.2rem 1.2rem;
+    color: var(--color-ink-soft);
+  }
+  .faq__answer p { margin: 0; }
+</style>

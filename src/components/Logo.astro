@@ -1,0 +1,40 @@
+---
+/*
+  LOGO — PLACEHOLDER PROFISSIONAL.
+  Substituir pelo SVG oficial exportado do CorelDRAW (versão colorida e negativa)
+  quando disponível — ver Guia de Estilo §1.2. Mantém área de proteção via padding
+  do container no Header/Footer (o logo nunca encosta nas bordas).
+
+  variant "cor"    -> sobre fundo claro (mark vermelho, texto azul)
+  variant "branco" -> sobre fundo azul/escuro (tudo branco — versão negativa)
+*/
+interface Props {
+  variant?: 'cor' | 'branco';
+  class?: string;
+}
+const { variant = 'cor', class: klass = '' } = Astro.props;
+const mark = variant === 'branco' ? '#FFFFFF' : 'var(--color-apice-red)';
+const word = variant === 'branco' ? '#FFFFFF' : 'var(--color-apice-blue)';
+---
+<svg
+  class={`logo ${klass}`}
+  viewBox="0 0 250 60"
+  role="img"
+  aria-label="Ápice Brindes"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <!-- Símbolo: ápice (cume) -->
+  <path d={`M26 6 L46 46 L6 46 Z`} fill={mark} />
+  <path d={`M26 22 L36 42 L16 42 Z`} fill={variant === 'branco' ? 'var(--color-apice-blue)' : '#FFFFFF'} />
+  <!-- Wordmark -->
+  <text x="60" y="31" font-family="var(--font-display)" font-weight="800" font-size="27" letter-spacing="0.5" fill={word}>ÁPICE</text>
+  <text x="61" y="49" font-family="var(--font-display)" font-weight="600" font-size="12.5" letter-spacing="6" fill={word}>BRINDES</text>
+</svg>
+
+<style>
+  .logo {
+    display: block;
+    height: 44px;
+    width: auto;
+  }
+</style>

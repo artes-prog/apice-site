@@ -1,0 +1,57 @@
+---
+import { site } from '../data/site';
+
+/*
+  Faixa de confiança sob o hero (§3.3). Prova rápida antes da rolagem.
+*/
+const itens = [
+  { icon: 'medal', texto: `${site.anosDeMercado} de mercado` },
+  { icon: 'tools', texto: 'Produção própria — silk e laser fibra' },
+  { icon: 'pin', texto: 'Atende Goiânia e região' },
+  { icon: 'chat', texto: 'Orçamento rápido no WhatsApp' },
+];
+
+const paths: Record<string, string> = {
+  medal: 'M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 14.9 7.2 16.9l.9-5.4L4.2 7.7l5.4-.8z',
+  tools: 'M4 20l7-7M14 4l6 6-4 4-6-6zM3 21l3-1 12-12',
+  pin: 'M12 22s7-6.1 7-12A7 7 0 0 0 5 10c0 5.9 7 12 7 12zM12 10.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z',
+  chat: 'M4 5h16v11H8l-4 4z',
+};
+---
+<section class="trust" aria-label="Por que a Ápice Brindes">
+  <div class="container-site trust__row">
+    {itens.map((it) => (
+      <div class="trust__item">
+        <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" class="trust__icon">
+          <path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" d={paths[it.icon]} />
+        </svg>
+        <span>{it.texto}</span>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .trust {
+    background: var(--color-paper-soft);
+    border-block: 1px solid var(--color-line);
+  }
+  .trust__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem 1.25rem;
+    padding-block: 1.4rem;
+  }
+  .trust__item {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-ink);
+  }
+  .trust__icon { flex: none; color: var(--color-apice-blue); }
+  @media (min-width: 900px) {
+    .trust__row { grid-template-columns: repeat(4, 1fr); }
+  }
+</style>

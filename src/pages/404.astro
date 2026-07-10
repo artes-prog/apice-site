@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CtaWhatsApp from '../components/CtaWhatsApp.astro';
+import { getCategorias } from '../lib/content';
+import { mensagens } from '../lib/whatsapp';
+
+const categorias = await getCategorias();
+---
+<BaseLayout title="Página não encontrada | Ápice Brindes" description="A página que você procura não existe ou mudou de endereço." noindex>
+  <section class="nf">
+    <div class="container-site nf__inner">
+      <p class="nf__code">404</p>
+      <h1 class="nf__title">Essa página a gente não encontrou</h1>
+      <p class="nf__lead">
+        O link pode ter mudado de endereço. Mas o seu brinde a gente encontra — escolha uma categoria abaixo ou
+        chame no WhatsApp.
+      </p>
+      <div class="nf__ctas">
+        <CtaWhatsApp variante="primario" mensagem={mensagens.generico} semente="404" label="Falar no WhatsApp" />
+        <a href="/" class="nf__home">Voltar para a home</a>
+      </div>
+
+      <h2 class="nf__sub">Categorias de brindes</h2>
+      <ul class="nf__cats">
+        {categorias.map((c) => (<li><a href={`/brindes/${c.data.slug}/`}>{c.data.nome}</a></li>))}
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .nf { padding-block: clamp(3rem, 7vw, 5rem); }
+  .nf__inner { text-align: center; max-width: 720px; margin-inline: auto; }
+  .nf__code { font-family: var(--font-display); font-weight: 800; font-size: clamp(3rem, 12vw, 5.5rem); color: var(--color-apice-red); line-height: 1; }
+  .nf__title { font-size: clamp(1.6rem, 4.5vw, 2.4rem); font-weight: 800; margin-top: 0.5rem; }
+  .nf__lead { margin: 1rem auto 1.75rem; color: var(--color-ink-soft); max-width: 48ch; }
+  .nf__ctas { display: flex; flex-wrap: wrap; gap: 1rem 1.4rem; justify-content: center; align-items: center; }
+  .nf__home { font-weight: 700; color: var(--color-apice-blue); }
+  .nf__home:hover { text-decoration: underline; }
+  .nf__sub { font-size: 1.2rem; margin-top: 3rem; margin-bottom: 1.1rem; }
+  .nf__cats {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    justify-content: center;
+  }
+  .nf__cats a {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-apice-blue);
+    background: var(--color-paper);
+    transition: background 0.15s ease;
+  }
+  .nf__cats a:hover { background: var(--color-paper-soft); }
+</style>

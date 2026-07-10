@@ -1,0 +1,56 @@
+---
+import Logo from './Logo.astro';
+import CtaWhatsApp from './CtaWhatsApp.astro';
+import { mensagens } from '../lib/whatsapp';
+
+/*
+  CTA final full-width (§3.3): fundo azul da marca, logo negativo, botão verde.
+  Fecha TODAS as páginas com a única ação do site — orçamento no WhatsApp.
+*/
+interface Props {
+  titulo?: string;
+  texto?: string;
+  mensagem?: string;
+  semente?: string;
+}
+const {
+  titulo = 'Vamos colocar a sua marca em brindes que a gente produz?',
+  texto = 'Fale agora com a nossa equipe. Orçamento sem compromisso, resposta rápida em horário comercial.',
+  mensagem = mensagens.generico,
+  semente,
+} = Astro.props;
+---
+<section class="cta-final">
+  <div class="container-site cta-final__inner">
+    <Logo variant="branco" class="cta-final__logo" />
+    <h2 class="cta-final__title">{titulo}</h2>
+    <p class="cta-final__text">{texto}</p>
+    <CtaWhatsApp variante="primario" mensagem={mensagem} semente={semente} label="Pedir orçamento no WhatsApp" />
+  </div>
+</section>
+
+<style>
+  .cta-final {
+    background: var(--color-apice-blue);
+    color: #fff;
+  }
+  .cta-final__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+    padding-block: 3.5rem;
+  }
+  .cta-final__logo { height: 42px; margin-bottom: 0.5rem; }
+  .cta-final__title {
+    color: #fff;
+    font-size: clamp(1.5rem, 4.2vw, 2.3rem);
+    max-width: 20ch;
+  }
+  .cta-final__text {
+    color: rgba(255, 255, 255, 0.88);
+    max-width: 52ch;
+    margin-bottom: 0.5rem;
+  }
+</style>

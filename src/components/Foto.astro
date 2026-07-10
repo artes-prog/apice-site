@@ -1,0 +1,90 @@
+---
+import { Image } from 'astro:assets';
+
+/*
+  Imagem inteligente com fallback gracioso.
+  - Se existir um arquivo real em src/assets/img/<src>, usa <Image /> do
+    astro:assets (WebP/AVIF automático, dimensões corretas, sem CLS).
+  - Se ainda não existir, renderiza um placeholder SVG neutro na proporção certa.
+  Para publicar a foto real: solte o arquivo em src/assets/img/<mesmo caminho>.
+  Ex.: conteúdo aponta "produtos/caneca.jpg" -> src/assets/img/produtos/caneca.jpg
+*/
+
+interface Props {
+  src: string;
+  alt: string;
+  ratio?: '4/3' | '16/9' | '3/2' | '1/1';
+  sizes?: string;
+  priority?: boolean;
+  class?: string;
+  widthHint?: number;
+}
+
+const {
+  src,
+  alt,
+  ratio = '4/3',
+  sizes = '(max-width: 768px) 100vw, 420px',
+  priority = false,
+  class: klass = '',
+  widthHint = 800,
+} = Astro.props;
+
+const modules = import.meta.glob<ImageMetadata>(
+  '/src/assets/img/**/*.{jpg,jpeg,png,webp,avif}',
+  { eager: true, import: 'default' }
+);
+const real = modules[`/src/assets/img/${src}`];
+
+const [rw, rh] = ratio.split('/').map(Number);
+---
+
+{real ? (
+  <Image
+    src={real}
+    alt={alt}
+    width={widthHint}
+    height={Math.round((widthHint * rh) / rw)}
+    sizes={sizes}
+    loading={priority ? 'eager' : 'lazy'}
+    fetchpriority={priority ? 'high' : 'auto'}
+    class={`foto ${klass}`}
+    style={`aspect-ratio:${rw}/${rh}`}
+  />
+) : (
+  <div
+    class={`foto foto--placeholder ${klass}`}
+    style={`aspect-ratio:${rw}/${rh}`}
+    role="img"
+    aria-label={alt}
+  >
+    <svg viewBox="0 0 64 64" width="56" height="56" aria-hidden="true" focusable="false">
+      <path
+        fill="none"
+        stroke="currentColor"
+        stroke-width="3"
+        stroke-linejoin="round"
+        d="M8 22h48v34H8zM8 22l6-10h36l6 10M32 12v10M8 34h48"
+      />
+      <path fill="none" stroke="currentColor" stroke-width="3" d="M24 22v34M40 22v34" />
+    </svg>
+  </div>
+)}
+
+<style>
+  .foto {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: var(--radius-card);
+    background: var(--color-paper-soft);
+  }
+  .foto--placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: color-mix(in srgb, var(--color-apice-blue) 22%, transparent);
+    border: 1px solid var(--color-line);
+  }
+</style>

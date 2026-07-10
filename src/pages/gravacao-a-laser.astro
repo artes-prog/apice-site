@@ -1,0 +1,8 @@
+---
+import { getEntry } from 'astro:content';
+import TecnicaPage from '../layouts/TecnicaPage.astro';
+
+const entry = await getEntry('tecnicas', 'gravacao-a-laser');
+if (!entry) throw new Error('Conteúdo da técnica "gravacao-a-laser" não encontrado.');
+---
+<TecnicaPage entry={entry} serviceType="Gravação a laser em brindes" />

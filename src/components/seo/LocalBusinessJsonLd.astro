@@ -1,0 +1,51 @@
+---
+import { site, perfisSociais } from '../../data/site';
+
+/*
+  JSON-LD LocalBusiness — vai em TODAS as páginas (via BaseLayout).
+  Sinal local forte: endereço, telefone, horário, área atendida e redes.
+  Nenhum concorrente local costuma ter isto — é vantagem de graça.
+*/
+const telE164 = '+55' + site.telefoneFixo.replace(/\D/g, '');
+const url = new URL('/', Astro.site).href;
+
+const address: Record<string, unknown> = {
+  '@type': 'PostalAddress',
+  streetAddress: site.endereco.rua,
+  addressLocality: site.endereco.cidade,
+  addressRegion: site.endereco.uf,
+  addressCountry: 'BR',
+};
+if (site.endereco.bairro) address.addressLocality = site.endereco.cidade;
+if (site.endereco.cep) address.postalCode = site.endereco.cep;
+
+const data: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  '@id': url + '#business',
+  name: site.nome,
+  description: site.slogan,
+  url,
+  image: new URL('/og-default.png', Astro.site).href,
+  telephone: telE164,
+  address,
+  areaServed: site.areaAtendimento.map((a) => ({ '@type': 'City', name: a })),
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+      opens: '08:00',
+      closes: '18:00',
+    },
+  ],
+  knowsLanguage: 'pt-BR',
+  parentOrganization: { '@type': 'Organization', name: site.grupo },
+};
+
+if (site.geo?.lat != null && site.geo?.lng != null) {
+  data.geo = { '@type': 'GeoCoordinates', latitude: site.geo.lat, longitude: site.geo.lng };
+}
+const sameAs = perfisSociais();
+if (sameAs.length) data.sameAs = sameAs;
+---
+<script type="application/ld+json" set:html={JSON.stringify(data)} is:inline />

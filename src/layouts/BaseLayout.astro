@@ -1,0 +1,161 @@
+---
+import '../styles/global.css';
+// Fontes self-hosted (font-display: swap embutido). Só 2 famílias, 2 pesos cada,
+// subset latin (suficiente para o português) — payload mínimo para o CWV.
+import '@fontsource/montserrat/latin-700.css';
+import '@fontsource/montserrat/latin-800.css';
+import '@fontsource/open-sans/latin-400.css';
+import '@fontsource/open-sans/latin-600.css';
+
+import { ClientRouter } from 'astro:transitions';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import CtaWhatsApp from '../components/CtaWhatsApp.astro';
+import SeoHead from '../components/seo/SeoHead.astro';
+import LocalBusinessJsonLd from '../components/seo/LocalBusinessJsonLd.astro';
+import { getCategorias } from '../lib/content';
+import { mensagens } from '../lib/whatsapp';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  ogType?: 'website' | 'article';
+  noindex?: boolean;
+  waMensagem?: string;
+  waSemente?: string;
+}
+const {
+  title,
+  description,
+  image,
+  ogType,
+  noindex,
+  waMensagem = mensagens.generico,
+  waSemente,
+} = Astro.props;
+
+const categoriasRaw = await getCategorias();
+const categorias = categoriasRaw.map((c) => ({ nome: c.data.nome, slug: c.data.slug }));
+---
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <meta name="theme-color" content="#003DA5" />
+    <meta name="generator" content={Astro.generator} />
+    <SeoHead title={title} description={description} image={image} ogType={ogType} noindex={noindex} />
+    <LocalBusinessJsonLd />
+    <ClientRouter />
+  </head>
+  <body>
+    <a href="#conteudo" class="skip-link">Pular para o conteúdo</a>
+    <Header />
+    <main id="conteudo">
+      <slot />
+    </main>
+    <Footer categorias={categorias} />
+
+    <!-- CTA flutuante: presente em todas as páginas -->
+    <CtaWhatsApp variante="flutuante" mensagem={waMensagem} semente={waSemente} />
+
+    <script>
+      // Ilha única de interatividade: menu mobile + medição de cliques de CTA.
+      // Delegação em `document` (persiste entre view transitions do ClientRouter).
+      const closeMenu = () => {
+        const menu = document.getElementById('mobile-menu');
+        const btn = document.querySelector('[data-menu-toggle]');
+        if (menu) (menu as HTMLElement).hidden = true;
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+      };
+
+      document.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+
+        const toggle = target.closest('[data-menu-toggle]');
+        if (toggle) {
+          const menu = document.getElementById('mobile-menu') as HTMLElement | null;
+          const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+          toggle.setAttribute('aria-expanded', String(!isOpen));
+          toggle.setAttribute('aria-label', isOpen ? 'Abrir menu de navegação' : 'Fechar menu de navegação');
+          if (menu) menu.hidden = isOpen;
+          return;
+        }
+
+        if (target.closest('[data-menu-close]')) {
+          closeMenu();
+          // deixa a navegação seguir normalmente
+        }
+
+        const wa = target.closest('[data-wa]') as HTMLElement | null;
+        if (wa) {
+          const pagina = wa.getAttribute('data-pagina') || location.pathname;
+          const atendente = wa.getAttribute('data-atendente') || '';
+          const label = `${pagina}-${atendente}`;
+          // Dispara evento se houver analytics (Plausible/GA). No-op sem eles.
+          // Para ativar: adicione o snippet do Plausible OU Cloudflare Web Analytics.
+          try {
+            (window as any).plausible?.('WhatsApp', { props: { pagina, atendente, label } });
+            (window as any).gtag?.('event', 'whatsapp_click', { pagina, atendente });
+          } catch (_) {}
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeMenu();
+      });
+
+      // ---- Construtor de orçamento (/orcamento/) ----
+      // Monta a mensagem completa e abre o WhatsApp da atendente do dia (par/ímpar).
+      function wireOrcamento() {
+        const form = document.getElementById('orcamento-form') as HTMLFormElement | null;
+        if (!form || form.dataset.wired) return;
+        form.dataset.wired = '1';
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const val = (n: string) =>
+            ((form.elements.namedItem(n) as HTMLInputElement | null)?.value || '').trim();
+          const linhas = ['Olá! Vim pelo site da Ápice e quero um orçamento de brindes personalizados.', ''];
+          const add = (rot: string, n: string) => { const v = val(n); if (v) linhas.push(`${rot}: ${v}`); };
+          add('Nome', 'nome');
+          add('Empresa', 'empresa');
+          add('WhatsApp', 'whatsapp');
+          add('Categoria', 'categoria');
+          add('Quantidade estimada', 'quantidade');
+          add('Data do evento', 'data');
+          add('Mensagem', 'mensagem');
+          const wa1 = form.dataset.wa1 || '';
+          const wa2 = form.dataset.wa2 || '';
+          const numero = new Date().getDate() % 2 === 0 ? wa1 : wa2;
+          const url = `https://wa.me/${numero}?text=${encodeURIComponent(linhas.join('\n'))}`;
+          try {
+            (window as any).plausible?.('WhatsApp', { props: { pagina: '/orcamento/', atendente: 'form' } });
+          } catch (_) {}
+          const win = window.open(url, '_blank', 'noopener');
+          if (!win) window.location.href = url;
+        });
+      }
+      document.addEventListener('astro:page-load', wireOrcamento);
+    </script>
+  </body>
+</html>
+
+<style>
+  .skip-link {
+    position: absolute;
+    left: -999px;
+    top: 0;
+    z-index: 100;
+    background: var(--color-apice-blue);
+    color: #fff;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0 0 8px 0;
+    font-weight: 700;
+  }
+  .skip-link:focus {
+    left: 0;
+  }
+</style>

@@ -1,0 +1,49 @@
+---
+import { site } from '../../data/site';
+
+/*
+  <head> de SEO — uma fonte só para title, description, canonical, OG e Twitter.
+  Canonical é sempre absoluto e com trailing slash (config trailingSlash:'always').
+*/
+interface Props {
+  title: string;
+  description: string;
+  image?: string;      // caminho absoluto do site (ex.: /og/default.png) OU URL completa
+  ogType?: 'website' | 'article';
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  image = '/og-default.png',
+  ogType = 'website',
+  noindex = false,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = image.startsWith('http')
+  ? image
+  : new URL(image, Astro.site).href;
+---
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+
+<!-- Open Graph (essencial: é o preview quando o link circula no WhatsApp) -->
+<meta property="og:type" content={ogType} />
+<meta property="og:site_name" content={site.nome} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:locale" content="pt_BR" />
+
+<!-- Twitter/X -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />

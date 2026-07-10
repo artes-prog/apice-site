@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Sitemap gerado automaticamente pelo @astrojs/sitemap
+Sitemap: https://apicebrindes.com/sitemap-index.xml

@@ -1,0 +1,13 @@
+{
+  "nome": "Agendas e Escritório",
+  "slug": "agendas-e-escritorio",
+  "ordem": 10,
+  "tituloSeo": "Agendas e Cadernos Personalizados em Goiânia | Ápice Brindes",
+  "descricaoSeo": "Agendas, cadernos e itens de escritório personalizados em Goiânia. Capa com gravação a laser ou silk. Clássico corporativo que funciona. Orçamento já.",
+  "h1": "Agendas, cadernos e escritório: o clássico que nunca falha",
+  "intro": "Agenda e caderno personalizados são o clássico corporativo por um motivo: passam o ano inteiro na mesa de quem recebe, em reuniões, ao lado do notebook, com a sua marca à vista. Trabalhamos com capas em couro sintético e materiais nobres, personalizadas com gravação a laser (baixo relevo elegante) ou silk screen. Combinam perfeitamente com kits de fim de ano e boas-vindas de colaboradores.",
+  "tecnicas": ["ambas"],
+  "imagemCapa": "categorias/agendas.jpg",
+  "destaqueHome": false,
+  "faqSlugs": ["quantidade-minima", "formato-logo"]
+}

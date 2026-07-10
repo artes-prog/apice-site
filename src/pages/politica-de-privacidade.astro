@@ -1,0 +1,95 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { site, enderecoLinha } from '../data/site';
+
+const atualizacao = new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+const title = 'Política de Privacidade | Ápice Brindes';
+const description = 'Como a Ápice Brindes trata os dados fornecidos por você, em conformidade com a LGPD (Lei nº 13.709/2018).';
+---
+<BaseLayout title={title} description={description}>
+  <div class="container-site crumbs-wrap">
+    <Breadcrumbs items={[{ name: 'Início', href: '/' }, { name: 'Política de Privacidade' }]} />
+  </div>
+
+  <article class="section">
+    <div class="container-site container-narrow legal">
+      <h1>Política de Privacidade</h1>
+      <p class="legal__meta">Última atualização: {atualizacao}</p>
+
+      <p>
+        Esta Política explica como a <strong>{site.nome}</strong> ({site.grupo}) trata os dados pessoais que você
+        nos fornece, em conformidade com a Lei Geral de Proteção de Dados — LGPD (Lei nº 13.709/2018).
+      </p>
+
+      <h2>1. Quais dados coletamos</h2>
+      <p>Coletamos apenas os dados que você nos envia voluntariamente para solicitar um orçamento ou tirar dúvidas:</p>
+      <ul>
+        <li>Dados de contato e identificação: nome, empresa, telefone/WhatsApp;</li>
+        <li>Informações do pedido: categoria de brinde, quantidade estimada, data do evento e a mensagem que você escrever.</li>
+      </ul>
+      <p>
+        Importante: o formulário de orçamento deste site <strong>não envia dados para um servidor nosso</strong>.
+        Ao enviar, ele apenas abre o aplicativo WhatsApp com a mensagem preenchida — a conversa acontece dentro do
+        WhatsApp, sob os termos e a política de privacidade da própria plataforma.
+      </p>
+
+      <h2>2. Para que usamos</h2>
+      <ul>
+        <li>Elaborar e enviar o seu orçamento;</li>
+        <li>Entrar em contato para esclarecer o pedido e conduzir o atendimento;</li>
+        <li>Cumprir obrigações legais quando aplicável.</li>
+      </ul>
+      <p>Não vendemos nem compartilhamos seus dados para fins de marketing de terceiros.</p>
+
+      <h2>3. Dados de navegação</h2>
+      <p>
+        Podemos usar uma ferramenta de estatística de acesso que respeita a privacidade, coletando dados agregados
+        e anônimos (como páginas mais visitadas), sem identificar você pessoalmente e sem cookies de rastreamento
+        publicitário. Mapas e o WhatsApp são serviços de terceiros e possuem políticas próprias.
+      </p>
+
+      <h2>4. Por quanto tempo guardamos</h2>
+      <p>
+        Mantemos os dados do seu atendimento pelo tempo necessário para conduzir a negociação e cumprir obrigações
+        legais. Depois disso, são eliminados ou anonimizados.
+      </p>
+
+      <h2>5. Seus direitos</h2>
+      <p>
+        Você pode, a qualquer momento, solicitar confirmação de tratamento, acesso, correção, anonimização ou
+        eliminação dos seus dados, entre outros direitos previstos na LGPD.
+      </p>
+
+      <h2>6. Como falar sobre seus dados</h2>
+      <p>
+        Para exercer seus direitos ou tirar dúvidas sobre privacidade, fale com a gente pelos nossos canais de
+        atendimento:
+      </p>
+      <ul>
+        <li>Telefone: {site.telefoneFixo}</li>
+        <li>WhatsApp: {site.atendentes.map((a) => a.nome).join(' ou ')} (contatos na página de <a href="/contato/">Contato</a>)</li>
+        <li>Endereço: {enderecoLinha()}</li>
+      </ul>
+
+      <h2>7. Alterações</h2>
+      <p>
+        Podemos atualizar esta Política periodicamente. A versão vigente é sempre a publicada nesta página, com a
+        data de atualização no topo.
+      </p>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .crumbs-wrap { padding-block: 1.1rem 0; }
+  .section { padding-block: clamp(2rem, 5vw, 3.5rem); }
+  .container-narrow { max-width: 760px; }
+  .legal h1 { font-size: clamp(1.9rem, 5vw, 2.6rem); font-weight: 800; }
+  .legal__meta { color: var(--color-ink-soft); font-size: 0.9rem; margin: 0.5rem 0 1.75rem; }
+  .legal h2 { font-size: 1.25rem; margin: 2rem 0 0.6rem; }
+  .legal p { color: var(--color-ink); line-height: 1.75; margin-bottom: 1rem; }
+  .legal ul { margin: 0 0 1.2rem 1.25rem; display: grid; gap: 0.5rem; }
+  .legal li { color: var(--color-ink); line-height: 1.6; }
+  .legal a { color: var(--color-apice-blue); text-decoration: underline; }
+</style>

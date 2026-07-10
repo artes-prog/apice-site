@@ -1,0 +1,176 @@
+---
+import Logo from './Logo.astro';
+
+/*
+  Cabeçalho fixo. Azul da marca = estrutura/confiança (Guia §1.2).
+  Logo respeita área de proteção via padding do container (nunca encosta na borda).
+  O menu mobile é uma ilha mínima: alternado por JS delegado no BaseLayout.
+*/
+const path = Astro.url.pathname;
+const links = [
+  { href: '/', label: 'Início' },
+  { href: '/brindes-personalizados/', label: 'Brindes' },
+  { href: '/gravacao-a-laser/', label: 'Gravação a laser' },
+  { href: '/silk-screen/', label: 'Silk screen' },
+  { href: '/sobre/', label: 'Sobre' },
+  { href: '/contato/', label: 'Contato' },
+];
+const isActive = (href: string) =>
+  href === '/' ? path === '/' : path.startsWith(href);
+---
+<header class="site-header">
+  <div class="container-site header-inner">
+    <a href="/" class="header-logo" aria-label="Ápice Brindes — página inicial">
+      <Logo variant="cor" />
+    </a>
+
+    <nav class="header-nav" aria-label="Navegação principal">
+      {links.map((l) => (
+        <a href={l.href} class:list={['nav-link', { active: isActive(l.href) }]} aria-current={isActive(l.href) ? 'page' : undefined}>
+          {l.label}
+        </a>
+      ))}
+    </nav>
+
+    <a href="/orcamento/" class="header-cta">Peça seu orçamento</a>
+
+    <button
+      class="header-toggle"
+      data-menu-toggle
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      aria-label="Abrir menu de navegação"
+    >
+      <span class="bar" aria-hidden="true"></span>
+      <span class="bar" aria-hidden="true"></span>
+      <span class="bar" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <div class="mobile-menu" id="mobile-menu" hidden>
+    <nav class="mobile-nav" aria-label="Navegação mobile">
+      {links.map((l) => (
+        <a href={l.href} class:list={['mobile-link', { active: isActive(l.href) }]} data-menu-close>
+          {l.label}
+        </a>
+      ))}
+      <a href="/orcamento/" class="mobile-cta" data-menu-close>Peça seu orçamento</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--color-paper);
+    border-bottom: 1px solid var(--color-line);
+  }
+  .header-inner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-height: 72px;
+  }
+  .header-logo {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+  }
+  .header-nav {
+    display: none;
+    margin-left: auto;
+    gap: 1.4rem;
+    align-items: center;
+  }
+  .nav-link {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--color-ink);
+    padding: 0.4rem 0;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .nav-link:hover { color: var(--color-apice-blue); }
+  .nav-link.active {
+    color: var(--color-apice-blue);
+    border-color: var(--color-apice-red);
+  }
+  .header-cta {
+    display: none;
+    flex: none;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: #fff;
+    background: var(--color-apice-red);
+    padding: 0.65rem 1.15rem;
+    border-radius: 999px;
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+  .header-cta:hover { background: var(--color-apice-red-dark); transform: translateY(-1px); }
+
+  .header-toggle {
+    margin-left: auto;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 44px;
+    height: 44px;
+    padding: 10px;
+    background: transparent;
+    border: 1px solid var(--color-line);
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .header-toggle .bar {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background: var(--color-apice-blue);
+    border-radius: 2px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  .header-toggle[aria-expanded='true'] .bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .header-toggle[aria-expanded='true'] .bar:nth-child(2) { opacity: 0; }
+  .header-toggle[aria-expanded='true'] .bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .mobile-menu {
+    border-top: 1px solid var(--color-line);
+    background: var(--color-paper);
+  }
+  .mobile-menu[hidden] { display: none; }
+  .mobile-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem 1.25rem 1.25rem;
+    max-width: 1200px;
+    margin-inline: auto;
+  }
+  .mobile-link {
+    padding: 0.9rem 0.25rem;
+    font-weight: 600;
+    color: var(--color-ink);
+    border-bottom: 1px solid var(--color-line);
+  }
+  .mobile-link.active { color: var(--color-apice-blue); }
+  .mobile-cta {
+    margin-top: 1rem;
+    text-align: center;
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: #fff;
+    background: var(--color-apice-red);
+    padding: 0.9rem 1.2rem;
+    border-radius: 999px;
+  }
+
+  @media (min-width: 960px) {
+    .header-nav { display: flex; }
+    .header-cta { display: inline-flex; }
+    .header-toggle { display: none; }
+    .mobile-menu { display: none !important; }
+  }
+</style>

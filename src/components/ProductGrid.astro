@@ -1,0 +1,41 @@
+---
+import ProductCard from './ProductCard.astro';
+import type { Produto } from '../lib/content';
+
+/*
+  Grade responsiva de produtos-vitrine. As duas primeiras fotos carregam
+  com prioridade (acima da dobra em telas maiores).
+*/
+interface Props {
+  produtos: Produto[];
+}
+const { produtos } = Astro.props;
+---
+<div class="prod-grid">
+  {produtos.map((p, i) => (
+    <ProductCard
+      nome={p.data.nome}
+      slug={p.data.slug}
+      descricaoCurta={p.data.descricaoCurta}
+      imagens={p.data.imagens}
+      precoAPartir={p.data.precoAPartir}
+      maisPedido={p.data.maisPedido}
+      tecnica={p.data.tecnica}
+      priority={i < 2}
+    />
+  ))}
+</div>
+
+<style>
+  .prod-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  @media (min-width: 560px) {
+    .prod-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 960px) {
+    .prod-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>

@@ -1,0 +1,117 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import Foto from '../components/Foto.astro';
+import CtaWhatsApp from '../components/CtaWhatsApp.astro';
+import FaqSection from '../components/FaqSection.astro';
+import CtaFinal from '../components/CtaFinal.astro';
+import ServiceJsonLd from '../components/seo/ServiceJsonLd.astro';
+import { getFaqsPorSlugs, type Tecnica } from '../lib/content';
+import { mensagens } from '../lib/whatsapp';
+
+/*
+  Página de técnica (SEO máximo). Renderiza o corpo Markdown longo do conteúdo
+  e envolve com hero, CTA, FAQ e JSON-LD Service.
+*/
+interface Props {
+  entry: Tecnica;
+  serviceType: string;
+}
+const { entry, serviceType } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+const faqs = await getFaqsPorSlugs(d.faqSlugs);
+const msg = mensagens.tecnica(d.nome.toLowerCase());
+---
+<BaseLayout title={d.tituloSeo} description={d.descricaoSeo} ogType="article" waMensagem={msg} waSemente={d.slug}>
+  <div class="container-site crumbs-wrap">
+    <Breadcrumbs items={[
+      { name: 'Início', href: '/' },
+      { name: d.nome },
+    ]} />
+  </div>
+
+  <section class="tec-hero">
+    <div class="container-site tec-hero__grid">
+      <div>
+        <h1 class="tec-hero__title">{d.h1}</h1>
+        <p class="tec-hero__lead">Produção própria em Goiânia. Você aprova a prova digital antes de qualquer peça e recebe orçamento rápido no WhatsApp.</p>
+        <CtaWhatsApp variante="primario" mensagem={msg} semente={d.slug} label="Pedir orçamento no WhatsApp" />
+      </div>
+      <div class="tec-hero__media">
+        <Foto src={d.imagemCapa} alt={`${d.nome} em brindes — produção própria da Ápice em Goiânia`} ratio="4/3" priority widthHint={900} />
+      </div>
+    </div>
+  </section>
+
+  <article class="section">
+    <div class="container-site container-narrow prose">
+      <Content />
+    </div>
+  </article>
+
+  {faqs.length > 0 && (
+    <section class="section section--alt">
+      <div class="container-site container-narrow">
+        <FaqSection faqs={faqs} title="Perguntas frequentes" />
+      </div>
+    </section>
+  )}
+
+  <CtaFinal semente={d.slug} mensagem={msg} />
+
+  <ServiceJsonLd serviceType={serviceType} nome={d.nome} descricao={d.descricaoSeo} />
+</BaseLayout>
+
+<style>
+  .crumbs-wrap { padding-block: 1.1rem 0; }
+  .tec-hero { padding-block: clamp(1.5rem, 4vw, 3rem); }
+  .tec-hero__grid { display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: center; }
+  .tec-hero__title { font-size: clamp(1.9rem, 5vw, 2.9rem); font-weight: 800; }
+  .tec-hero__lead { margin: 1.1rem 0 1.75rem; color: var(--color-ink-soft); font-size: 1.08rem; max-width: 52ch; }
+  .section { padding-block: clamp(2.5rem, 5vw, 4rem); }
+  .section--alt { background: var(--color-paper-soft); }
+  .container-narrow { max-width: 780px; }
+
+  /* PROSE — corpo Markdown das técnicas */
+  .prose :global(h2) {
+    font-size: clamp(1.4rem, 3.5vw, 1.85rem);
+    margin-top: 2.5rem;
+    margin-bottom: 0.9rem;
+  }
+  .prose :global(h2:first-child) { margin-top: 0; }
+  .prose :global(h3) { font-size: 1.2rem; margin-top: 1.75rem; margin-bottom: 0.6rem; color: var(--color-apice-blue); }
+  .prose :global(p) { margin-bottom: 1.1rem; color: var(--color-ink); line-height: 1.7; }
+  .prose :global(ul), .prose :global(ol) { margin: 0 0 1.2rem 1.25rem; display: grid; gap: 0.5rem; }
+  .prose :global(li) { color: var(--color-ink); line-height: 1.6; }
+  .prose :global(strong) { color: var(--color-ink); font-weight: 700; }
+  .prose :global(a) { color: var(--color-apice-blue); text-decoration: underline; }
+  .prose :global(blockquote) {
+    margin: 1.75rem 0;
+    padding: 1.1rem 1.4rem;
+    background: var(--color-paper-soft);
+    border-left: 4px solid var(--color-apice-red);
+    border-radius: 0 var(--radius-card) var(--radius-card) 0;
+    color: var(--color-ink);
+  }
+  .prose :global(blockquote p:last-child) { margin-bottom: 0; }
+  .prose :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.92rem;
+  }
+  .prose :global(th), .prose :global(td) {
+    border: 1px solid var(--color-line);
+    padding: 0.7rem 0.85rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  .prose :global(thead th) { background: var(--color-apice-blue); color: #fff; }
+  .prose :global(tbody tr:nth-child(even)) { background: var(--color-paper-soft); }
+
+  @media (min-width: 860px) {
+    .tec-hero__grid { grid-template-columns: 1.05fr 0.95fr; }
+  }
+</style>

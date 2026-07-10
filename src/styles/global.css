@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+/*
+  ============================================================================
+  ÁPICE BRINDES — TOKENS DA MARCA (fonte única da verdade)
+  ============================================================================
+  Todas as cores, fontes e geometria do site nascem AQUI. Para reajustar a
+  marca (ex.: conferir HEX contra a pág. 4 do Guia de Estilo), edite os valores
+  deste bloco @theme — as classes utilitárias (bg-apice-blue, text-ink,
+  font-display, rounded-card, shadow-card...) e as var(--color-*) se atualizam
+  no site inteiro.
+
+  Regra de cor (Guia de Estilo, §1.2):
+    azul  = estrutura e confiança (header, títulos de seção, footer)
+    vermelho = pontos focais e destaque (badges, diferenciais, CTA secundário)
+    verde = EXCLUSIVO do botão de WhatsApp — nada mais no site é verde.
+  ============================================================================
+*/
+@theme {
+  /* Paleta oficial da marca */
+  --color-apice-red: #E30613;      /* vermelho Ápice — energia, ação */
+  --color-apice-red-dark: #B00510; /* hover/estados */
+  --color-apice-blue: #003DA5;     /* azul Ápice — confiança, institucional */
+  --color-apice-blue-dark: #002B75;
+  --color-apice-white: #FFFFFF;
+
+  /* Neutros de apoio */
+  --color-ink: #1A1D23;       /* texto principal */
+  --color-ink-soft: #4B5563;  /* texto de apoio */
+  --color-paper: #FFFFFF;
+  --color-paper-soft: #F4F6FA; /* fundos de seção alternados */
+  --color-line: #E2E7EF;
+
+  /* Conversão — verde universal do WhatsApp (fora do guia, padrão da plataforma) */
+  --color-wa-green: #25D366;
+  --color-wa-green-dark: #1EBE5B;
+
+  /* Tipografia (as @font-face vêm do @fontsource, importado no BaseLayout) */
+  --font-display: "Montserrat", system-ui, sans-serif; /* títulos 700/800 */
+  --font-body: "Open Sans", system-ui, sans-serif;     /* corpo 400/600 */
+
+  /* Geometria */
+  --radius-card: 12px;
+  --radius-lg: 20px;
+  --shadow-card: 0 4px 24px rgba(0, 61, 165, 0.08);
+  --shadow-card-hover: 0 8px 32px rgba(0, 61, 165, 0.14);
+}
+
+/* Container central do site (1200px) */
+@utility container-site {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+/* ==========================================================================
+   BASE
+   ========================================================================== */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    font-family: var(--font-body);
+    color: var(--color-ink);
+    background: var(--color-paper);
+    font-weight: 400;
+    line-height: 1.6;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--color-apice-blue);
+    text-wrap: balance;
+  }
+
+  /* Foco visível e consistente em toda navegação por teclado (a11y §6.1) */
+  :focus-visible {
+    outline: 3px solid var(--color-apice-blue);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

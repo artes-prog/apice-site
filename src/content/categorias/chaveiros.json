@@ -1,0 +1,13 @@
+{
+  "nome": "Chaveiros Personalizados",
+  "slug": "chaveiros",
+  "ordem": 7,
+  "tituloSeo": "Chaveiros Personalizados em Goiânia | Ápice Brindes",
+  "descricaoSeo": "Chaveiros personalizados em metal, couro e acrílico com gravação a laser em Goiânia. Brinde de entrega em volume com ótimo custo. Peça orçamento.",
+  "h1": "Chaveiros personalizados para ações de volume",
+  "intro": "Quando a ação pede volume — feiras, eventos, lançamentos imobiliários, concessionárias — o chaveiro personalizado entrega presença de marca com investimento mínimo por unidade. Produzimos em metal com gravação a laser (acabamento nobre e permanente), couro sintético e acrílico. Nossa produção própria em Goiânia permite prazos curtos mesmo em pedidos grandes.",
+  "tecnicas": ["ambas"],
+  "imagemCapa": "categorias/chaveiros.jpg",
+  "destaqueHome": false,
+  "faqSlugs": ["quantidade-minima", "prazo-producao"]
+}

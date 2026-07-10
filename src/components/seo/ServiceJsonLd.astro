@@ -1,0 +1,27 @@
+---
+import { site } from '../../data/site';
+
+/*
+  JSON-LD Service para as páginas de técnica (§5.2).
+  Provider referencia o LocalBusiness global por @id.
+*/
+interface Props {
+  serviceType: string; // ex.: "Gravação a laser em brindes"
+  nome: string;
+  descricao: string;
+}
+const { serviceType, nome, descricao } = Astro.props;
+const homeUrl = new URL('/', Astro.site).href;
+
+const data = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  serviceType,
+  name: nome,
+  description: descricao,
+  provider: { '@type': 'LocalBusiness', '@id': homeUrl + '#business', name: site.nome },
+  areaServed: site.areaAtendimento.map((a) => ({ '@type': 'City', name: a })),
+  url: new URL(Astro.url.pathname, Astro.site).href,
+};
+---
+<script type="application/ld+json" set:html={JSON.stringify(data)} is:inline />

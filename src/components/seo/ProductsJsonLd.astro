@@ -1,0 +1,41 @@
+---
+import { site } from '../../data/site';
+import type { Produto } from '../../lib/content';
+import { nomeTecnica } from '../../lib/content';
+
+/*
+  JSON-LD Product para os produtos-vitrine de uma categoria (@graph).
+  `offers` só é emitido quando houver precoAPartir — nunca inventamos preço.
+  Sem foto real ainda, a imagem cai no OG padrão da marca (placeholder válido).
+*/
+interface Props {
+  produtos: Produto[];
+}
+const { produtos } = Astro.props;
+const ogFallback = new URL('/og-default.png', Astro.site).href;
+
+const graph = produtos.map((p) => {
+  const node: Record<string, unknown> = {
+    '@type': 'Product',
+    name: p.data.nome,
+    description: p.data.descricaoCurta,
+    brand: { '@type': 'Brand', name: site.nome },
+    category: nomeTecnica(p.data.tecnica),
+    image: ogFallback,
+  };
+  if (p.data.precoAPartir != null) {
+    node.offers = {
+      '@type': 'Offer',
+      priceCurrency: 'BRL',
+      price: p.data.precoAPartir,
+      availability: 'https://schema.org/InStock',
+    };
+  }
+  return node;
+});
+
+const data = { '@context': 'https://schema.org', '@graph': graph };
+---
+{produtos.length > 0 && (
+  <script type="application/ld+json" set:html={JSON.stringify(data)} is:inline />
+)}

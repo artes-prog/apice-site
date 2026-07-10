@@ -1,0 +1,101 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import Foto from '../../components/Foto.astro';
+import CtaWhatsApp from '../../components/CtaWhatsApp.astro';
+import ProductGrid from '../../components/ProductGrid.astro';
+import FaqSection from '../../components/FaqSection.astro';
+import CtaFinal from '../../components/CtaFinal.astro';
+import ProductsJsonLd from '../../components/seo/ProductsJsonLd.astro';
+import {
+  getCategorias,
+  getProdutosDaCategoria,
+  getFaqsPorSlugs,
+} from '../../lib/content';
+import { mensagens } from '../../lib/whatsapp';
+
+export const getStaticPaths = (async () => {
+  const categorias = await getCategorias();
+  return categorias.map((c) => ({ params: { slug: c.data.slug }, props: { categoria: c } }));
+}) satisfies GetStaticPaths;
+
+const { categoria } = Astro.props;
+const d = categoria.data;
+const produtos = await getProdutosDaCategoria(d.slug);
+const faqs = await getFaqsPorSlugs(d.faqSlugs);
+const msg = mensagens.categoria(d.nome.toLowerCase());
+---
+<BaseLayout
+  title={d.tituloSeo}
+  description={d.descricaoSeo}
+  waMensagem={msg}
+  waSemente={d.slug}
+>
+  <div class="container-site crumbs-wrap">
+    <Breadcrumbs items={[
+      { name: 'Início', href: '/' },
+      { name: 'Brindes', href: '/brindes-personalizados/' },
+      { name: d.nome },
+    ]} />
+  </div>
+
+  <!-- HERO DA CATEGORIA -->
+  <section class="cat-hero">
+    <div class="container-site cat-hero__grid">
+      <div class="cat-hero__copy">
+        <h1 class="cat-hero__title">{d.h1}</h1>
+        <p class="cat-hero__intro">{d.intro}</p>
+        <CtaWhatsApp variante="primario" mensagem={msg} semente={d.slug} label="Pedir orçamento no WhatsApp" />
+      </div>
+      <div class="cat-hero__media">
+        <Foto src={d.imagemCapa} alt={`${d.nome} personalizados pela Ápice Brindes em Goiânia`} ratio="4/3" priority widthHint={900} />
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUTOS -->
+  <section class="section">
+    <div class="container-site">
+      <h2 class="section__title">Opções de {d.nome.toLowerCase()}</h2>
+      <p class="section__sub">Modelos-vitrine para inspirar. Trabalhamos com muitas outras opções — chame no WhatsApp e a gente encontra o brinde ideal para a sua ação.</p>
+      <div class="section__grid">
+        <ProductGrid produtos={produtos} />
+      </div>
+    </div>
+  </section>
+
+  {faqs.length > 0 && (
+    <section class="section section--alt">
+      <div class="container-site container-narrow">
+        <FaqSection faqs={faqs} title={`Perguntas sobre ${d.nome.toLowerCase()}`} />
+      </div>
+    </section>
+  )}
+
+  <CtaFinal semente={d.slug} mensagem={msg} titulo={`Vamos personalizar ${d.nome.toLowerCase()} com a sua marca?`} />
+
+  <ProductsJsonLd produtos={produtos} />
+</BaseLayout>
+
+<style>
+  .crumbs-wrap { padding-block: 1.1rem 0; }
+  .cat-hero { padding-block: clamp(1.5rem, 4vw, 3rem); }
+  .cat-hero__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: center;
+  }
+  .cat-hero__title { font-size: clamp(1.8rem, 5vw, 2.7rem); font-weight: 800; }
+  .cat-hero__intro { margin: 1.1rem 0 1.75rem; color: var(--color-ink-soft); font-size: 1.05rem; max-width: 52ch; }
+  .section { padding-block: clamp(2.5rem, 5vw, 4rem); }
+  .section--alt { background: var(--color-paper-soft); }
+  .section__title { font-size: clamp(1.5rem, 4vw, 2.1rem); }
+  .section__sub { color: var(--color-ink-soft); margin-top: 0.4rem; max-width: 62ch; }
+  .section__grid { margin-top: 1.75rem; }
+  .container-narrow { max-width: 820px; }
+  @media (min-width: 860px) {
+    .cat-hero__grid { grid-template-columns: 1.05fr 0.95fr; }
+  }
+</style>

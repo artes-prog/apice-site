@@ -1,0 +1,13 @@
+{
+  "nome": "Garrafas e Squeezes",
+  "slug": "garrafas-e-squeezes",
+  "ordem": 2,
+  "tituloSeo": "Garrafas e Squeezes Personalizados em Goiânia | Ápice Brindes",
+  "descricaoSeo": "Garrafas térmicas e squeezes personalizados com gravação a laser em Goiânia. Brinde útil que sua marca acompanha todo dia. Orçamento no WhatsApp.",
+  "h1": "Garrafas térmicas e squeezes com sua marca gravada",
+  "intro": "Garrafa térmica personalizada é o brinde mais desejado do momento em ambientes corporativos — útil, durável e presente na rotina de quem recebe. Trabalhamos com garrafas em inox e squeezes em alumínio e plástico, com gravação a laser fibra que não descasca e não sai com o uso, feita na nossa própria produção em Goiânia. Perfeitas para kits executivos, campanhas de endomarketing, eventos esportivos e presentes de fim de ano.",
+  "tecnicas": ["laser"],
+  "imagemCapa": "categorias/garrafas.jpg",
+  "destaqueHome": true,
+  "faqSlugs": ["quantidade-minima", "laser-ou-silk", "prazo-producao"]
+}

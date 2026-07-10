@@ -1,0 +1,242 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import CtaWhatsApp from '../components/CtaWhatsApp.astro';
+import FaqSection from '../components/FaqSection.astro';
+import { site } from '../data/site';
+import { getCategorias, getFaqsDaPagina } from '../lib/content';
+import { mensagens } from '../lib/whatsapp';
+
+const categorias = await getCategorias();
+const faqs = await getFaqsDaPagina('orcamento');
+const [wa1, wa2] = site.atendentes;
+
+const title = 'Peça seu Orçamento de Brindes Personalizados | Ápice Brindes';
+const description =
+  'Monte seu orçamento de brindes personalizados em segundos e fale direto no WhatsApp com a nossa equipe. Sem compromisso, resposta rápida em horário comercial.';
+---
+<BaseLayout title={title} description={description} waMensagem={mensagens.generico} waSemente="orcamento">
+  <div class="container-site crumbs-wrap">
+    <Breadcrumbs items={[{ name: 'Início', href: '/' }, { name: 'Orçamento' }]} />
+  </div>
+
+  <section class="orc-hero">
+    <div class="container-site">
+      <h1 class="orc-hero__title">Peça seu orçamento</h1>
+      <p class="orc-hero__lead">
+        Duas formas, do seu jeito: fale <strong>agora</strong> com uma das nossas atendentes, ou monte o pedido no
+        formulário abaixo — ele abre o WhatsApp com tudo preenchido. <strong>Sem compromisso.</strong>
+      </p>
+    </div>
+  </section>
+
+  <!-- ATALHO: falar direto -->
+  <section class="section">
+    <div class="container-site">
+      <h2 class="section__title section__title--center">Prefere falar direto? Chame agora</h2>
+      <div class="atend-grid">
+        {site.atendentes.map((a) => (
+          <div class="atend-card">
+            <div class="atend-card__avatar" aria-hidden="true">{a.nome.charAt(0)}</div>
+            <p class="atend-card__nome">{a.nome}</p>
+            <p class="atend-card__papel">Atendimento Ápice Brindes</p>
+            <CtaWhatsApp variante="inline" atendente={a} mensagem={mensagens.generico} label={`Chamar ${a.nome}`} class="atend-card__cta" />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CONSTRUTOR DE ORÇAMENTO -->
+  <section class="section section--alt">
+    <div class="container-site container-narrow">
+      <h2 class="section__title section__title--center">Ou monte o seu pedido</h2>
+      <p class="orc-help">Preencha o que puder — só o nome e o WhatsApp são obrigatórios. O resto ajuda a agilizar.</p>
+
+      <form id="orcamento-form" class="orc-form" data-wa1={wa1.whatsapp} data-wa2={wa2.whatsapp} novalidate>
+        <div class="orc-form__row">
+          <div class="field">
+            <label for="f-nome">Seu nome *</label>
+            <input id="f-nome" name="nome" type="text" autocomplete="name" required />
+          </div>
+          <div class="field">
+            <label for="f-empresa">Empresa</label>
+            <input id="f-empresa" name="empresa" type="text" autocomplete="organization" />
+          </div>
+        </div>
+
+        <div class="orc-form__row">
+          <div class="field">
+            <label for="f-whatsapp">Seu WhatsApp *</label>
+            <input id="f-whatsapp" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel" placeholder="(62) 9 9999-9999" required />
+          </div>
+          <div class="field">
+            <label for="f-categoria">Categoria de brinde</label>
+            <select id="f-categoria" name="categoria">
+              <option value="">Selecione (opcional)</option>
+              {categorias.map((c) => (<option value={c.data.nome}>{c.data.nome}</option>))}
+              <option value="Outros / não sei ainda">Outros / não sei ainda</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="orc-form__row">
+          <div class="field">
+            <label for="f-quantidade">Quantidade estimada</label>
+            <input id="f-quantidade" name="quantidade" type="text" inputmode="numeric" placeholder="Ex.: 100" />
+          </div>
+          <div class="field">
+            <label for="f-data">Data do evento (se houver)</label>
+            <input id="f-data" name="data" type="date" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="f-mensagem">Mensagem</label>
+          <textarea id="f-mensagem" name="mensagem" rows="4" placeholder="Conte o que você precisa: brinde, ocasião, se já tem o logo, etc."></textarea>
+        </div>
+
+        <button type="submit" class="orc-form__submit">
+          <svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M16 3C9.4 3 4 8.3 4 15c0 2.1.6 4.2 1.6 6L4 29l8.2-1.6c1.7.9 3.6 1.4 5.6 1.4h.2c6.6 0 12-5.3 12-12S22.6 3 16 3z"/></svg>
+          Enviar pelo WhatsApp
+        </button>
+        <p class="orc-form__nota">Ao enviar, abrimos o WhatsApp com o seu pedido já preenchido. Você confere e envia.</p>
+      </form>
+
+      <ul class="orc-reassure">
+        <li>Resposta em horário comercial, geralmente em poucos minutos.</li>
+        <li>Orçamento sem compromisso.</li>
+        <li>{site.horario}.</li>
+      </ul>
+    </div>
+  </section>
+
+  {faqs.length > 0 && (
+    <section class="section">
+      <div class="container-site container-narrow">
+        <FaqSection faqs={faqs} title="Antes de pedir, talvez ajude" />
+      </div>
+    </section>
+  )}
+</BaseLayout>
+
+<style>
+  .crumbs-wrap { padding-block: 1.1rem 0; }
+  .orc-hero { padding-block: clamp(2rem, 5vw, 3rem); text-align: center; }
+  .orc-hero__title { font-size: clamp(2rem, 5.5vw, 3rem); font-weight: 800; }
+  .orc-hero__lead { margin: 1rem auto 0; max-width: 56ch; color: var(--color-ink-soft); font-size: 1.1rem; }
+
+  .section { padding-block: clamp(2.5rem, 5vw, 4rem); }
+  .section--alt { background: var(--color-paper-soft); }
+  .section__title { font-size: clamp(1.5rem, 4vw, 2.1rem); }
+  .section__title--center { text-align: center; }
+  .container-narrow { max-width: 760px; }
+
+  .atend-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    max-width: 720px;
+    margin: 1.75rem auto 0;
+  }
+  @media (min-width: 560px) { .atend-grid { grid-template-columns: repeat(2, 1fr); } }
+  .atend-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.35rem;
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    padding: 1.6rem 1.4rem;
+    box-shadow: var(--shadow-card);
+  }
+  .atend-card__avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    background: var(--color-apice-blue);
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.5rem;
+    margin-bottom: 0.4rem;
+  }
+  .atend-card__nome { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; color: var(--color-apice-blue); }
+  .atend-card__papel { font-size: 0.85rem; color: var(--color-ink-soft); }
+  .atend-card__cta { margin-top: 0.8rem; }
+
+  .orc-help { text-align: center; color: var(--color-ink-soft); margin: 0.5rem auto 1.75rem; max-width: 52ch; }
+  .orc-form {
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem;
+    box-shadow: var(--shadow-card);
+    display: grid;
+    gap: 1.1rem;
+  }
+  .orc-form__row { display: grid; grid-template-columns: 1fr; gap: 1.1rem; }
+  @media (min-width: 620px) { .orc-form__row { grid-template-columns: 1fr 1fr; } }
+  .field { display: flex; flex-direction: column; gap: 0.4rem; }
+  .field label { font-weight: 600; font-size: 0.9rem; color: var(--color-ink); }
+  .field input, .field select, .field textarea {
+    font: inherit;
+    color: var(--color-ink);
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+    border-radius: 10px;
+    padding: 0.7rem 0.85rem;
+    width: 100%;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    outline: none;
+    border-color: var(--color-apice-blue);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-apice-blue) 18%, transparent);
+  }
+  .field textarea { resize: vertical; }
+  .orc-form__submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    background: var(--color-wa-green);
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.05rem;
+    padding: 0.95rem 1.5rem;
+    border: 0;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35);
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+  .orc-form__submit:hover { background: var(--color-wa-green-dark); transform: translateY(-2px); }
+  .orc-form__nota { font-size: 0.82rem; color: var(--color-ink-soft); text-align: center; }
+
+  .orc-reassure {
+    list-style: none;
+    padding: 0;
+    margin: 1.75rem auto 0;
+    display: grid;
+    gap: 0.6rem;
+    max-width: 52ch;
+  }
+  .orc-reassure li {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--color-ink-soft);
+    font-size: 0.92rem;
+  }
+  .orc-reassure li::before {
+    content: '✓';
+    color: var(--color-wa-green-dark);
+    font-weight: 800;
+    flex: none;
+  }
+</style>

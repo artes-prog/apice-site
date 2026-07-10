@@ -1,0 +1,109 @@
+---
+import Foto from './Foto.astro';
+import CtaWhatsApp from './CtaWhatsApp.astro';
+import { nomeTecnica } from '../lib/content';
+import { mensagens } from '../lib/whatsapp';
+
+/*
+  Card de produto-vitrine. Não é e-commerce: sem carrinho, sem quantidade.
+  Preço null => "Sob consulta". Todo caminho leva ao WhatsApp.
+*/
+interface Props {
+  nome: string;
+  slug: string;
+  descricaoCurta: string;
+  imagens: string[];
+  precoAPartir: number | null;
+  maisPedido: boolean;
+  tecnica: 'laser' | 'silk' | 'ambas';
+  priority?: boolean;
+}
+const { nome, slug, descricaoCurta, imagens, precoAPartir, maisPedido, tecnica, priority = false } = Astro.props;
+
+const preco =
+  precoAPartir != null
+    ? `A partir de ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(precoAPartir)}`
+    : 'Sob consulta';
+---
+<article class="prod-card">
+  <div class="prod-card__media">
+    {maisPedido && <span class="prod-card__badge">Mais pedido</span>}
+    <Foto src={imagens[0]} alt={`${nome} — personalização em ${nomeTecnica(tecnica)}`} ratio="4/3" priority={priority} />
+  </div>
+  <div class="prod-card__body">
+    <h3 class="prod-card__title">{nome}</h3>
+    <p class="prod-card__desc">{descricaoCurta}</p>
+    <div class="prod-card__foot">
+      <span class="prod-card__price">{preco}</span>
+      <span class="prod-card__tec">{nomeTecnica(tecnica)}</span>
+    </div>
+    <CtaWhatsApp
+      variante="inline"
+      mensagem={mensagens.produto(nome)}
+      semente={slug}
+      label="Quero este"
+      class="prod-card__cta"
+    />
+  </div>
+</article>
+
+<style>
+  .prod-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    height: 100%;
+  }
+  .prod-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card-hover);
+  }
+  .prod-card__media { position: relative; }
+  .prod-card__media :global(.foto) { border-radius: 0; }
+  .prod-card__badge {
+    position: absolute;
+    top: 0.7rem;
+    left: 0.7rem;
+    z-index: 2;
+    background: var(--color-apice-red);
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+    padding: 0.3rem 0.65rem;
+    border-radius: 999px;
+    box-shadow: 0 2px 8px rgba(227, 6, 19, 0.35);
+  }
+  .prod-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    padding: 1rem 1.1rem 1.2rem;
+    flex: 1;
+  }
+  .prod-card__title { font-size: 1.02rem; color: var(--color-apice-blue); }
+  .prod-card__desc { font-size: 0.9rem; color: var(--color-ink-soft); }
+  .prod-card__foot {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: auto;
+    padding-top: 0.35rem;
+  }
+  .prod-card__price { font-family: var(--font-display); font-weight: 700; color: var(--color-ink); font-size: 0.95rem; }
+  .prod-card__tec {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--color-apice-red);
+  }
+  .prod-card__cta { margin-top: 0.5rem; width: 100%; }
+</style>

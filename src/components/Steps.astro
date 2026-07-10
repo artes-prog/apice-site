@@ -1,0 +1,69 @@
+---
+/*
+  "Como funciona" em 3 passos (§3.3) — mata a objeção "deve ser complicado".
+*/
+const passos = [
+  { n: 1, titulo: 'Escolha o brinde', texto: 'Veja as categorias ou nos diga o que a sua ação precisa. Sugerimos opções por faixa de investimento.' },
+  { n: 2, titulo: 'Envie seu logo', texto: 'Mande sua arte no WhatsApp (vetor de preferência, mas PNG/JPG também serve). Você aprova a prova digital.' },
+  { n: 3, titulo: 'Receba orçamento e prazo', texto: 'Retornamos rápido, em horário comercial, com valores e prazo — produzido na nossa própria fábrica em Goiânia.' },
+];
+---
+<section class="steps" aria-labelledby="steps-title">
+  <div class="container-site">
+    <h2 id="steps-title" class="steps__title">Como funciona</h2>
+    <ol class="steps__grid">
+      {passos.map((p) => (
+        <li class="steps__item">
+          <span class="steps__num" aria-hidden="true">{p.n}</span>
+          <h3 class="steps__step-title">{p.titulo}</h3>
+          <p class="steps__text">{p.texto}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .steps { padding-block: 3.5rem; }
+  .steps__title {
+    text-align: center;
+    font-size: clamp(1.5rem, 4vw, 2.1rem);
+    margin-bottom: 2.25rem;
+  }
+  .steps__grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: 1fr;
+    counter-reset: none;
+  }
+  .steps__item {
+    position: relative;
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem 1.5rem 1.5rem;
+    box-shadow: var(--shadow-card);
+  }
+  .steps__num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    background: var(--color-apice-blue);
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .steps__step-title { font-size: 1.15rem; margin-bottom: 0.5rem; }
+  .steps__text { color: var(--color-ink-soft); font-size: 0.95rem; }
+  @media (min-width: 800px) {
+    .steps__grid { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>

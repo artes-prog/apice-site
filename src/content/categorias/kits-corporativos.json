@@ -1,0 +1,13 @@
+{
+  "nome": "Kits Corporativos",
+  "slug": "kits-corporativos",
+  "ordem": 8,
+  "tituloSeo": "Kits Corporativos Personalizados em Goiânia | Ápice Brindes",
+  "descricaoSeo": "Kits corporativos personalizados: boas-vindas, fim de ano, datas comemorativas. Montagem completa em Goiânia com produção própria. Orçamento no WhatsApp.",
+  "h1": "Kits corporativos completos, montados e prontos para entregar",
+  "intro": "O kit corporativo é o formato que mais cresce no mercado de brindes: em vez de um item solto, uma experiência de marca completa — caneca, caderno, caneta, garrafa, embalagem personalizada. A Ápice monta o kit inteiro: você escolhe os itens (ou pede nossa sugestão por faixa de investimento), personalizamos tudo na nossa produção e entregamos pronto para distribuir. Forte para onboarding de colaboradores, fim de ano, Dia das Mães, Dia dos Pais e presentes para clientes-chave.",
+  "tecnicas": ["ambas"],
+  "imagemCapa": "categorias/kits.jpg",
+  "destaqueHome": true,
+  "faqSlugs": ["quantidade-minima", "prazo-producao", "formato-logo"]
+}
