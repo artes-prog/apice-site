@@ -17,11 +17,12 @@
   ============================================================================
 */
 @theme {
-  /* Paleta oficial da marca */
-  --color-apice-red: #E30613;      /* vermelho Ápice — energia, ação */
-  --color-apice-red-dark: #B00510; /* hover/estados */
-  --color-apice-blue: #003DA5;     /* azul Ápice — confiança, institucional */
-  --color-apice-blue-dark: #002B75;
+  /* Paleta oficial da marca — extraída diretamente do SVG oficial exportado
+     do CorelDRAW (src/assets/brand/). Fonte de verdade: os arquivos de logo. */
+  --color-apice-red: #F30D0E;      /* vermelho Ápice — energia, ação */
+  --color-apice-red-dark: #C10B0C; /* hover/estados */
+  --color-apice-blue: #1541A8;     /* azul Ápice — confiança, institucional */
+  --color-apice-blue-dark: #0F2E73;
   --color-apice-white: #FFFFFF;
 
   /* Neutros de apoio */

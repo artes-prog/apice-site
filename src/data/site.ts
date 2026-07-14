@@ -22,7 +22,6 @@ export const site = {
   nome: raw.nome,
   slogan: raw.slogan,
   anosDeMercado: raw.anosDeMercado,
-  grupo: raw.grupo,
   endereco: {
     rua: raw.endereco.rua,
     bairro: raw.endereco.bairro,

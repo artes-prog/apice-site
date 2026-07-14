@@ -10,11 +10,14 @@ interface Props {
   nome: string;
   slug: string;
   imagemCapa: string;
-  tecnicas: ('laser' | 'silk' | 'ambas')[];
+  tecnicas: ('laser' | 'silk' | 'ambas' | 'sublimacao' | 'silk-sublimacao')[];
   priority?: boolean;
 }
 const { nome, slug, imagemCapa, tecnicas, priority = false } = Astro.props;
-const tags = tecnicas.includes('ambas') ? ['silk', 'laser'] : tecnicas;
+// "ambas" expande para silk+laser; outros valores (ex.: sublimacao) se somam,
+// em vez de serem substituídos — uma categoria pode ter mais de duas técnicas.
+const expandido = tecnicas.flatMap((t) => (t === 'ambas' ? ['silk', 'laser'] : [t]));
+const tags = [...new Set(expandido)];
 ---
 <a href={`/brindes/${slug}/`} class="cat-card" aria-label={`Ver ${nome}`}>
   <div class="cat-card__media">

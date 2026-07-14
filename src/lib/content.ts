@@ -10,6 +10,7 @@ export type Produto = CollectionEntry<'produtos'>;
 export type Tecnica = CollectionEntry<'tecnicas'>;
 export type Faq = CollectionEntry<'faq'>;
 export type Depoimento = CollectionEntry<'depoimentos'>;
+export type ItemPortfolio = CollectionEntry<'portfolio'>;
 
 /** Categorias na ordem definida pelo campo `ordem`. */
 export async function getCategorias(): Promise<Categoria[]> {
@@ -51,9 +52,17 @@ export async function getDepoimentosPublicados(): Promise<Depoimento[]> {
   return deps.filter((d) => d.data.publicar);
 }
 
+/** Trabalhos de portfólio autorizados (publicar:true), na ordem definida. */
+export async function getPortfolioPublicado(): Promise<ItemPortfolio[]> {
+  const itens = await getCollection('portfolio');
+  return itens.filter((i) => i.data.publicar).sort((a, b) => a.data.ordem - b.data.ordem);
+}
+
 /** Nome amigável da técnica, para textos e mensagens. */
-export function nomeTecnica(t: 'laser' | 'silk' | 'ambas'): string {
-  if (t === 'laser') return 'gravação a laser';
-  if (t === 'silk') return 'silk screen';
-  return 'silk screen e gravação a laser';
+export function nomeTecnica(t: 'laser' | 'silk' | 'ambas' | 'sublimacao' | 'silk-sublimacao'): string {
+  if (t === 'laser') return 'gravação com Fiber Laser';
+  if (t === 'silk') return 'Silk Screen';
+  if (t === 'sublimacao') return 'sublimação';
+  if (t === 'silk-sublimacao') return 'Silk Screen e sublimação';
+  return 'Silk Screen e gravação com Fiber Laser';
 }

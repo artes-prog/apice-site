@@ -2,7 +2,6 @@
   "nome": "Ápice Brindes",
   "slogan": "Brindes personalizados que marcam sua empresa",
   "anosDeMercado": "Mais de 20 anos",
-  "grupo": "Grupo Uaibag Confecção e Comércio Ltda",
   "endereco": {
     "rua": "Av. S1, nº 889",
     "bairro": "Setor Bela Vista",
@@ -16,7 +15,7 @@
     { "nome": "Tereza", "whatsapp": "5562999274302" }
   ],
   "horario": "Segunda a sexta, das 8h às 18h",
-  "instagram": "PREENCHER_URL_INSTAGRAM",
+  "instagram": "https://www.instagram.com/apicebrindesoficial/",
   "facebook": "https://www.facebook.com/oficialapicebrindes/",
   "googleBusiness": "PREENCHER_URL_GOOGLE_BUSINESS",
   "geo": { "lat": null, "lng": null },

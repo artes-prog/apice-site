@@ -12,7 +12,10 @@ import { z } from 'astro/zod'; // Zod v4 — cópia interna do Astro 7
   ============================================================================
 */
 
-const tecnicaEnum = z.enum(['laser', 'silk', 'ambas']);
+// 'sublimacao' existe só para o rótulo do produto — hoje é usado por um único
+// item (caneca de porcelana). Não vira categoria/página própria de técnica
+// (o site continua com duas técnicas centrais: laser e silk).
+const tecnicaEnum = z.enum(['laser', 'silk', 'ambas', 'sublimacao', 'silk-sublimacao']);
 
 const categorias = defineCollection({
   loader: glob({ pattern: '**/*.json', base: './src/content/categorias' }),
@@ -84,4 +87,17 @@ const depoimentos = defineCollection({
   }),
 });
 
-export const collections = { categorias, produtos, tecnicas, faq, depoimentos };
+const portfolio = defineCollection({
+  loader: glob({ pattern: '**/*.json', base: './src/content/portfolio' }),
+  schema: z.object({
+    slug: z.string(),
+    cliente: z.string(),
+    produto: z.string(),
+    tecnica: tecnicaEnum,
+    foto: z.string(),
+    ordem: z.number().default(0),
+    publicar: z.boolean().default(true),
+  }),
+});
+
+export const collections = { categorias, produtos, tecnicas, faq, depoimentos, portfolio };

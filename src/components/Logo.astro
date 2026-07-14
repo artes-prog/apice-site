@@ -1,40 +1,76 @@
 ---
 /*
-  LOGO — PLACEHOLDER PROFISSIONAL.
-  Substituir pelo SVG oficial exportado do CorelDRAW (versão colorida e negativa)
-  quando disponível — ver Guia de Estilo §1.2. Mantém área de proteção via padding
-  do container no Header/Footer (o logo nunca encosta nas bordas).
-
-  variant "cor"    -> sobre fundo claro (mark vermelho, texto azul)
-  variant "branco" -> sobre fundo azul/escuro (tudo branco — versão negativa)
+  LOGO OFICIAL — exportado do CorelDRAW pelo cliente (SVG, texto convertido em
+  curvas). Duas versões fixas, conforme o Guia de Estilo §1.2:
+    variant "cor"    -> versão colorida, sobre fundo claro
+    variant "branco" -> versão negativa (branca), sobre fundo azul/escuro
+  Os arquivos-fonte ficam em src/assets/brand/. Para trocar o logo no futuro,
+  basta substituir esses dois arquivos (mesmo nome) — nada de código muda.
 */
+import logoColoridaRaw from '../assets/brand/logo-colorida.svg?raw';
+import logoBrancaRaw from '../assets/brand/logo-branca.svg?raw';
+
 interface Props {
   variant?: 'cor' | 'branco';
   class?: string;
 }
 const { variant = 'cor', class: klass = '' } = Astro.props;
-const mark = variant === 'branco' ? '#FFFFFF' : 'var(--color-apice-red)';
-const word = variant === 'branco' ? '#FFFFFF' : 'var(--color-apice-blue)';
+
+/*
+  O CorelDRAW exporta o SVG com prólogo XML e DOCTYPE (<?xml ...?> e
+  <!DOCTYPE svg PUBLIC ...>) no topo do arquivo. Isso é válido como documento
+  SVG standalone, mas ao injetar o conteúdo no MEIO de uma página HTML
+  (set:html) esses tokens ficam soltos antes da tag <svg> e alguns motores de
+  renderização não processam o restante corretamente. Removemos essa parte,
+  mantendo só a partir de <svg>.
+
+  Segundo problema, mais sério: o Corel define as cores via classes CSS
+  globais (.fil0, .fil1) dentro de um <style> no próprio SVG. Como a logo
+  aparece VÁRIAS vezes na mesma página (cabeçalho colorido + rodapé/CTA
+  branco), essas classes de mesmo nome colidem — a última versão inserida no
+  HTML vence para TODAS as instâncias da página, apagando a cor das outras
+  (ex.: a versão branca sobrescrevia a colorida, deixando o logo do cabeçalho
+  branco sobre fundo branco = invisível). Corrigimos convertendo cada classe
+  em atributo `fill` direto no próprio path, e removendo o bloco <style>.
+*/
+function limparSvg(raw: string): string {
+  const inicio = raw.indexOf('<svg');
+  let svg = inicio >= 0 ? raw.slice(inicio) : raw;
+
+  const estilo = svg.match(/<style[^>]*>([\s\S]*?)<\/style>/);
+  if (estilo) {
+    const regraRe = /\.(\w+)\s*\{([^}]*)\}/g;
+    let m: RegExpExecArray | null;
+    while ((m = regraRe.exec(estilo[1]))) {
+      const [, nomeClasse, declaracoes] = m;
+      const fill = declaracoes.match(/fill:\s*([^;]+)/)?.[1]?.trim();
+      const fillRule = declaracoes.match(/fill-rule:\s*([^;]+)/)?.[1]?.trim();
+      if (fill) {
+        const attrs = `fill="${fill}"${fillRule ? ` fill-rule="${fillRule}"` : ''}`;
+        svg = svg.replaceAll(`class="${nomeClasse}"`, attrs);
+      }
+    }
+    svg = svg.replace(/<defs>\s*<style[\s\S]*?<\/style>\s*<\/defs>/, '');
+  }
+
+  return svg;
+}
+const logoColorida = limparSvg(logoColoridaRaw);
+const logoBranca = limparSvg(logoBrancaRaw);
+const svg = variant === 'branco' ? logoBranca : logoColorida;
 ---
-<svg
-  class={`logo ${klass}`}
-  viewBox="0 0 250 60"
-  role="img"
-  aria-label="Ápice Brindes"
-  xmlns="http://www.w3.org/2000/svg"
->
-  <!-- Símbolo: ápice (cume) -->
-  <path d={`M26 6 L46 46 L6 46 Z`} fill={mark} />
-  <path d={`M26 22 L36 42 L16 42 Z`} fill={variant === 'branco' ? 'var(--color-apice-blue)' : '#FFFFFF'} />
-  <!-- Wordmark -->
-  <text x="60" y="31" font-family="var(--font-display)" font-weight="800" font-size="27" letter-spacing="0.5" fill={word}>ÁPICE</text>
-  <text x="61" y="49" font-family="var(--font-display)" font-weight="600" font-size="12.5" letter-spacing="6" fill={word}>BRINDES</text>
-</svg>
+<span class={`logo ${klass}`} role="img" aria-label="Ápice Brindes" set:html={svg} />
 
 <style>
   .logo {
-    display: block;
+    display: inline-block;
     height: 44px;
+    width: auto;
+    line-height: 0;
+  }
+  .logo :global(svg) {
+    display: block;
+    height: 100%;
     width: auto;
   }
 </style>

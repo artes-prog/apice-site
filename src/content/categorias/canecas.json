@@ -5,8 +5,8 @@
   "tituloSeo": "Canecas Personalizadas em Goiânia | Ápice Brindes",
   "descricaoSeo": "Canecas personalizadas com seu logo em Goiânia. Gravação a laser em inox e impressão em cerâmica. Produção própria, orçamento rápido no WhatsApp.",
   "h1": "Canecas personalizadas com a marca da sua empresa",
-  "intro": "A caneca é o brinde corporativo que fica na mesa do cliente todos os dias — e a sua marca junto com ela. Na Ápice Brindes, personalizamos canecas de cerâmica, inox e polímero com impressão silk screen ou gravação a laser fibra, tudo em produção própria aqui em Goiânia. Isso significa prazo menor, controle de qualidade peça a peça e acabamento que não desbota na primeira lavagem. Ideal para kits de boas-vindas, datas comemorativas, eventos e ações com clientes.",
-  "tecnicas": ["ambas"],
+  "intro": "A caneca é o brinde corporativo que fica na mesa do cliente todos os dias — e a sua marca junto com ela. Na Ápice Brindes, personalizamos canecas de cerâmica, inox e polímero com impressão Silk Screen ou gravação com Fiber Laser, tudo em produção própria aqui em Goiânia. Isso significa prazo menor, controle de qualidade peça a peça e acabamento que não desbota na primeira lavagem. Ideal para kits de boas-vindas, datas comemorativas, eventos e ações com clientes.",
+  "tecnicas": ["ambas", "sublimacao"],
   "imagemCapa": "categorias/canecas.jpg",
   "destaqueHome": true,
   "faqSlugs": ["quantidade-minima", "prazo-producao", "formato-logo"]

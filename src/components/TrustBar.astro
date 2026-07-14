@@ -6,7 +6,7 @@ import { site } from '../data/site';
 */
 const itens = [
   { icon: 'medal', texto: `${site.anosDeMercado} de mercado` },
-  { icon: 'tools', texto: 'Produção própria — silk e laser fibra' },
+  { icon: 'tools', texto: 'Produção própria — silk e Fiber Laser' },
   { icon: 'pin', texto: 'Atende Goiânia e região' },
   { icon: 'chat', texto: 'Orçamento rápido no WhatsApp' },
 ];
@@ -37,9 +37,13 @@ const paths: Record<string, string> = {
     border-block: 1px solid var(--color-line);
   }
   .trust__row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem 1.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* agrupa os itens centralizados, em vez de
+                                 presos a colunas de largura fixa */
+    align-items: flex-start; /* cada linha da quebra se alinha pelo topo,
+                                 sem depender da altura do vizinho */
+    gap: 1.1rem 2.5rem; /* espaço vertical entre linhas · horizontal entre itens */
     padding-block: 1.4rem;
   }
   .trust__item {
@@ -51,7 +55,4 @@ const paths: Record<string, string> = {
     color: var(--color-ink);
   }
   .trust__icon { flex: none; color: var(--color-apice-blue); }
-  @media (min-width: 900px) {
-    .trust__row { grid-template-columns: repeat(4, 1fr); }
-  }
 </style>
