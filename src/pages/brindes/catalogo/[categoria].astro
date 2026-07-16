@@ -119,61 +119,76 @@ const description = `Todas as opções de ${d.nome.toLowerCase()} do nosso catá
 <script>
   import { FILTRO_SEP } from '../../../lib/filtros';
 
-  const busca = document.getElementById('busca-produto') as HTMLInputElement | null;
-  const filtrosWrap = document.getElementById('filtros');
-  const coresWrap = document.getElementById('cores');
-  const grid = document.getElementById('produto-grid');
-  const resultadoInfo = document.getElementById('resultado-info');
-  const semResultado = document.getElementById('sem-resultado');
-  if (!busca || !grid) throw new Error('catalogo: elementos não encontrados');
+  /*
+    IMPORTANTE: o BaseLayout usa <ClientRouter /> (view transitions). Numa navegação client-side
+    o Astro troca o DOM mas NÃO re-executa este módulo (módulo ES roda uma vez só por URL). Se a
+    gente ligar os listeners no escopo do módulo, ao entrar na 2ª categoria pelo link os chips e a
+    busca ficam sem listener nenhum — "travados", exatamente o bug relatado. Por isso a montagem
+    vive numa função disparada por `astro:page-load`, que roda no load inicial E a cada transição
+    (mesmo padrão já usado no BaseLayout). O guard `dataset.wired` evita ligar duas vezes no mesmo DOM.
+  */
+  function initCatalogo() {
+    const grid = document.getElementById('produto-grid');
+    const busca = document.getElementById('busca-produto') as HTMLInputElement | null;
+    if (!grid || !busca) return; // não é uma página de categoria do catálogo
+    if (grid.dataset.wired) return;
+    grid.dataset.wired = '1';
 
-  const cards = Array.from(grid.querySelectorAll<HTMLElement>('.produto-card'));
-  let filtroAtivo = '__todos__';
-  let corAtiva = '__todas__';
+    const filtrosWrap = document.getElementById('filtros');
+    const coresWrap = document.getElementById('cores');
+    const resultadoInfo = document.getElementById('resultado-info');
+    const semResultado = document.getElementById('sem-resultado');
 
-  function aplicarFiltros() {
-    const termo = busca!.value.trim().toLowerCase();
-    let visiveis = 0;
-    for (const card of cards) {
-      const nome = card.dataset.nome ?? '';
-      const codigo = card.dataset.codigo ?? '';
-      const tags = card.dataset.filtros ?? '';
-      const cor = card.dataset.cor ?? '';
-      const bateBusca = !termo || nome.includes(termo) || codigo.includes(termo);
-      const bateFiltro = filtroAtivo === '__todos__' || tags.split(FILTRO_SEP).includes(filtroAtivo);
-      const bateCor = corAtiva === '__todas__' || cor === corAtiva;
-      const mostra = bateBusca && bateFiltro && bateCor;
-      card.hidden = !mostra;
-      if (mostra) visiveis++;
+    const cards = Array.from(grid.querySelectorAll<HTMLElement>('.produto-card'));
+    let filtroAtivo = '__todos__';
+    let corAtiva = '__todas__';
+
+    function aplicarFiltros() {
+      const termo = busca!.value.trim().toLowerCase();
+      let visiveis = 0;
+      for (const card of cards) {
+        const nome = card.dataset.nome ?? '';
+        const codigo = card.dataset.codigo ?? '';
+        const tags = card.dataset.filtros ?? '';
+        const cor = card.dataset.cor ?? '';
+        const bateBusca = !termo || nome.includes(termo) || codigo.includes(termo);
+        const bateFiltro = filtroAtivo === '__todos__' || tags.split(FILTRO_SEP).includes(filtroAtivo);
+        const bateCor = corAtiva === '__todas__' || cor === corAtiva;
+        const mostra = bateBusca && bateFiltro && bateCor;
+        card.hidden = !mostra;
+        if (mostra) visiveis++;
+      }
+      if (resultadoInfo) resultadoInfo.textContent = `${visiveis} de ${cards.length} produtos`;
+      if (semResultado) semResultado.hidden = visiveis !== 0;
     }
-    if (resultadoInfo) resultadoInfo.textContent = `${visiveis} de ${cards.length} produtos`;
-    if (semResultado) semResultado.hidden = visiveis !== 0;
+
+    busca.addEventListener('input', aplicarFiltros);
+
+    filtrosWrap?.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-filtro]');
+      if (!btn) return;
+      filtroAtivo = btn.dataset.filtro ?? '__todos__';
+      filtrosWrap.querySelectorAll('.filtro-chip').forEach((el) => el.classList.remove('is-ativo'));
+      btn.classList.add('is-ativo');
+      aplicarFiltros();
+    });
+
+    // Cor é um toggle: clicar na cor ativa desliga (volta a "todas"). Assim nunca fica "travado" —
+    // sempre dá pra limpar a cor clicando de novo no mesmo chip.
+    coresWrap?.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-cor-filtro]');
+      if (!btn) return;
+      const cor = btn.dataset.corFiltro ?? '__todas__';
+      corAtiva = corAtiva === cor ? '__todas__' : cor;
+      coresWrap.querySelectorAll('.cor-chip').forEach((el) => el.classList.remove('is-ativo'));
+      if (corAtiva !== '__todas__') btn.classList.add('is-ativo');
+      aplicarFiltros();
+    });
+
+    aplicarFiltros();
   }
 
-  busca.addEventListener('input', aplicarFiltros);
-
-  filtrosWrap?.addEventListener('click', (e) => {
-    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-filtro]');
-    if (!btn) return;
-    filtroAtivo = btn.dataset.filtro ?? '__todos__';
-    filtrosWrap.querySelectorAll('.filtro-chip').forEach((el) => el.classList.remove('is-ativo'));
-    btn.classList.add('is-ativo');
-    aplicarFiltros();
-  });
-
-  // Cor é um toggle: clicar na cor ativa desliga (volta a "todas"). Assim nunca fica "travado" —
-  // sempre dá pra limpar a cor clicando de novo no mesmo chip.
-  coresWrap?.addEventListener('click', (e) => {
-    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-cor-filtro]');
-    if (!btn) return;
-    const cor = btn.dataset.corFiltro ?? '__todas__';
-    corAtiva = corAtiva === cor ? '__todas__' : cor;
-    coresWrap.querySelectorAll('.cor-chip').forEach((el) => el.classList.remove('is-ativo'));
-    if (corAtiva !== '__todas__') btn.classList.add('is-ativo');
-    aplicarFiltros();
-  });
-
-  aplicarFiltros();
+  document.addEventListener('astro:page-load', initCatalogo);
 </script>
 
 <style>

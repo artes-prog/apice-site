@@ -50,7 +50,7 @@ const description = `${produto.nome} do catálogo completo Ápice Brindes. Códi
           <img id="foto-principal" src={urlImagemXbz(fotos[0])} alt={produto.nome} width="600" height="600" />
         </div>
         {fotos.length > 1 && (
-          <div class="produto-foto-miniaturas">
+          <div class="produto-foto-miniaturas" id="foto-galeria">
             {fotos.map((f, i) => (
               <button type="button" class="miniatura" class:list={{ 'is-ativa': i === 0 }} data-foto={urlImagemXbz(f)}>
                 <img src={urlImagemXbz(f)} alt={`${produto.nome} — foto ${i + 1}`} width="90" height="90" loading="lazy" />
@@ -99,15 +99,28 @@ const description = `${produto.nome} do catálogo completo Ápice Brindes. Códi
 </BaseLayout>
 
 <script>
-  const principal = document.getElementById('foto-principal') as HTMLImageElement | null;
-  document.querySelectorAll<HTMLButtonElement>('.miniatura').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      if (!principal) return;
+  /*
+    Igual ao catálogo: com <ClientRouter /> este módulo não re-executa a cada navegação, então
+    ligar os listeners no escopo do módulo deixaria as miniaturas mortas ao abrir o 2º produto
+    pelo link. Montagem via `astro:page-load` + guard para não ligar duas vezes no mesmo DOM.
+  */
+  function initGaleria() {
+    const galeria = document.getElementById('foto-galeria');
+    const principal = document.getElementById('foto-principal') as HTMLImageElement | null;
+    if (!galeria || !principal) return;
+    if (galeria.dataset.wired) return;
+    galeria.dataset.wired = '1';
+
+    galeria.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('.miniatura');
+      if (!btn) return;
       principal.src = btn.dataset.foto ?? principal.src;
-      document.querySelectorAll('.miniatura').forEach((b) => b.classList.remove('is-ativa'));
+      galeria.querySelectorAll('.miniatura').forEach((b) => b.classList.remove('is-ativa'));
       btn.classList.add('is-ativa');
     });
-  });
+  }
+
+  document.addEventListener('astro:page-load', initGaleria);
 </script>
 
 <style>
