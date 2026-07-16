@@ -2,7 +2,9 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import CategoryCard from '../components/CategoryCard.astro';
+import CatalogoBanner from '../components/CatalogoBanner.astro';
 import CtaWhatsApp from '../components/CtaWhatsApp.astro';
+import Foto from '../components/Foto.astro';
 import FaqSection from '../components/FaqSection.astro';
 import CtaFinal from '../components/CtaFinal.astro';
 import { getCategorias, getFaqsDaPagina } from '../lib/content';
@@ -14,7 +16,7 @@ const msg = mensagens.generico;
 
 const title = 'Brindes Personalizados para Empresas em Goiânia | Ápice Brindes';
 const description =
-  'Todas as categorias de brindes personalizados da Ápice em Goiânia: canecas, garrafas, canetas, camisetas, kits corporativos e mais. Produção própria de silk e laser. Orçamento no WhatsApp.';
+  'Todas as categorias de brindes personalizados da Ápice em Goiânia: canecas, garrafas, canetas, chaveiros, kits corporativos e mais. Produção própria de silk e laser. Orçamento no WhatsApp.';
 ---
 <BaseLayout title={title} description={description} waMensagem={msg} waSemente="hub">
   <div class="container-site crumbs-wrap">
@@ -22,35 +24,43 @@ const description =
   </div>
 
   <section class="hub-hero">
-    <div class="container-site">
-      <h1 class="hub-hero__title">Brindes personalizados para empresas em Goiânia</h1>
-      <div class="hub-hero__lead">
-        <p>
-          Brinde bom é aquele que fica com o cliente e mantém a sua marca à vista todos os dias. Na
-          <strong> Ápice Brindes</strong>, a gente personaliza canecas, garrafas, canetas, camisetas, chaveiros,
-          kits corporativos e muito mais — tudo com o seu logo e com o padrão de acabamento que uma empresa
-          séria precisa passar.
-        </p>
-        <p>
-          O diferencial está na <strong>produção própria</strong>: fazemos Silk Screen e gravação com Fiber Laser
-          aqui mesmo, em Goiânia. Enquanto a maioria terceiriza (e depende do prazo dos outros), nós controlamos
-          cada etapa — o que significa prazo real, qualidade conferida peça a peça e liberdade para ajustar a arte
-          até ficar do jeito que a sua marca merece. São <strong>mais de 20 anos</strong> atendendo RHs, agências,
-          comitês de formatura, comércio e indústria da região.
-        </p>
+    <div class="container-site hub-hero__grid">
+      <div class="hub-hero__copy">
+        <h1 class="hub-hero__title">Brindes personalizados para empresas em Goiânia</h1>
+        <div class="hub-hero__lead">
+          <p>
+            Brinde bom é aquele que fica com o cliente e mantém a sua marca à vista todos os dias. Na
+            <strong> Ápice Brindes</strong>, a gente personaliza canecas, garrafas, canetas, chaveiros,
+            kits corporativos e muito mais — tudo com o seu logo e com o padrão de acabamento que uma empresa
+            séria precisa passar.
+          </p>
+          <p>
+            O diferencial está na <strong>produção própria</strong>: fazemos Silk Screen e gravação com Fiber Laser
+            aqui mesmo, em Goiânia. Enquanto a maioria terceiriza (e depende do prazo dos outros), nós controlamos
+            cada etapa — o que significa prazo real, qualidade conferida peça a peça e liberdade para ajustar a arte
+            até ficar do jeito que a sua marca merece. São <strong>mais de 20 anos</strong> atendendo RHs, agências,
+            comitês de formatura, comércio e indústria da região.
+          </p>
+        </div>
+        <CtaWhatsApp variante="primario" mensagem={msg} semente="hub" label="Pedir orçamento no WhatsApp" />
       </div>
-      <CtaWhatsApp variante="primario" mensagem={msg} semente="hub" label="Pedir orçamento no WhatsApp" />
+      <div class="hub-hero__media">
+        <Foto src="produtos/kit-executivo.jpg" alt="Kit executivo personalizado pela Ápice Brindes" ratio="1/1" priority widthHint={900} />
+      </div>
     </div>
   </section>
 
   <section class="section">
     <div class="container-site">
       <h2 class="section__title">Escolha uma categoria</h2>
-      <p class="section__sub">Clique para ver modelos-vitrine e pedir orçamento. Não achou o que procura? A gente trabalha com muito mais — é só chamar no WhatsApp.</p>
+      <p class="section__sub">Clique para ver modelos-vitrine e pedir orçamento.</p>
       <div class="cards-grid">
         {categorias.map((c, i) => (
           <CategoryCard nome={c.data.nome} slug={c.data.slug} imagemCapa={c.data.imagemCapa} tecnicas={c.data.tecnicas} priority={i < 3} />
         ))}
+      </div>
+      <div class="banner-wrap">
+        <CatalogoBanner />
       </div>
     </div>
   </section>
@@ -87,9 +97,18 @@ const description =
 <style>
   .crumbs-wrap { padding-block: 1.1rem 0; }
   .hub-hero { padding-block: clamp(2rem, 5vw, 3.5rem); }
+  .hub-hero__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: center;
+  }
   .hub-hero__title { font-size: clamp(2rem, 5.5vw, 3rem); font-weight: 800; max-width: 20ch; }
-  .hub-hero__lead { margin: 1.25rem 0 1.75rem; max-width: 68ch; }
+  .hub-hero__lead { margin: 1.25rem 0 1.75rem; max-width: 52ch; }
   .hub-hero__lead p { color: var(--color-ink-soft); font-size: 1.05rem; margin-bottom: 1rem; }
+  @media (min-width: 860px) {
+    .hub-hero__grid { grid-template-columns: 1.05fr 0.95fr; }
+  }
   .section { padding-block: clamp(2.5rem, 5vw, 4rem); }
   .section--alt { background: var(--color-paper-soft); }
   .section__title { font-size: clamp(1.5rem, 4vw, 2.2rem); }
@@ -99,6 +118,7 @@ const description =
   .cards-grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
   @media (min-width: 560px) { .cards-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (min-width: 960px) { .cards-grid { grid-template-columns: repeat(3, 1fr); } }
+  .banner-wrap { margin-top: 2.5rem; }
 
   .tec-links { display: grid; grid-template-columns: 1fr; gap: 1.25rem; max-width: 900px; margin-inline: auto; }
   @media (min-width: 700px) { .tec-links { grid-template-columns: repeat(2, 1fr); } }

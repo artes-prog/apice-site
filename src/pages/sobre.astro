@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import Foto from '../components/Foto.astro';
+import CtaWhatsApp from '../components/CtaWhatsApp.astro';
 import CtaFinal from '../components/CtaFinal.astro';
 import { site } from '../data/site';
 import { mensagens } from '../lib/whatsapp';
@@ -31,21 +32,30 @@ const description =
           qualidade que não chega. Há <strong>{site.anosDeMercado.toLowerCase()}</strong> fazemos diferente, com
           <strong> produção própria</strong> de Silk Screen e gravação com Fiber Laser em Goiânia.
         </p>
+        <ul class="sobre-hero__stats">
+          <li><strong>{site.anosDeMercado}</strong> de mercado</li>
+          <li><strong>Produção própria</strong> em Goiânia</li>
+          <li><strong>Atendimento humano</strong> no WhatsApp</li>
+        </ul>
+        <CtaWhatsApp variante="primario" mensagem={mensagens.generico} semente="sobre" label="Pedir orçamento no WhatsApp" />
       </div>
       <div class="sobre-hero__media">
         <Foto src="sobre/producao.jpg" alt="Produção própria de brindes personalizados da Ápice em Goiânia" ratio="4/3" priority widthHint={900} />
+        <span class="sobre-hero__caption">Nossa fábrica em Goiânia</span>
       </div>
     </div>
   </section>
 
   <section class="section">
-    <div class="container-site container-narrow prose-block">
-      <h2>Como trabalhamos</h2>
-      <p>
-        Atendemos empresas, RHs, agências, comitês de formatura e comércio de Goiânia e região. Você nos diz o
-        que precisa (ou pede sugestão por faixa de investimento), aprova a prova digital, e a gente produz e
-        entrega. Nada de catálogo interminável ou processo confuso: o caminho é direto e o atendimento é humano.
-      </p>
+    <div class="container-site">
+      <div class="sobre-prose prose-block">
+        <h2>Como trabalhamos</h2>
+        <p>
+          Atendemos empresas, RHs, agências, comitês de formatura e comércio de Goiânia e região. Você nos diz o
+          que precisa (ou pede sugestão por faixa de investimento), aprova a prova digital, e a gente produz e
+          entrega. Nada de catálogo interminável ou processo confuso: o caminho é direto e o atendimento é humano.
+        </p>
+      </div>
     </div>
   </section>
 
@@ -69,15 +79,57 @@ const description =
 <style>
   .crumbs-wrap { padding-block: 1.1rem 0; }
   .sobre-hero { padding-block: clamp(2rem, 5vw, 3.5rem); }
-  .sobre-hero__grid { display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: center; }
+  .sobre-hero__grid { display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: start; }
   .sobre-hero__title { font-size: clamp(1.9rem, 5vw, 2.9rem); font-weight: 800; }
   .sobre-hero__lead { margin-top: 1.1rem; color: var(--color-ink-soft); font-size: 1.1rem; max-width: 52ch; }
+  .sobre-hero__stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin: 1.5rem 0 1.75rem;
+    padding: 1rem 1.25rem;
+    background: var(--color-paper-soft);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    max-width: 52ch;
+  }
+  .sobre-hero__stats li {
+    font-size: 0.95rem;
+    color: var(--color-ink-soft);
+    padding-left: 1.4rem;
+    position: relative;
+  }
+  .sobre-hero__stats li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.45rem;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-apice-red);
+  }
+  .sobre-hero__stats strong { color: var(--color-apice-blue); }
+  .sobre-hero__media { position: relative; }
+  .sobre-hero__media :global(.foto) { box-shadow: var(--shadow-card-hover); }
+  .sobre-hero__caption {
+    position: absolute;
+    left: 1.25rem;
+    bottom: 1.25rem;
+    background: rgba(21, 65, 168, 0.9);
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+  }
 
   .section { padding-block: clamp(2.5rem, 5vw, 4rem); }
   .section--alt { background: var(--color-paper-soft); }
   .section__title { font-size: clamp(1.5rem, 4vw, 2.1rem); }
   .section__title--center { text-align: center; margin-bottom: 2rem; }
-  .container-narrow { max-width: 780px; }
+  .sobre-prose { max-width: 780px; }
 
   .prose-block h2 { font-size: clamp(1.4rem, 3.5vw, 1.85rem); margin: 2rem 0 0.75rem; }
   .prose-block h2:first-child { margin-top: 0; }

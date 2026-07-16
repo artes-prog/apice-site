@@ -1,0 +1,297 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import CtaFinal from '../../../components/CtaFinal.astro';
+import { getCatalogoXbz, urlImagemXbz, codigoSlug } from '../../../lib/content';
+import { mensagens } from '../../../lib/whatsapp';
+import { FILTRO_SEP, criarPlanoDeFiltros, formatarLabelFiltro, extrairCor, extrairCoresDisponiveis, HEX_CORES } from '../../../lib/filtros';
+
+export const getStaticPaths = (async () => {
+  const categorias = await getCatalogoXbz();
+  return categorias.map((c) => ({ params: { categoria: c.data.slug }, props: { categoria: c } }));
+}) satisfies GetStaticPaths;
+
+const { categoria } = Astro.props;
+const d = categoria.data;
+const msg = mensagens.categoria(d.nome.toLowerCase());
+
+/*
+  Filtros são extraídos automaticamente das tags reais da XBZ (e, na
+  ausência delas, das palavras do nome) em src/lib/filtros.ts — reaproveitado
+  também pelo script de auditoria que garante que nenhum filtro fique "morto".
+*/
+const { filtros, chavesPorProduto } = criarPlanoDeFiltros(d.produtos, d.nome);
+const cores = extrairCoresDisponiveis(d.produtos);
+
+// Só oferece "filtre por tipo/cor" no texto quando a categoria de fato tem esses filtros.
+const temFiltros = filtros.length > 0 || cores.length > 0;
+const lead = `${d.produtos.length} produtos nesta categoria. ${temFiltros ? 'Ache pelo nome ou código, ou filtre por tipo e cor.' : 'Ache pelo nome ou código.'}`;
+
+const title = `${d.nome} — Catálogo Completo | Ápice Brindes`;
+const description = `Todas as opções de ${d.nome.toLowerCase()} do nosso catálogo completo. Busque por nome ou código e peça orçamento no WhatsApp.`;
+---
+<BaseLayout title={title} description={description} waMensagem={msg} waSemente={`catalogo-${d.slug}`}>
+  <div class="container-site crumbs-wrap">
+    <Breadcrumbs items={[
+      { name: 'Início', href: '/' },
+      { name: 'Brindes', href: '/brindes-personalizados/' },
+      { name: 'Catálogo completo', href: '/brindes/catalogo/' },
+      { name: d.nome },
+    ]} />
+  </div>
+
+  <section class="cat-hero">
+    <div class="container-site">
+      <h1 class="cat-hero__title">{d.nome}</h1>
+      <p class="cat-hero__lead">{lead}</p>
+
+      <div class="busca-wrap">
+        <input
+          type="search"
+          id="busca-produto"
+          class="busca-input"
+          placeholder="Buscar por nome ou código..."
+          aria-label="Buscar produto por nome ou código"
+          autocomplete="off"
+        />
+      </div>
+
+      {filtros.length > 0 && (
+        <div class="filtros" id="filtros" role="group" aria-label="Filtrar por tipo">
+          <button type="button" class="filtro-chip is-ativo" data-filtro="__todos__">Todos</button>
+          {filtros.map((f) => (
+            <button type="button" class="filtro-chip" data-filtro={f}>{formatarLabelFiltro(f)}</button>
+          ))}
+        </div>
+      )}
+
+      {cores.length > 0 && (
+        <div class="cores" id="cores" role="group" aria-label="Filtrar por cor">
+          <span class="cores__label">Cor:</span>
+          {cores.map(({ cor }) => (
+            <button
+              type="button"
+              class="cor-chip"
+              data-cor-filtro={cor}
+              title={`${formatarLabelFiltro(cor)}`}
+              aria-label={`Filtrar por cor ${formatarLabelFiltro(cor)}`}
+            >
+              <span class="cor-chip__dot" style={`--dot: ${HEX_CORES[cor] ?? '#9ca3af'}`}></span>
+              <span class="cor-chip__nome">{formatarLabelFiltro(cor)}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container-site">
+      <p class="resultado-info" id="resultado-info" aria-live="polite"></p>
+      <div class="produto-grid" id="produto-grid">
+        {d.produtos.map((p, i) => (
+          <a
+            href={`/brindes/catalogo/${d.slug}/${codigoSlug(p.codigo)}/`}
+            class="produto-card"
+            data-nome={p.nome.toLowerCase()}
+            data-codigo={p.codigo.toLowerCase()}
+            data-filtros={chavesPorProduto[i].join(FILTRO_SEP)}
+            data-cor={extrairCor(p) ?? ''}
+          >
+            <div class="produto-card__img">
+              <img src={urlImagemXbz(p.imagem)} alt={p.nome} loading="lazy" width="300" height="300" />
+            </div>
+            <div class="produto-card__body">
+              <p class="produto-card__nome">{p.nome}</p>
+              <span class="produto-card__codigo">Código: {p.codigo}</span>
+            </div>
+          </a>
+        ))}
+      </div>
+      <p class="sem-resultado" id="sem-resultado" hidden>Nenhum produto encontrado. Tente outra busca ou fale com a gente no WhatsApp.</p>
+    </div>
+  </section>
+
+  <CtaFinal semente={`catalogo-${d.slug}`} mensagem={msg} titulo={`Quer personalizar algo de ${d.nome.toLowerCase()}?`} />
+</BaseLayout>
+
+<script>
+  import { FILTRO_SEP } from '../../../lib/filtros';
+
+  const busca = document.getElementById('busca-produto') as HTMLInputElement | null;
+  const filtrosWrap = document.getElementById('filtros');
+  const coresWrap = document.getElementById('cores');
+  const grid = document.getElementById('produto-grid');
+  const resultadoInfo = document.getElementById('resultado-info');
+  const semResultado = document.getElementById('sem-resultado');
+  if (!busca || !grid) throw new Error('catalogo: elementos não encontrados');
+
+  const cards = Array.from(grid.querySelectorAll<HTMLElement>('.produto-card'));
+  let filtroAtivo = '__todos__';
+  let corAtiva = '__todas__';
+
+  function aplicarFiltros() {
+    const termo = busca!.value.trim().toLowerCase();
+    let visiveis = 0;
+    for (const card of cards) {
+      const nome = card.dataset.nome ?? '';
+      const codigo = card.dataset.codigo ?? '';
+      const tags = card.dataset.filtros ?? '';
+      const cor = card.dataset.cor ?? '';
+      const bateBusca = !termo || nome.includes(termo) || codigo.includes(termo);
+      const bateFiltro = filtroAtivo === '__todos__' || tags.split(FILTRO_SEP).includes(filtroAtivo);
+      const bateCor = corAtiva === '__todas__' || cor === corAtiva;
+      const mostra = bateBusca && bateFiltro && bateCor;
+      card.hidden = !mostra;
+      if (mostra) visiveis++;
+    }
+    if (resultadoInfo) resultadoInfo.textContent = `${visiveis} de ${cards.length} produtos`;
+    if (semResultado) semResultado.hidden = visiveis !== 0;
+  }
+
+  busca.addEventListener('input', aplicarFiltros);
+
+  filtrosWrap?.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-filtro]');
+    if (!btn) return;
+    filtroAtivo = btn.dataset.filtro ?? '__todos__';
+    filtrosWrap.querySelectorAll('.filtro-chip').forEach((el) => el.classList.remove('is-ativo'));
+    btn.classList.add('is-ativo');
+    aplicarFiltros();
+  });
+
+  // Cor é um toggle: clicar na cor ativa desliga (volta a "todas"). Assim nunca fica "travado" —
+  // sempre dá pra limpar a cor clicando de novo no mesmo chip.
+  coresWrap?.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-cor-filtro]');
+    if (!btn) return;
+    const cor = btn.dataset.corFiltro ?? '__todas__';
+    corAtiva = corAtiva === cor ? '__todas__' : cor;
+    coresWrap.querySelectorAll('.cor-chip').forEach((el) => el.classList.remove('is-ativo'));
+    if (corAtiva !== '__todas__') btn.classList.add('is-ativo');
+    aplicarFiltros();
+  });
+
+  aplicarFiltros();
+</script>
+
+<style>
+  .crumbs-wrap { padding-block: 1.1rem 0; }
+  .cat-hero { padding-block: clamp(1.5rem, 4vw, 2.5rem); }
+  .cat-hero__title { font-size: clamp(1.7rem, 4.5vw, 2.4rem); font-weight: 800; }
+  .cat-hero__lead { margin-top: 0.6rem; color: var(--color-ink-soft); }
+
+  .busca-wrap { margin-top: 1.5rem; max-width: 480px; }
+  .busca-input {
+    width: 100%;
+    padding: 0.85rem 1.1rem;
+    font-size: 1rem;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    background: var(--color-paper);
+  }
+  .busca-input:focus { outline: 2px solid var(--color-apice-blue); outline-offset: 1px; }
+
+  .filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+  .filtro-chip {
+    padding: 0.45rem 0.95rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-ink-soft);
+    background: var(--color-paper-soft);
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .filtro-chip:hover { border-color: var(--color-apice-blue); }
+  .filtro-chip.is-ativo {
+    background: var(--color-apice-blue);
+    border-color: var(--color-apice-blue);
+    color: #fff;
+  }
+
+  .cores {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.85rem;
+  }
+  .cores__label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-ink-soft);
+    margin-right: 0.15rem;
+  }
+  .cor-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.7rem 0.35rem 0.4rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--color-ink-soft);
+    background: var(--color-paper-soft);
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .cor-chip__dot {
+    width: 1.05rem;
+    height: 1.05rem;
+    border-radius: 50%;
+    background: var(--dot);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    flex: none;
+  }
+  .cor-chip:hover { border-color: var(--color-apice-blue); }
+  .cor-chip.is-ativo {
+    border-color: var(--color-apice-blue);
+    box-shadow: 0 0 0 1px var(--color-apice-blue) inset;
+    color: var(--color-apice-blue);
+  }
+
+  .section { padding-block: clamp(1.5rem, 4vw, 3rem); }
+  .resultado-info { color: var(--color-ink-soft); font-size: 0.9rem; margin-bottom: 1rem; }
+
+  .produto-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  @media (min-width: 620px) { .produto-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 900px) { .produto-grid { grid-template-columns: repeat(4, 1fr); } }
+  @media (min-width: 1180px) { .produto-grid { grid-template-columns: repeat(5, 1fr); } }
+
+  .produto-card {
+    display: block;
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .produto-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-card-hover); }
+  .produto-card__img {
+    aspect-ratio: 1/1;
+    background: var(--color-paper-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .produto-card__img img { width: 100%; height: 100%; object-fit: contain; }
+  .produto-card__body { padding: 0.75rem 0.85rem 0.95rem; }
+  .produto-card__nome { font-size: 0.86rem; line-height: 1.3; min-height: 2.6em; }
+  .produto-card__codigo { display: block; margin-top: 0.4rem; font-size: 0.76rem; color: var(--color-ink-soft); }
+
+  .sem-resultado { text-align: center; color: var(--color-ink-soft); padding-block: 2rem; }
+</style>

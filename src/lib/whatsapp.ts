@@ -46,4 +46,6 @@ export const mensagens = {
   produto: (prod: string) =>
     `Olá! Vi o produto ${prod} no site e quero um orçamento.`,
   generico: 'Olá! Vim pelo site da Ápice e quero falar sobre brindes personalizados.',
+  naoEncontrou:
+    'Olá! Não encontrei no site o produto que eu queria. Pode me ajudar a ver as opções?',
 };

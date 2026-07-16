@@ -100,4 +100,32 @@ const portfolio = defineCollection({
   }),
 });
 
-export const collections = { categorias, produtos, tecnicas, faq, depoimentos, portfolio };
+// Catálogo completo do fornecedor XBZ, espelhado com autorização deles.
+// Cada arquivo = uma categoria XBZ, com a lista bruta de produtos daquela
+// categoria. Fotos são hotlinked direto do servidor da XBZ (sem cópia local),
+// sem preço e sem técnica de personalização (o cliente pergunta direto).
+const catalogoXbzItem = z.object({
+  codigo: z.string(),
+  nome: z.string(),
+  imagem: z.string(), // caminho relativo no servidor da XBZ, ex.: /img/produtos/1/foo.jpg
+  // Campos abaixo só existem depois do scrape detalhado (página individual do
+  // produto). Ficam opcionais para a listagem funcionar mesmo antes disso.
+  fotos: z.array(z.string()).optional(), // todas as fotos do produto (relativas)
+  descricao: z.string().optional(),
+  // Genérico de propósito: cada tipo de produto tem specs diferentes (altura/
+  // largura/medidas de gravação para canetas, capacidade para garrafas,
+  // voltagem para eletrônicos...). Cada item é o rótulo exato da XBZ + valor.
+  especificacoes: z.array(z.object({ label: z.string(), valor: z.string() })).optional(),
+  tags: z.array(z.object({ nome: z.string(), href: z.string() })).optional(),
+});
+
+const catalogoXbz = defineCollection({
+  loader: glob({ pattern: '**/*.json', base: './src/content/catalogo-xbz' }),
+  schema: z.object({
+    nome: z.string(),
+    slug: z.string(),
+    produtos: z.array(catalogoXbzItem),
+  }),
+});
+
+export const collections = { categorias, produtos, tecnicas, faq, depoimentos, portfolio, catalogoXbz };

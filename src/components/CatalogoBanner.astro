@@ -1,0 +1,83 @@
+---
+/*
+  Chamada para o catálogo completo (4.000+ produtos da XBZ) — fica nas
+  páginas de categoria e no hub de brindes, logo após os produtos.
+  Os botões de PDF só aparecem quando um href é passado (arquivo hospedado em /public/catalogos/).
+*/
+interface Props {
+  catalogoHref?: string;
+  bottonsHref?: string;
+}
+const { catalogoHref, bottonsHref } = Astro.props;
+---
+<div class="cat-banner">
+  <a href="/brindes/catalogo/" class="cat-banner__principal">Ver catálogo completo</a>
+  {(catalogoHref || bottonsHref) && (
+    <div class="cat-banner__extra">
+      {catalogoHref && (
+        <a href={catalogoHref} target="_blank" rel="noopener noreferrer" class="cat-banner__pdf">
+          Baixar catálogo completo (PDF)
+        </a>
+      )}
+      {bottonsHref && (
+        <a href={bottonsHref} target="_blank" rel="noopener noreferrer" class="cat-banner__pdf">
+          Baixar catálogo de bottons (PDF)
+        </a>
+      )}
+    </div>
+  )}
+</div>
+
+<style>
+  .cat-banner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    background: var(--color-paper-soft);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem 1.75rem;
+    text-align: center;
+  }
+  .cat-banner__principal {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(1.15rem, 2.5vw, 1.5rem);
+    color: #fff;
+    background: var(--color-apice-blue);
+    padding: 1.1rem 2.75rem;
+    border-radius: 999px;
+    box-shadow: var(--shadow-card);
+    transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .cat-banner__principal:hover {
+    background: var(--color-apice-blue-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card-hover);
+  }
+  .cat-banner__extra {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem 1rem;
+  }
+  .cat-banner__pdf {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.55rem 1rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-apice-blue);
+    border: 1px solid var(--color-apice-blue);
+    border-radius: 999px;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .cat-banner__pdf:hover {
+    background: var(--color-apice-blue);
+    color: #fff;
+  }
+</style>

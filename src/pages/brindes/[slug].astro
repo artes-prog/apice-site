@@ -5,6 +5,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Foto from '../../components/Foto.astro';
 import CtaWhatsApp from '../../components/CtaWhatsApp.astro';
 import ProductGrid from '../../components/ProductGrid.astro';
+import CatalogoBanner from '../../components/CatalogoBanner.astro';
 import FaqSection from '../../components/FaqSection.astro';
 import CtaFinal from '../../components/CtaFinal.astro';
 import ProductsJsonLd from '../../components/seo/ProductsJsonLd.astro';
@@ -58,9 +59,12 @@ const msg = mensagens.categoria(d.nome.toLowerCase());
   <section class="section">
     <div class="container-site">
       <h2 class="section__title">Opções de {d.nome.toLowerCase()}</h2>
-      <p class="section__sub">Modelos-vitrine para inspirar. Trabalhamos com muitas outras opções — chame no WhatsApp e a gente encontra o brinde ideal para a sua ação.</p>
+      <p class="section__sub">Modelos-vitrine para inspirar.</p>
       <div class="section__grid">
         <ProductGrid produtos={produtos} />
+      </div>
+      <div class="banner-wrap">
+        <CatalogoBanner />
       </div>
     </div>
   </section>
@@ -94,6 +98,7 @@ const msg = mensagens.categoria(d.nome.toLowerCase());
   .section__title { font-size: clamp(1.5rem, 4vw, 2.1rem); }
   .section__sub { color: var(--color-ink-soft); margin-top: 0.4rem; max-width: 62ch; }
   .section__grid { margin-top: 1.75rem; }
+  .banner-wrap { margin-top: 2.5rem; }
   .container-narrow { max-width: 820px; }
   @media (min-width: 860px) {
     .cat-hero__grid { grid-template-columns: 1.05fr 0.95fr; }

@@ -11,6 +11,7 @@ export type Tecnica = CollectionEntry<'tecnicas'>;
 export type Faq = CollectionEntry<'faq'>;
 export type Depoimento = CollectionEntry<'depoimentos'>;
 export type ItemPortfolio = CollectionEntry<'portfolio'>;
+export type CategoriaXbz = CollectionEntry<'catalogoXbz'>;
 
 /** Categorias na ordem definida pelo campo `ordem`. */
 export async function getCategorias(): Promise<Categoria[]> {
@@ -56,6 +57,35 @@ export async function getDepoimentosPublicados(): Promise<Depoimento[]> {
 export async function getPortfolioPublicado(): Promise<ItemPortfolio[]> {
   const itens = await getCollection('portfolio');
   return itens.filter((i) => i.data.publicar).sort((a, b) => a.data.ordem - b.data.ordem);
+}
+
+/** Categorias do catálogo completo XBZ, em ordem alfabética. */
+export async function getCatalogoXbz(): Promise<CategoriaXbz[]> {
+  const cats = await getCollection('catalogoXbz');
+  return cats.sort((a, b) => a.data.nome.localeCompare(b.data.nome, 'pt-BR'));
+}
+
+/** Uma categoria do catálogo XBZ pelo slug. */
+export async function getCategoriaXbz(slug: string): Promise<CategoriaXbz | undefined> {
+  const cats = await getCollection('catalogoXbz');
+  return cats.find((c) => c.data.slug === slug);
+}
+
+/** URL pública (hotlink) de uma imagem do catálogo XBZ. */
+export function urlImagemXbz(caminho: string): string {
+  return `https://www.xbzbrindes.com.br${caminho}`;
+}
+
+/**
+ * Códigos da XBZ podem ter caracteres inválidos em URL/pasta (@, *, espaço).
+ * Usado tanto para gerar a rota quanto para montar o link — precisa ser a
+ * MESMA função nos dois lugares, senão o link não bate com a página gerada.
+ */
+export function codigoSlug(codigo: string): string {
+  return codigo
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 }
 
 /** Nome amigável da técnica, para textos e mensagens. */

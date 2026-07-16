@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import CtaFinal from '../../../components/CtaFinal.astro';
+import { getCatalogoXbz } from '../../../lib/content';
+import { mensagens } from '../../../lib/whatsapp';
+
+const categorias = await getCatalogoXbz();
+const totalProdutos = categorias.reduce((soma, c) => soma + c.data.produtos.length, 0);
+
+const title = 'Catálogo Completo de Brindes | Ápice Brindes';
+const description =
+  'Catálogo completo de brindes personalizáveis da Ápice Brindes em Goiânia: milhares de opções por categoria, busque por nome ou código e peça orçamento no WhatsApp.';
+---
+<BaseLayout title={title} description={description} waMensagem={mensagens.generico} waSemente="catalogo-xbz">
+  <div class="container-site crumbs-wrap">
+    <Breadcrumbs items={[{ name: 'Início', href: '/' }, { name: 'Brindes', href: '/brindes-personalizados/' }, { name: 'Catálogo completo' }]} />
+  </div>
+
+  <section class="cat-hero">
+    <div class="container-site">
+      <h1 class="cat-hero__title">Catálogo completo de brindes</h1>
+      <p class="cat-hero__lead">
+        Além da nossa vitrine de mais pedidos, temos acesso a um catálogo com mais de {totalProdutos.toLocaleString('pt-BR')} produtos
+        organizados por categoria. Encontrou algo? Manda o código ou o nome no WhatsApp e a gente cuida da personalização.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container-site">
+      <div class="cat-grid">
+        {categorias.map((c) => (
+          <a href={`/brindes/catalogo/${c.data.slug}/`} class="cat-card">
+            <h2 class="cat-card__nome">{c.data.nome}</h2>
+            <span class="cat-card__count">{c.data.produtos.length} produtos</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaFinal semente="catalogo-xbz" mensagem={mensagens.generico} titulo="Não achou a categoria que procurava?" />
+</BaseLayout>
+
+<style>
+  .crumbs-wrap { padding-block: 1.1rem 0; }
+  .cat-hero { padding-block: clamp(1.75rem, 4vw, 3rem); }
+  .cat-hero__title { font-size: clamp(1.9rem, 5vw, 2.7rem); font-weight: 800; }
+  .cat-hero__lead { margin-top: 1rem; color: var(--color-ink-soft); font-size: 1.05rem; max-width: 66ch; }
+
+  .section { padding-block: clamp(1.5rem, 4vw, 3rem); }
+
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.9rem;
+  }
+  @media (min-width: 620px) { .cat-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 900px) { .cat-grid { grid-template-columns: repeat(4, 1fr); } }
+
+  .cat-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    padding: 1.1rem 1.2rem;
+    box-shadow: var(--shadow-card);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .cat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-card-hover); }
+  .cat-card__nome { font-size: 1rem; font-weight: 700; color: var(--color-apice-blue); }
+  .cat-card__count { font-size: 0.82rem; color: var(--color-ink-soft); }
+</style>

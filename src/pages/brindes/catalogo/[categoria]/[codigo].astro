@@ -1,0 +1,181 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../../components/Breadcrumbs.astro';
+import CtaWhatsApp from '../../../../components/CtaWhatsApp.astro';
+import CtaFinal from '../../../../components/CtaFinal.astro';
+import { getCatalogoXbz, urlImagemXbz, codigoSlug } from '../../../../lib/content';
+import { mensagens } from '../../../../lib/whatsapp';
+
+export const getStaticPaths = (async () => {
+  const categorias = await getCatalogoXbz();
+  const paths = [];
+  for (const cat of categorias) {
+    for (const produto of cat.data.produtos) {
+      paths.push({
+        params: { categoria: cat.data.slug, codigo: codigoSlug(produto.codigo) },
+        props: { categoria: cat, produto },
+      });
+    }
+  }
+  return paths;
+}) satisfies GetStaticPaths;
+
+const { categoria, produto } = Astro.props as {
+  categoria: Awaited<ReturnType<typeof getCatalogoXbz>>[number];
+  produto: Awaited<ReturnType<typeof getCatalogoXbz>>[number]['data']['produtos'][number];
+};
+
+const fotos = produto.fotos && produto.fotos.length > 0 ? produto.fotos : [produto.imagem];
+const msg = mensagens.produto(`${produto.nome} (código ${produto.codigo})`);
+
+const title = `${produto.nome} — Código ${produto.codigo} | Ápice Brindes`;
+const description = `${produto.nome} do catálogo completo Ápice Brindes. Código ${produto.codigo}. Peça orçamento e personalização no WhatsApp.`;
+---
+<BaseLayout title={title} description={description} waMensagem={msg} waSemente={`produto-${produto.codigo}`}>
+  <div class="container-site crumbs-wrap">
+    <Breadcrumbs items={[
+      { name: 'Início', href: '/' },
+      { name: 'Brindes', href: '/brindes-personalizados/' },
+      { name: 'Catálogo completo', href: '/brindes/catalogo/' },
+      { name: categoria.data.nome, href: `/brindes/catalogo/${categoria.data.slug}/` },
+      { name: produto.nome },
+    ]} />
+  </div>
+
+  <section class="section">
+    <div class="container-site produto-grid">
+      <div class="produto-fotos">
+        <div class="produto-foto-principal">
+          <img id="foto-principal" src={urlImagemXbz(fotos[0])} alt={produto.nome} width="600" height="600" />
+        </div>
+        {fotos.length > 1 && (
+          <div class="produto-foto-miniaturas">
+            {fotos.map((f, i) => (
+              <button type="button" class="miniatura" class:list={{ 'is-ativa': i === 0 }} data-foto={urlImagemXbz(f)}>
+                <img src={urlImagemXbz(f)} alt={`${produto.nome} — foto ${i + 1}`} width="90" height="90" loading="lazy" />
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div class="produto-info">
+        <p class="produto-codigo">Código: {produto.codigo}</p>
+        <h1 class="produto-nome">{produto.nome}</h1>
+
+        {produto.descricao && <p class="produto-descricao">{produto.descricao}</p>}
+
+        {produto.especificacoes && produto.especificacoes.length > 0 && (
+          <dl class="produto-specs">
+            {produto.especificacoes.map((e) => (
+              <>
+                <dt>{e.label}</dt>
+                <dd>{e.valor}</dd>
+              </>
+            ))}
+          </dl>
+        )}
+
+        {produto.tags && produto.tags.length > 0 && (
+          <div class="produto-tags">
+            {produto.tags.map((t) => <span class="produto-tag">{t.nome}</span>)}
+          </div>
+        )}
+
+        <p class="produto-nota">
+          Personalizamos este item com Silk Screen ou gravação a Fiber Laser, conforme o material. Fale com a gente
+          pelo código para confirmar técnica, prazo e quantidade.
+        </p>
+
+        <CtaWhatsApp variante="primario" mensagem={msg} semente={`produto-${produto.codigo}`} label="Pedir orçamento deste produto" />
+
+        <a href={`/brindes/catalogo/${categoria.data.slug}/`} class="produto-voltar">← Voltar para {categoria.data.nome}</a>
+      </div>
+    </div>
+  </section>
+
+  <CtaFinal semente={`produto-${produto.codigo}`} mensagem={msg} titulo="Quer ver mais opções antes de decidir?" />
+</BaseLayout>
+
+<script>
+  const principal = document.getElementById('foto-principal') as HTMLImageElement | null;
+  document.querySelectorAll<HTMLButtonElement>('.miniatura').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      if (!principal) return;
+      principal.src = btn.dataset.foto ?? principal.src;
+      document.querySelectorAll('.miniatura').forEach((b) => b.classList.remove('is-ativa'));
+      btn.classList.add('is-ativa');
+    });
+  });
+</script>
+
+<style>
+  .crumbs-wrap { padding-block: 1.1rem 0; }
+  .section { padding-block: clamp(1.5rem, 4vw, 3rem); }
+
+  .produto-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  @media (min-width: 860px) {
+    .produto-grid { grid-template-columns: 1fr 1fr; align-items: start; }
+  }
+
+  .produto-foto-principal {
+    aspect-ratio: 1/1;
+    background: var(--color-paper-soft);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .produto-foto-principal img { width: 100%; height: 100%; object-fit: contain; }
+
+  .produto-foto-miniaturas { display: flex; gap: 0.6rem; margin-top: 0.75rem; flex-wrap: wrap; }
+  .miniatura {
+    width: 64px;
+    height: 64px;
+    border-radius: 10px;
+    border: 2px solid var(--color-line);
+    overflow: hidden;
+    padding: 0;
+    background: var(--color-paper-soft);
+    cursor: pointer;
+  }
+  .miniatura img { width: 100%; height: 100%; object-fit: contain; }
+  .miniatura.is-ativa { border-color: var(--color-apice-blue); }
+
+  .produto-codigo { color: var(--color-ink-soft); font-size: 0.9rem; font-weight: 600; }
+  .produto-nome { font-size: clamp(1.5rem, 4vw, 2.1rem); font-weight: 800; margin-top: 0.3rem; }
+  .produto-descricao { margin-top: 1rem; color: var(--color-ink-soft); line-height: 1.7; }
+
+  .produto-specs {
+    margin-top: 1.25rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.4rem 1rem;
+    font-size: 0.92rem;
+  }
+  .produto-specs dt { font-weight: 700; color: var(--color-apice-blue); }
+  .produto-specs dd { color: var(--color-ink-soft); }
+
+  .produto-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.25rem; }
+  .produto-tag {
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.35rem 0.8rem;
+    background: var(--color-paper-soft);
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    color: var(--color-ink-soft);
+  }
+
+  .produto-nota { margin-top: 1.25rem; color: var(--color-ink-soft); font-size: 0.92rem; max-width: 60ch; }
+
+  .produto-info :global(.wa) { margin-top: 1.5rem; }
+  .produto-voltar { display: block; margin-top: 1.25rem; color: var(--color-apice-blue); font-weight: 600; font-size: 0.92rem; }
+</style>
