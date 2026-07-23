@@ -1,1 +1,9 @@
-{"slug": "caneca-porcelana-rizzo", "cliente": "Rizzo Imobiliária", "produto": "Caneca de Porcelana com Caixa Presente", "tecnica": "silk", "foto": "portfolio/caneca-porcelana-rizzo.jpg", "ordem": 9, "publicar": true}
+{
+  "cliente": "Rizzo Imobiliária",
+  "produto": "Caneca de Porcelana com Caixa Presente",
+  "foto": "/portfolio/caneca-porcelana-rizzo.jpg",
+  "tecnica": "sublimacao",
+  "slug": "caneca-porcelana-rizzo",
+  "ordem": 9,
+  "publicar": true
+}
