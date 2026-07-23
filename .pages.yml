@@ -1,0 +1,364 @@
+# ============================================================================
+#  Painel de edição do site da Ápice Brindes — Pages CMS (pagescms.org)
+# ============================================================================
+#  Cada bloco em "content" vira uma tela no painel. As fotos enviadas pelo
+#  painel caem em src/assets/img/<pasta> e o site as otimiza no build.
+#
+#  De propósito NÃO está aqui o catálogo XBZ (4.035 produtos em
+#  src/content/catalogo-xbz): ele se atualiza sozinho toda semana, então
+#  editar à mão seria sobrescrito. Tudo o que é seu e editável está abaixo.
+# ============================================================================
+
+media:
+  - name: fotos
+    input: src/assets/img
+    output: ""
+
+content:
+  # -------------------------------------------------------------------------
+  #  DADOS DA EMPRESA — telefone, endereço, WhatsApp, redes. Um lugar só;
+  #  mudou aqui, muda no site inteiro (header, rodapé, contato, orçamento).
+  # -------------------------------------------------------------------------
+  - name: empresa
+    label: Dados da empresa
+    type: file
+    path: src/data/site.json
+    format: json
+    fields:
+      - name: nome
+        label: Nome da empresa
+        type: string
+      - name: slogan
+        label: Slogan
+        type: string
+      - name: anosDeMercado
+        label: Anos de mercado
+        type: string
+        description: "Texto livre. Ex.: Mais de 20 anos"
+      - name: endereco
+        label: Endereço
+        type: object
+        fields:
+          - { name: rua, label: Rua e número, type: string }
+          - { name: bairro, label: Bairro, type: string }
+          - { name: cidade, label: Cidade, type: string }
+          - { name: uf, label: Estado (UF), type: string }
+          - { name: cep, label: CEP, type: string }
+      - name: telefoneFixo
+        label: Telefone fixo
+        type: string
+      - name: atendentes
+        label: Atendentes (WhatsApp)
+        type: object
+        list: true
+        fields:
+          - { name: nome, label: Nome, type: string }
+          - name: whatsapp
+            label: WhatsApp
+            type: string
+            description: "Só números, com 55 e DDD. Ex.: 5562999194794"
+      - name: horario
+        label: Horário de atendimento
+        type: string
+      - name: instagram
+        label: Instagram (link completo)
+        type: string
+      - name: facebook
+        label: Facebook (link completo)
+        type: string
+      - name: googleBusiness
+        label: Google Business (link completo)
+        type: string
+      - name: geo
+        label: Coordenadas do mapa (avançado)
+        type: object
+        fields:
+          - { name: lat, label: Latitude, type: number, required: false }
+          - { name: lng, label: Longitude, type: number, required: false }
+      - name: areaAtendimento
+        label: Cidades atendidas
+        type: string
+        list: true
+
+  # -------------------------------------------------------------------------
+  #  CATEGORIAS
+  # -------------------------------------------------------------------------
+  - name: categorias
+    label: Categorias
+    type: collection
+    path: src/content/categorias
+    format: json
+    filename: "{fields.slug}.json"
+    view:
+      fields: [nome, ordem, destaqueHome]
+      primary: nome
+      sort: [ordem]
+    fields:
+      - name: nome
+        label: Nome
+        type: string
+      - name: slug
+        label: Identificador (slug)
+        type: string
+        pattern:
+          regex: "^[a-z0-9-]+$"
+          message: "Só letras minúsculas, números e hífen — sem espaços nem acentos."
+        description: "Vai na URL. Ex.: canecas. Evite mudar depois de publicado."
+      - name: ordem
+        label: Ordem na lista
+        type: number
+        description: "Menor número aparece primeiro."
+      - name: h1
+        label: Título principal da página (H1)
+        type: string
+      - name: intro
+        label: Texto de introdução
+        type: text
+      - name: tecnicas
+        label: Técnicas de personalização
+        type: select
+        multiple: true
+        options:
+          values: [laser, silk, ambas, sublimacao, silk-sublimacao]
+      - name: imagemCapa
+        label: Foto de capa
+        type: image
+        options:
+          media: fotos
+          path: categorias
+      - name: destaqueHome
+        label: Mostrar na página inicial?
+        type: boolean
+      - name: tituloSeo
+        label: Título no Google (SEO)
+        type: string
+      - name: descricaoSeo
+        label: Descrição no Google (SEO)
+        type: text
+      - name: faqSlugs
+        label: Perguntas do FAQ ligadas a esta categoria
+        type: reference
+        required: false
+        options:
+          collection: faq
+          multiple: true
+          value: "{fields.slug}"
+          label: "{fields.pergunta}"
+          search: pergunta
+
+  # -------------------------------------------------------------------------
+  #  PRODUTOS EM DESTAQUE
+  # -------------------------------------------------------------------------
+  - name: produtos
+    label: Produtos em destaque
+    type: collection
+    path: src/content/produtos
+    format: json
+    filename: "{fields.slug}.json"
+    view:
+      fields: [nome, categoria, maisPedido]
+      primary: nome
+    fields:
+      - name: nome
+        label: Nome do produto
+        type: string
+      - name: slug
+        label: Identificador (slug)
+        type: string
+        pattern:
+          regex: "^[a-z0-9-]+$"
+          message: "Só letras minúsculas, números e hífen — sem espaços nem acentos."
+        description: "Vai na URL. Ex.: caneca-inox-termica"
+      - name: categoria
+        label: Categoria
+        type: reference
+        options:
+          collection: categorias
+          value: "{fields.slug}"
+          label: "{fields.nome}"
+          search: nome
+      - name: descricaoCurta
+        label: Descrição curta
+        type: text
+      - name: imagens
+        label: Fotos do produto
+        type: image
+        list: true
+        options:
+          media: fotos
+          path: produtos
+        description: "Pelo menos uma foto."
+      - name: tecnica
+        label: Técnica de personalização
+        type: select
+        options:
+          values: [laser, silk, ambas, sublimacao, silk-sublimacao]
+      - name: maisPedido
+        label: Marcar como “mais pedido”?
+        type: boolean
+      # Campos mantidos ocultos de propósito: o site nunca mostra preço nem
+      # número de quantidade mínima (orçamento é sempre pelo WhatsApp).
+      - { name: precoAPartir, label: Preço, type: number, hidden: true, required: false }
+      - { name: qtdMinima, label: Quantidade mínima, type: string, hidden: true, required: false }
+
+  # -------------------------------------------------------------------------
+  #  PERGUNTAS FREQUENTES (FAQ)
+  # -------------------------------------------------------------------------
+  - name: faq
+    label: Perguntas frequentes
+    type: collection
+    path: src/content/faq
+    format: json
+    filename: "{fields.slug}.json"
+    view:
+      fields: [pergunta]
+      primary: pergunta
+    fields:
+      - name: pergunta
+        label: Pergunta
+        type: string
+      - name: resposta
+        label: Resposta
+        type: text
+      - name: slug
+        label: Identificador (slug)
+        type: string
+        pattern:
+          regex: "^[a-z0-9-]+$"
+          message: "Só letras minúsculas, números e hífen — sem espaços nem acentos."
+        description: "Ex.: prazo-producao"
+      - name: paginas
+        label: Onde esta pergunta aparece
+        type: select
+        multiple: true
+        options:
+          values: [home, categorias, tecnicas, orcamento, contato]
+
+  # -------------------------------------------------------------------------
+  #  PORTFÓLIO — trabalhos entregues
+  # -------------------------------------------------------------------------
+  - name: portfolio
+    label: Portfólio
+    type: collection
+    path: src/content/portfolio
+    format: json
+    filename: "{fields.slug}.json"
+    view:
+      fields: [cliente, produto, publicar]
+      primary: cliente
+      sort: [ordem]
+    fields:
+      - name: cliente
+        label: Cliente
+        type: string
+      - name: produto
+        label: Produto entregue
+        type: string
+      - name: foto
+        label: Foto do trabalho
+        type: image
+        options:
+          media: fotos
+          path: portfolio
+      - name: tecnica
+        label: Técnica usada
+        type: select
+        options:
+          values: [laser, silk, ambas, sublimacao, silk-sublimacao]
+      - name: slug
+        label: Identificador (slug)
+        type: string
+        pattern:
+          regex: "^[a-z0-9-]+$"
+          message: "Só letras minúsculas, números e hífen — sem espaços nem acentos."
+      - name: ordem
+        label: Ordem na galeria
+        type: number
+        description: "Menor número aparece primeiro."
+      - name: publicar
+        label: Publicar no site?
+        type: boolean
+
+  # -------------------------------------------------------------------------
+  #  DEPOIMENTOS
+  # -------------------------------------------------------------------------
+  - name: depoimentos
+    label: Depoimentos
+    type: collection
+    path: src/content/depoimentos
+    format: json
+    filename: "{fields.slug}.json"
+    view:
+      fields: [autor, empresa, publicar]
+      primary: autor
+    fields:
+      - name: autor
+        label: Nome de quem deu o depoimento
+        type: string
+      - name: empresa
+        label: Empresa
+        type: string
+      - name: texto
+        label: Depoimento
+        type: text
+      - name: slug
+        label: Identificador (slug)
+        type: string
+        pattern:
+          regex: "^[a-z0-9-]+$"
+          message: "Só letras minúsculas, números e hífen — sem espaços nem acentos."
+      - name: publicar
+        label: Publicar no site?
+        type: boolean
+        description: "Só aparece no site quando estiver ligado."
+
+  # -------------------------------------------------------------------------
+  #  TÉCNICAS (páginas de Gravação a laser e Silk screen) — texto longo
+  # -------------------------------------------------------------------------
+  - name: tecnicas
+    label: Páginas de técnica (laser / silk)
+    type: collection
+    path: src/content/tecnicas
+    format: yaml-frontmatter
+    filename: "{fields.slug}.md"
+    view:
+      fields: [nome]
+      primary: nome
+    fields:
+      - name: nome
+        label: Nome da técnica
+        type: string
+      - name: slug
+        label: Identificador (slug)
+        type: string
+        pattern:
+          regex: "^[a-z0-9-]+$"
+          message: "Só letras minúsculas, números e hífen — sem espaços nem acentos."
+      - name: h1
+        label: Título principal (H1)
+        type: string
+      - name: imagemCapa
+        label: Foto de capa
+        type: image
+        options:
+          media: fotos
+          path: tecnicas
+      - name: body
+        label: Conteúdo da página
+        type: rich-text
+      - name: tituloSeo
+        label: Título no Google (SEO)
+        type: string
+      - name: descricaoSeo
+        label: Descrição no Google (SEO)
+        type: text
+      - name: faqSlugs
+        label: Perguntas do FAQ ligadas
+        type: reference
+        required: false
+        options:
+          collection: faq
+          multiple: true
+          value: "{fields.slug}"
+          label: "{fields.pergunta}"
+          search: pergunta
