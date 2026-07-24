@@ -24,6 +24,10 @@
   "instagram": "https://www.instagram.com/apicebrindesoficial/",
   "facebook": "https://www.facebook.com/oficialapicebrindes/",
   "googleBusiness": "PREENCHER_URL_GOOGLE_BUSINESS",
+  "geo": {
+    "lat": null,
+    "lng": null
+  },
   "areaAtendimento": [
     "Goiânia",
     "Aparecida de Goiânia",

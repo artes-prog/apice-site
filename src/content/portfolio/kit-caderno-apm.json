@@ -1,7 +1,7 @@
 {
   "cliente": "APM Academia de Cursos Médicos",
   "produto": "Kit Caderno e Caneta Personalizados",
-  "foto": "/portfolio/kit-caderno-apm.jpg",
+  "foto": "portfolio/kit-caderno-apm.jpg",
   "tecnica": "silk",
   "slug": "kit-caderno-apm",
   "ordem": 25,

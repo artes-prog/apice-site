@@ -34,7 +34,11 @@ const modules = import.meta.glob<ImageMetadata>(
   '/src/assets/img/**/*.{jpg,jpeg,png,webp,avif}',
   { eager: true, import: 'default' }
 );
-const real = modules[`/src/assets/img/${src}`];
+// O Pages CMS (painel de edição) às vezes grava o caminho com "/" na frente
+// (ex.: "/portfolio/foo.jpg"). Sem normalizar, a barra dobra ("img//portfolio/…")
+// e não bate com nenhuma chave do glob — a foto cai silenciosamente no placeholder.
+const srcNormalizado = src.replace(/^\/+/, '');
+const real = modules[`/src/assets/img/${srcNormalizado}`];
 
 const [rw, rh] = ratio.split('/').map(Number);
 ---
