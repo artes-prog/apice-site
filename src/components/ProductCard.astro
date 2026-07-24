@@ -15,7 +15,7 @@ interface Props {
   imagens: string[];
   precoAPartir: number | null;
   maisPedido: boolean;
-  tecnica: 'laser' | 'silk' | 'ambas' | 'sublimacao' | 'silk-sublimacao';
+  tecnica: 'laser' | 'silk' | 'ambas' | 'sublimacao' | 'silk-sublimacao' | 'impressao-digital-resinada' | 'vinil-transparente' | 'silk-fiber-laser';
   priority?: boolean;
 }
 const { nome, slug, descricaoCurta, imagens, precoAPartir, maisPedido, tecnica, priority = false } = Astro.props;

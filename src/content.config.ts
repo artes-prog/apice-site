@@ -15,7 +15,12 @@ import { z } from 'astro/zod'; // Zod v4 — cópia interna do Astro 7
 // 'sublimacao' existe só para o rótulo do produto — hoje é usado por um único
 // item (caneca de porcelana). Não vira categoria/página própria de técnica
 // (o site continua com duas técnicas centrais: laser e silk).
-const tecnicaEnum = z.enum(['laser', 'silk', 'ambas', 'sublimacao', 'silk-sublimacao']);
+// As três últimas são técnicas específicas que aparecem só como rótulo em
+// trabalhos reais do Portfólio (nunca viram categoria/página).
+const tecnicaEnum = z.enum([
+  'laser', 'silk', 'ambas', 'sublimacao', 'silk-sublimacao',
+  'impressao-digital-resinada', 'vinil-transparente', 'silk-fiber-laser',
+]);
 
 const categorias = defineCollection({
   loader: glob({ pattern: '**/*.json', base: './src/content/categorias' }),

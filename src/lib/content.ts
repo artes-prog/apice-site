@@ -89,10 +89,15 @@ export function codigoSlug(codigo: string): string {
 }
 
 /** Nome amigável da técnica, para textos e mensagens. */
-export function nomeTecnica(t: 'laser' | 'silk' | 'ambas' | 'sublimacao' | 'silk-sublimacao'): string {
+export function nomeTecnica(
+  t: 'laser' | 'silk' | 'ambas' | 'sublimacao' | 'silk-sublimacao' | 'impressao-digital-resinada' | 'vinil-transparente' | 'silk-fiber-laser'
+): string {
   if (t === 'laser') return 'gravação com Fiber Laser';
   if (t === 'silk') return 'Silk Screen';
   if (t === 'sublimacao') return 'sublimação';
   if (t === 'silk-sublimacao') return 'Silk Screen e sublimação';
+  if (t === 'impressao-digital-resinada') return 'Impressão Digital Resinada';
+  if (t === 'vinil-transparente') return 'Vinil Transparente';
+  if (t === 'silk-fiber-laser') return 'Silk Screen + Fiber Laser';
   return 'Silk Screen e gravação com Fiber Laser';
 }

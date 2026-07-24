@@ -264,7 +264,7 @@ content:
         label: Técnica usada
         type: select
         options:
-          values: [laser, silk, ambas, sublimacao, silk-sublimacao]
+          values: [laser, silk, ambas, sublimacao, silk-sublimacao, impressao-digital-resinada, vinil-transparente, silk-fiber-laser]
       - name: slug
         label: Identificador (slug)
         type: string
