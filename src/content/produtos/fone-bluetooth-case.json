@@ -1,1 +1,12 @@
-{"nome": "Fone Bluetooth com Case Personalizado", "slug": "fone-bluetooth", "categoria": "tecnologia", "descricaoCurta": "Case com Silk Screen: sua marca aberta várias vezes por dia.", "imagens": ["produtos/fone-bluetooth.jpg"], "precoAPartir": null, "qtdMinima": "consultar", "maisPedido": false, "tecnica": "silk"}
+{
+  "nome": "Fone Bluetooth com Case Personalizado",
+  "slug": "fone-bluetooth",
+  "categoria": "tecnologia",
+  "descricaoCurta": "Case com Silk Screen: sua marca aberta várias vezes por dia.",
+  "imagens": [
+    "/Ventura.png"
+  ],
+  "tecnica": "silk",
+  "maisPedido": false,
+  "qtdMinima": "consultar"
+}
