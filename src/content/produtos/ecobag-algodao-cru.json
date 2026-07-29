@@ -1,1 +1,12 @@
-{"nome": "Ecobag de Algodão Cru", "slug": "ecobag-algodao", "categoria": "ecologicos", "descricaoCurta": "A sacola que substitui plástico e circula pela cidade com sua marca em silk.", "imagens": ["produtos/ecobag.jpg"], "precoAPartir": null, "qtdMinima": "consultar", "maisPedido": false, "tecnica": "silk"}
+{
+  "nome": "Ecobag de Algodão Cru",
+  "slug": "ecobag-algodao",
+  "categoria": "ecologicos",
+  "descricaoCurta": "A sacola que substitui plástico e circula pela cidade com sua marca em silk.",
+  "imagens": [
+    "/Unimed-1.png"
+  ],
+  "tecnica": "silk",
+  "maisPedido": false,
+  "qtdMinima": "consultar"
+}
