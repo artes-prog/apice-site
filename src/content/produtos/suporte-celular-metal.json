@@ -1,1 +1,12 @@
-{"nome": "Suporte de Celular em Metal", "slug": "suporte-celular", "categoria": "tecnologia", "descricaoCurta": "Fica na mesa do cliente o dia inteiro, com sua marca gravada a laser.", "imagens": ["produtos/suporte-celular.jpg"], "precoAPartir": null, "qtdMinima": "consultar", "maisPedido": false, "tecnica": "laser"}
+{
+  "nome": "Suporte de Celular em Metal",
+  "slug": "suporte-celular",
+  "categoria": "tecnologia",
+  "descricaoCurta": "Fica na mesa do cliente o dia inteiro, com sua marca gravada a laser.",
+  "imagens": [
+    "/Pneus Express.png"
+  ],
+  "tecnica": "laser",
+  "maisPedido": false,
+  "qtdMinima": "consultar"
+}
