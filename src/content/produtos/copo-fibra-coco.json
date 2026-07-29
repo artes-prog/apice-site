@@ -1,1 +1,12 @@
-{"nome": "Copo de Fibra de Coco", "slug": "copo-fibra-coco", "categoria": "ecologicos", "descricaoCurta": "Material reaproveitado, visual único, mensagem sustentável clara.", "imagens": ["produtos/copo-fibra.jpg"], "precoAPartir": null, "qtdMinima": "consultar", "maisPedido": false, "tecnica": "silk"}
+{
+  "nome": "Copo de Fibra de Bambu 350ml",
+  "slug": "copo-fibra-bambu",
+  "categoria": "ecologicos",
+  "descricaoCurta": "Material reaproveitado, visual único, mensagem sustentável clara.",
+  "imagens": [
+    "/Copo Fibra.png"
+  ],
+  "tecnica": "silk",
+  "maisPedido": false,
+  "qtdMinima": "consultar"
+}
