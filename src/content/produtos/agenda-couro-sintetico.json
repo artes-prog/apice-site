@@ -1,1 +1,12 @@
-{"nome": "Agenda em Couro Sintético", "slug": "agenda-couro", "categoria": "agendas-e-escritorio", "descricaoCurta": "Capa nobre com Silk Screen de alta definição. O clássico de fim de ano corporativo.", "imagens": ["produtos/agenda-couro.jpg"], "precoAPartir": null, "qtdMinima": "consultar", "maisPedido": true, "tecnica": "silk"}
+{
+  "nome": "Agenda em Couro Sintético",
+  "slug": "agenda-couro",
+  "categoria": "agendas-e-escritorio",
+  "descricaoCurta": "Capa nobre com Silk Screen de alta definição. O clássico de fim de ano corporativo.",
+  "imagens": [
+    "/Agenda A5.png"
+  ],
+  "tecnica": "silk",
+  "maisPedido": true,
+  "qtdMinima": "consultar"
+}
