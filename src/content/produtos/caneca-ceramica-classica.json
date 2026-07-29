@@ -1,1 +1,12 @@
-{"nome": "Caneca de Porcelana 325ml", "slug": "caneca-ceramica-classica", "categoria": "canecas", "descricaoCurta": "A caneca corporativa por excelência. Personalização por sublimação, com cores vivas e fiéis à sua marca, resistente a lavagens.", "imagens": ["produtos/caneca-ceramica.jpg"], "precoAPartir": null, "qtdMinima": "consultar", "maisPedido": true, "tecnica": "sublimacao"}
+{
+  "nome": "Caneca de Porcelana 325ml",
+  "slug": "caneca-ceramica-classica",
+  "categoria": "canecas",
+  "descricaoCurta": "A caneca corporativa por excelência. Personalização por sublimação, com cores vivas e fiéis à sua marca, resistente a lavagens.",
+  "imagens": [
+    "/mockup1785331906993.png"
+  ],
+  "tecnica": "sublimacao",
+  "maisPedido": true,
+  "qtdMinima": "consultar"
+}
