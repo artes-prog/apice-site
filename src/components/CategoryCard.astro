@@ -66,6 +66,8 @@ const tags = [...new Set(expandido)];
     flex-direction: column;
     gap: 0.6rem;
     padding: 1.1rem 1.15rem 1.25rem;
+    flex: 1; /* preenche a altura do card -> margin-top:auto ancora o botão na base
+                em todos os cards, independe do nº de tags */
   }
   .cat-card__title {
     font-size: 1.1rem;
