@@ -1,1 +1,12 @@
-{"nome": "Mousepad Personalizado", "slug": "mousepad", "categoria": "agendas-e-escritorio", "descricaoCurta": "Sua marca na mesa de trabalho, visível o expediente inteiro.", "imagens": ["produtos/mousepad.jpg"], "precoAPartir": null, "qtdMinima": "consultar", "maisPedido": false, "tecnica": "silk"}
+{
+  "nome": "Mousepad Personalizado",
+  "slug": "mousepad",
+  "categoria": "agendas-e-escritorio",
+  "descricaoCurta": "Sua marca na mesa de trabalho, visível o expediente inteiro.",
+  "imagens": [
+    "/Complexo Cerrado.png"
+  ],
+  "tecnica": "silk",
+  "maisPedido": false,
+  "qtdMinima": "consultar"
+}
