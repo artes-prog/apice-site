@@ -1,1 +1,12 @@
-{"nome": "Chaveiro de Acrílico Colorido", "slug": "chaveiro-acrilico", "categoria": "chaveiros", "descricaoCurta": "Cores vivas e formato personalizado para ações de grande volume.", "imagens": ["produtos/chaveiro-acrilico.jpg"], "precoAPartir": null, "qtdMinima": "consultar", "maisPedido": false, "tecnica": "silk"}
+{
+  "nome": "Chaveiro de Abridor ",
+  "slug": "chaveiro-abridor",
+  "categoria": "chaveiros",
+  "descricaoCurta": "Cores vivas e formato personalizado para ações de grande volume.",
+  "imagens": [
+    "/Chaveiro abridor.png"
+  ],
+  "tecnica": "laser",
+  "maisPedido": false,
+  "qtdMinima": "consultar"
+}
