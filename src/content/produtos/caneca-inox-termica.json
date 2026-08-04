@@ -1,1 +1,12 @@
-{"nome": "Caneca Térmica de Inox 450ml", "slug": "caneca-inox-termica", "categoria": "canecas", "descricaoCurta": "Mantém a temperatura por horas. Personalização duradoura, acabamento executivo.", "imagens": ["produtos/caneca-inox.jpg"], "precoAPartir": null, "qtdMinima": "consultar", "maisPedido": false, "tecnica": "ambas"}
+{
+  "nome": "Caneca Térmica de Inox 450ml",
+  "slug": "caneca-inox-termica",
+  "categoria": "canecas",
+  "descricaoCurta": "Mantém a temperatura por horas. Personalização duradoura, acabamento executivo.",
+  "imagens": [
+    "/Palme.png"
+  ],
+  "tecnica": "ambas",
+  "maisPedido": false,
+  "qtdMinima": "consultar"
+}

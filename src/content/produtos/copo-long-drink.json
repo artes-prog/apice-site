@@ -1,1 +1,12 @@
-{"nome": "Copo Long Drink Personalizado", "slug": "copo-long-drink", "categoria": "copos-e-tacas", "descricaoCurta": "O padrão de formaturas e festas. Silk vibrante que aparece em toda foto.", "imagens": ["produtos/copo-long-drink.jpg"], "precoAPartir": null, "qtdMinima": "consultar", "maisPedido": false, "tecnica": "silk"}
+{
+  "nome": "Copo Long Drink Personalizado",
+  "slug": "copo-long-drink",
+  "categoria": "copos-e-tacas",
+  "descricaoCurta": "O padrão de formaturas e festas. Silk vibrante que aparece em toda foto.",
+  "imagens": [
+    "/Copo Acrílico.png"
+  ],
+  "tecnica": "silk",
+  "maisPedido": false,
+  "qtdMinima": "consultar"
+}

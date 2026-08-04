@@ -1,1 +1,12 @@
-{"nome": "Kit Executivo Premium", "slug": "kit-executivo", "categoria": "kits-corporativos", "descricaoCurta": "Garrafa térmica + caneta + agenda em couro sintético, com Fiber Laser e Silk Screen. Para clientes-chave.", "imagens": ["produtos/kit-executivo.jpg"], "precoAPartir": null, "qtdMinima": "consultar", "maisPedido": false, "tecnica": "ambas"}
+{
+  "nome": "Kit Executivo Premium",
+  "slug": "kit-executivo",
+  "categoria": "kits-corporativos",
+  "descricaoCurta": "Garrafa térmica + caneta + agenda em couro sintético, com Fiber Laser e Silk Screen. Para clientes-chave.",
+  "imagens": [
+    "/Kit Exec Premi.png"
+  ],
+  "tecnica": "ambas",
+  "maisPedido": false,
+  "qtdMinima": "consultar"
+}

@@ -1,1 +1,12 @@
-{"nome": "Garrafa Térmica com Display de Temperatura", "slug": "garrafa-smart-display", "categoria": "garrafas-e-squeezes", "descricaoCurta": "Alto valor percebido: display LED de temperatura na tampa. Para clientes estratégicos.", "imagens": ["produtos/garrafa-smart.jpg"], "precoAPartir": null, "qtdMinima": "consultar", "maisPedido": false, "tecnica": "ambas"}
+{
+  "nome": "Garrafa Térmica com Difusor",
+  "slug": "garrafa-termica-difusor",
+  "categoria": "garrafas-e-squeezes",
+  "descricaoCurta": "Alto valor percebido: display LED de temperatura na tampa. Para clientes estratégicos.",
+  "imagens": [
+    "/Garrafas-1.png"
+  ],
+  "tecnica": "ambas",
+  "maisPedido": false,
+  "qtdMinima": "consultar"
+}

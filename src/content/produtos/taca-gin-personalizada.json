@@ -1,1 +1,12 @@
-{"nome": "Taça de Gin Personalizada", "slug": "taca-gin", "categoria": "copos-e-tacas", "descricaoCurta": "Sofisticação para eventos premium, casamentos corporativos e lançamentos.", "imagens": ["produtos/taca-gin.jpg"], "precoAPartir": null, "qtdMinima": "consultar", "maisPedido": false, "tecnica": "silk"}
+{
+  "nome": "Taça de Gin Personalizada",
+  "slug": "taca-gin",
+  "categoria": "copos-e-tacas",
+  "descricaoCurta": "Sofisticação para eventos premium, casamentos corporativos e lançamentos.",
+  "imagens": [
+    "/Taça Gin.png"
+  ],
+  "tecnica": "silk",
+  "maisPedido": false,
+  "qtdMinima": "consultar"
+}

@@ -1,1 +1,12 @@
-{"nome": "Squeeze de Alumínio 600ml", "slug": "squeeze-aluminio", "categoria": "garrafas-e-squeezes", "descricaoCurta": "Leve, resistente e ideal para eventos esportivos e ações de volume.", "imagens": ["produtos/squeeze-aluminio.jpg"], "precoAPartir": null, "qtdMinima": "consultar", "maisPedido": false, "tecnica": "ambas"}
+{
+  "nome": "Squeeze Plástico 700ml",
+  "slug": "squeeze-plastico-700",
+  "categoria": "garrafas-e-squeezes",
+  "descricaoCurta": "Leve, resistente e ideal para eventos esportivos e ações de volume.",
+  "imagens": [
+    "/Videira.png"
+  ],
+  "tecnica": "ambas",
+  "maisPedido": false,
+  "qtdMinima": "consultar"
+}
