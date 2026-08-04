@@ -3,11 +3,11 @@
   "slogan": "Brindes personalizados que marcam sua empresa",
   "anosDeMercado": "Mais de 20 anos",
   "endereco": {
-    "rua": "Av. S1, nº 889",
+    "rua": "R. S-1, nº 889",
     "bairro": "Setor Bela Vista",
     "cidade": "Goiânia",
     "uf": "GO",
-    "cep": "PREENCHER"
+    "cep": "74823-420"
   },
   "telefoneFixo": "(62) 3249-0564",
   "atendentes": [
@@ -23,7 +23,7 @@
   "horario": "Segunda a sexta, das 8h às 18h",
   "instagram": "https://www.instagram.com/apicebrindesoficial/",
   "facebook": "https://www.facebook.com/oficialapicebrindes/",
-  "googleBusiness": "PREENCHER_URL_GOOGLE_BUSINESS",
+  "googleBusiness": "https://maps.app.goo.gl/rx9T1MzgDshtQWFo7",
   "geo": {
     "lat": null,
     "lng": null
