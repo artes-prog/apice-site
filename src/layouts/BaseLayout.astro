@@ -95,27 +95,46 @@ const categorias = categoriasRaw.map((c) => ({ nome: c.data.nome, slug: c.data.s
       import { ler, linhasDaMensagem } from '../lib/lista-orcamento';
 
       /*
-        ---- Captura de lead ----
-        O site é estático (sem servidor), então guardar o contato exige um
-        endpoint externo. Enquanto LEAD_ENDPOINT estiver vazio, a função é um
-        no-op silencioso: o formulário segue funcionando normalmente pelo
-        WhatsApp, sem erro nenhum para o visitante.
+        ---- Captura de lead (Web3Forms) ----
+        O site é estático (sem servidor), então o contato é registrado por um
+        serviço de formulário que entrega direto no e-mail da Ápice.
 
-        Para ligar: cole a URL do formulário (ex.: Web3Forms/Formspree) em
-        LEAD_ENDPOINT. A partir daí, todo envio é registrado ANTES de abrir o
-        WhatsApp — inclusive de quem desiste no meio, que hoje se perde.
+        O envio acontece ANTES de abrir o WhatsApp: assim, quem preenche e
+        desiste no meio do caminho não se perde mais.
+
+        A access_key do Web3Forms é pública por design (fica no HTML de
+        qualquer formulário deles) — não é segredo e não dá acesso à conta.
       */
-      const LEAD_ENDPOINT = '';
+      const LEAD_ENDPOINT = 'https://api.web3forms.com/submit';
+      const LEAD_KEY = '4e3bb9f0-0065-4c32-9dcc-06f40f59b6eb';
 
-      function enviarLead(dados: Record<string, unknown>) {
-        if (!LEAD_ENDPOINT) return;
+      function enviarLead(d: Record<string, string | number>) {
+        if (!LEAD_ENDPOINT || !LEAD_KEY) return;
         try {
-          const corpo = JSON.stringify({ ...dados, enviado_em: new Date().toISOString() });
+          const quem = String(d.nome || 'Sem nome');
+          const payload: Record<string, unknown> = {
+            access_key: LEAD_KEY,
+            from_name: 'Site Ápice Brindes',
+            subject: `Novo orçamento pelo site — ${quem}`,
+            // Responder o e-mail vai direto para o cliente, quando ele deixar.
+            ...(d.email ? { replyto: d.email } : {}),
+            Nome: d.nome,
+            Empresa: d.empresa || '—',
+            WhatsApp: d.whatsapp,
+            'E-mail': d.email || '—',
+            Categoria: d.categoria || '—',
+            'Quantidade estimada': d.quantidade || '—',
+            'Data do evento': d.data || '—',
+            Mensagem: d.mensagem || '—',
+            'Produtos separados': d.produtos || '(nenhum)',
+            'Página de origem': d.origem,
+            'Enviado em': new Date().toLocaleString('pt-BR'),
+          };
           // keepalive: a requisição sobrevive à aba navegando para o WhatsApp.
           fetch(LEAD_ENDPOINT, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: corpo,
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify(payload),
             keepalive: true,
           }).catch(() => {});
         } catch (_) {
