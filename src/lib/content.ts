@@ -50,7 +50,7 @@ export async function getFaqsPorSlugs(slugs: string[]): Promise<Faq[]> {
 /** Só depoimentos autorizados (publicar:true). Placeholders nunca vazam. */
 export async function getDepoimentosPublicados(): Promise<Depoimento[]> {
   const deps = await getCollection('depoimentos');
-  return deps.filter((d) => d.data.publicar);
+  return deps.filter((d) => d.data.publicar).sort((a, b) => a.data.ordem - b.data.ordem);
 }
 
 /** Trabalhos de portfólio autorizados (publicar:true), na ordem definida. */

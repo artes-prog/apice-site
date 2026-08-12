@@ -86,7 +86,13 @@ const depoimentos = defineCollection({
     slug: z.string(),
     texto: z.string(),
     autor: z.string(),
-    empresa: z.string(),
+    // Opcional: as avaliações do Google são de pessoas físicas, sem empresa.
+    empresa: z.string().optional().default(''),
+    // De onde veio o depoimento. 'google' exibe o selo de avaliação verificada.
+    fonte: z.enum(['google', 'direto']).default('direto'),
+    estrelas: z.number().min(1).max(5).default(5),
+    // Ordem de exibição (menor primeiro). Empate cai na ordem do arquivo.
+    ordem: z.number().default(0),
     // A seção só renderiza itens com publicar:true. Placeholders ficam ocultos.
     publicar: z.boolean().default(false),
   }),

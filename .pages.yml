@@ -289,18 +289,35 @@ content:
     format: json
     filename: "{fields.slug}.json"
     view:
-      fields: [autor, empresa, publicar]
+      fields: [autor, fonte, ordem, publicar]
       primary: autor
+      sort: [ordem]
     fields:
       - name: autor
-        label: Nome de quem deu o depoimento
-        type: string
-      - name: empresa
-        label: Empresa
+        label: Nome de quem avaliou
         type: string
       - name: texto
         label: Depoimento
         type: text
+        description: "Manter o texto exatamente como a pessoa escreveu — não reescrever."
+      - name: fonte
+        label: Origem
+        type: select
+        options:
+          values: [google, direto]
+        description: "google = mostra as estrelas e o selo 'Avaliação no Google'."
+      - name: estrelas
+        label: Estrelas (1 a 5)
+        type: number
+      - name: empresa
+        label: Empresa (opcional)
+        type: string
+        required: false
+        description: "Deixe vazio para avaliações de pessoa física."
+      - name: ordem
+        label: Ordem de exibição
+        type: number
+        description: "Menor número aparece primeiro. A home mostra as 6 primeiras."
       - name: slug
         label: Identificador (slug)
         type: string

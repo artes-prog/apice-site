@@ -129,11 +129,25 @@ const description =
     <section class="section section--alt">
       <div class="container-site">
         <h2 class="section__title section__title--center">O que dizem nossos clientes</h2>
+        <p class="depo-sub">Avaliações públicas de quem já comprou com a gente.</p>
         <div class="cards-grid cards-grid--3">
-          {depoimentos.map((d) => (
-            <TestimonialCard texto={d.data.texto} autor={d.data.autor} empresa={d.data.empresa} />
+          {depoimentos.slice(0, 6).map((d) => (
+            <TestimonialCard
+              texto={d.data.texto}
+              autor={d.data.autor}
+              empresa={d.data.empresa}
+              fonte={d.data.fonte}
+              estrelas={d.data.estrelas}
+            />
           ))}
         </div>
+        {site.googleBusiness && (
+          <p class="depo-todas">
+            <a href={site.googleBusiness} target="_blank" rel="noopener noreferrer">
+              Ver todas as avaliações no Google →
+            </a>
+          </p>
+        )}
       </div>
     </section>
   )}
@@ -194,6 +208,16 @@ const description =
   .section__sub--center { text-align: center; max-width: 60ch; margin-inline: auto; margin-bottom: 2rem; }
   .section__more { font-weight: 700; color: var(--color-apice-blue); white-space: nowrap; }
   .section__more:hover { text-decoration: underline; }
+
+  .depo-sub {
+    text-align: center;
+    color: var(--color-ink-soft);
+    margin: 0.4rem auto 2rem;
+    max-width: 52ch;
+  }
+  .depo-todas { text-align: center; margin-top: 1.75rem; }
+  .depo-todas a { font-weight: 700; color: var(--color-apice-blue); }
+  .depo-todas a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
   .cards-grid {
     display: grid;
