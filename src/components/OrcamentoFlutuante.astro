@@ -1,0 +1,79 @@
+---
+/*
+  Contador flutuante da lista de orçamento.
+
+  Fica escondido por padrão e só aparece quando há itens — assim não polui a
+  tela de quem está só navegando. Posicionado ACIMA do botão de WhatsApp
+  flutuante (que ocupa o canto inferior direito) para os dois não colidirem.
+*/
+---
+<a href="/orcamento/" class="orc-float" id="orc-float" hidden aria-live="polite">
+  <svg class="orc-float__icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+    <path fill="currentColor" d="M6 2h12a1 1 0 0 1 1 1v18l-7-3.2L5 21V3a1 1 0 0 1 1-1z"/>
+  </svg>
+  <span class="orc-float__txt">Meu orçamento</span>
+  <span class="orc-float__badge" id="orc-float-badge">0</span>
+</a>
+
+<style>
+  .orc-float {
+    position: fixed;
+    right: max(1rem, env(safe-area-inset-right));
+    /* acima do CTA flutuante de WhatsApp */
+    bottom: calc(max(1rem, env(safe-area-inset-bottom)) + 3.6rem);
+    z-index: 60;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.9rem;
+    line-height: 1;
+    color: #fff;
+    background: var(--color-apice-blue);
+    border-radius: 999px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .orc-float:hover { background: var(--color-apice-blue-dark); transform: translateY(-2px); }
+  .orc-float:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+  .orc-float[hidden] { display: none; }
+
+  .orc-float__icon { flex: none; }
+  .orc-float__badge {
+    display: inline-grid;
+    place-items: center;
+    min-width: 1.35rem;
+    height: 1.35rem;
+    padding-inline: 0.3rem;
+    border-radius: 999px;
+    background: var(--color-apice-red);
+    font-size: 0.78rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Em tela estreita vira só o ícone + número, pra não cobrir conteúdo */
+  @media (max-width: 420px) {
+    .orc-float__txt { display: none; }
+  }
+</style>
+
+<script>
+  import { contar, EVENTO } from '../lib/lista-orcamento';
+
+  function atualizarFlutuante() {
+    const el = document.getElementById('orc-float');
+    const badge = document.getElementById('orc-float-badge');
+    if (!el || !badge) return;
+    const n = contar();
+    badge.textContent = String(n);
+    el.hidden = n === 0;
+    el.setAttribute('aria-label', `Meu orçamento: ${n} ${n === 1 ? 'produto' : 'produtos'}`);
+  }
+
+  // Reage a adicionar/remover em qualquer página (evento próprio do módulo)
+  // e a cada navegação do ClientRouter.
+  document.addEventListener(EVENTO, atualizarFlutuante);
+  document.addEventListener('astro:page-load', atualizarFlutuante);
+</script>

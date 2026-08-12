@@ -53,6 +53,16 @@ const description =
       <h2 class="section__title section__title--center">Ou monte o seu pedido</h2>
       <p class="orc-help">Preencha o que puder — só o nome e o WhatsApp são obrigatórios. O resto ajuda a agilizar.</p>
 
+      <!-- Lista de produtos separados no catálogo (preenchida pelo navegador) -->
+      <section class="lista-orc" id="lista-orc" hidden>
+        <div class="lista-orc__topo">
+          <h3 class="lista-orc__titulo">Produtos que você separou (<span id="lista-orc-n">0</span>)</h3>
+          <button type="button" class="lista-orc__limpar" id="lista-orc-limpar">Limpar lista</button>
+        </div>
+        <ul class="lista-orc__itens" id="lista-orc-itens"></ul>
+        <p class="lista-orc__nota">Eles vão junto na sua mensagem, com os códigos.</p>
+      </section>
+
       <form id="orcamento-form" class="orc-form" data-wa1={wa1.whatsapp} data-wa2={wa2.whatsapp} novalidate>
         <div class="orc-form__row">
           <div class="field">
@@ -71,6 +81,13 @@ const description =
             <input id="f-whatsapp" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel" placeholder="(62) 9 9999-9999" required />
           </div>
           <div class="field">
+            <label for="f-email">Seu e-mail</label>
+            <input id="f-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="voce@empresa.com.br" />
+          </div>
+        </div>
+
+        <div class="orc-form__row">
+          <div class="field">
             <label for="f-categoria">Categoria de brinde</label>
             <select id="f-categoria" name="categoria">
               <option value="">Selecione (opcional)</option>
@@ -78,13 +95,13 @@ const description =
               <option value="Outros / não sei ainda">Outros / não sei ainda</option>
             </select>
           </div>
-        </div>
-
-        <div class="orc-form__row">
           <div class="field">
             <label for="f-quantidade">Quantidade estimada</label>
             <input id="f-quantidade" name="quantidade" type="text" inputmode="numeric" placeholder="Ex.: 100" />
           </div>
+        </div>
+
+        <div class="orc-form__row">
           <div class="field">
             <label for="f-data">Data do evento (se houver)</label>
             <input id="f-data" name="data" type="date" />
@@ -120,8 +137,125 @@ const description =
   )}
 </BaseLayout>
 
+<script>
+  import { ler, remover, limpar, EVENTO } from '../lib/lista-orcamento';
+
+  /*
+    Renderiza a lista de produtos separados no catálogo. Montagem via
+    astro:page-load por causa do <ClientRouter /> (script de módulo não
+    re-executa em navegação client-side).
+  */
+  function renderListaOrcamento() {
+    const box = document.getElementById('lista-orc');
+    const ul = document.getElementById('lista-orc-itens');
+    const contador = document.getElementById('lista-orc-n');
+    if (!box || !ul || !contador) return;
+
+    const itens = ler();
+    contador.textContent = String(itens.length);
+    box.hidden = itens.length === 0;
+
+    ul.replaceChildren();
+    for (const item of itens) {
+      const li = document.createElement('li');
+      li.className = 'lista-orc__item';
+
+      const info = document.createElement('div');
+      info.className = 'lista-orc__info';
+      const a = document.createElement('a');
+      a.href = item.url;
+      a.className = 'lista-orc__nome';
+      a.textContent = item.nome; // textContent: nunca injeta HTML
+      const cod = document.createElement('span');
+      cod.className = 'lista-orc__cod';
+      cod.textContent = `Código: ${item.codigo}`;
+      info.append(a, cod);
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'lista-orc__remover';
+      btn.textContent = 'Remover';
+      btn.setAttribute('aria-label', `Remover ${item.nome} da lista`);
+      btn.addEventListener('click', () => remover(item.codigo));
+
+      li.append(info, btn);
+      ul.append(li);
+    }
+  }
+
+  function initListaOrcamento() {
+    const limparBtn = document.getElementById('lista-orc-limpar');
+    if (limparBtn && !limparBtn.dataset.wired) {
+      limparBtn.dataset.wired = '1';
+      limparBtn.addEventListener('click', () => limpar());
+    }
+    renderListaOrcamento();
+  }
+
+  document.addEventListener('astro:page-load', initListaOrcamento);
+  document.addEventListener(EVENTO, renderListaOrcamento); // some/atualiza ao remover
+</script>
+
 <style>
   .crumbs-wrap { padding-block: 1.1rem 0; }
+
+  /* Lista de produtos separados no catálogo */
+  .lista-orc {
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+    border-left: 4px solid var(--color-apice-blue);
+    border-radius: var(--radius-card);
+    padding: 1.25rem 1.35rem;
+    margin-bottom: 1.75rem;
+  }
+  .lista-orc[hidden] { display: none; }
+  .lista-orc__topo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+  }
+  .lista-orc__titulo { font-size: 1rem; color: var(--color-apice-blue); }
+  .lista-orc__limpar {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-ink-soft);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .lista-orc__limpar:hover { color: var(--color-apice-red); }
+  .lista-orc__itens { list-style: none; padding: 0; margin: 0.9rem 0 0; display: grid; gap: 0.55rem; }
+  .lista-orc__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.6rem 0.75rem;
+    background: var(--color-paper-soft);
+    border-radius: 8px;
+  }
+  .lista-orc__info { display: flex; flex-direction: column; min-width: 0; }
+  .lista-orc__nome { font-weight: 600; font-size: 0.93rem; color: var(--color-ink); }
+  .lista-orc__nome:hover { color: var(--color-apice-blue); text-decoration: underline; }
+  .lista-orc__cod { font-size: 0.8rem; color: var(--color-ink-soft); }
+  .lista-orc__remover {
+    flex: none;
+    background: none;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-ink-soft);
+    cursor: pointer;
+  }
+  .lista-orc__remover:hover { border-color: var(--color-apice-red); color: var(--color-apice-red); }
+  .lista-orc__nota { margin-top: 0.85rem; font-size: 0.85rem; color: var(--color-ink-soft); }
   .orc-hero { padding-block: clamp(2rem, 5vw, 3rem); text-align: center; }
   .orc-hero__title { font-size: clamp(2rem, 5.5vw, 3rem); font-weight: 800; }
   .orc-hero__lead { margin: 1rem auto 0; max-width: 56ch; color: var(--color-ink-soft); font-size: 1.1rem; }

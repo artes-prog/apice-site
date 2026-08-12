@@ -11,6 +11,7 @@ import { ClientRouter } from 'astro:transitions';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import CtaWhatsApp from '../components/CtaWhatsApp.astro';
+import OrcamentoFlutuante from '../components/OrcamentoFlutuante.astro';
 import SeoHead from '../components/seo/SeoHead.astro';
 import LocalBusinessJsonLd from '../components/seo/LocalBusinessJsonLd.astro';
 import { getCategorias } from '../lib/content';
@@ -88,8 +89,40 @@ const categorias = categoriasRaw.map((c) => ({ nome: c.data.nome, slug: c.data.s
 
     <!-- CTA flutuante: presente em todas as páginas -->
     <CtaWhatsApp variante="flutuante" mensagem={waMensagem} semente={waSemente} />
+    <OrcamentoFlutuante />
 
     <script>
+      import { ler, linhasDaMensagem } from '../lib/lista-orcamento';
+
+      /*
+        ---- Captura de lead ----
+        O site é estático (sem servidor), então guardar o contato exige um
+        endpoint externo. Enquanto LEAD_ENDPOINT estiver vazio, a função é um
+        no-op silencioso: o formulário segue funcionando normalmente pelo
+        WhatsApp, sem erro nenhum para o visitante.
+
+        Para ligar: cole a URL do formulário (ex.: Web3Forms/Formspree) em
+        LEAD_ENDPOINT. A partir daí, todo envio é registrado ANTES de abrir o
+        WhatsApp — inclusive de quem desiste no meio, que hoje se perde.
+      */
+      const LEAD_ENDPOINT = '';
+
+      function enviarLead(dados: Record<string, unknown>) {
+        if (!LEAD_ENDPOINT) return;
+        try {
+          const corpo = JSON.stringify({ ...dados, enviado_em: new Date().toISOString() });
+          // keepalive: a requisição sobrevive à aba navegando para o WhatsApp.
+          fetch(LEAD_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: corpo,
+            keepalive: true,
+          }).catch(() => {});
+        } catch (_) {
+          /* nunca bloquear o envio pelo WhatsApp por causa da captura */
+        }
+      }
+
       // Ilha única de interatividade: menu mobile + medição de cliques de CTA.
       // Delegação em `document` (persiste entre view transitions do ClientRouter).
       const closeMenu = () => {
@@ -150,16 +183,40 @@ const categorias = categoriasRaw.map((c) => ({ nome: c.data.nome, slug: c.data.s
           add('Nome', 'nome');
           add('Empresa', 'empresa');
           add('WhatsApp', 'whatsapp');
+          add('E-mail', 'email');
           add('Categoria', 'categoria');
           add('Quantidade estimada', 'quantidade');
           add('Data do evento', 'data');
           add('Mensagem', 'mensagem');
+          // Produtos separados no catálogo entram na mesma mensagem, com os códigos.
+          linhas.push(...linhasDaMensagem());
+
+          // Captura do lead ANTES de sair para o WhatsApp: se a pessoa não
+          // concluir o envio lá, o contato não se perde. Só dispara quando um
+          // endpoint estiver configurado (ver LEAD_ENDPOINT).
+          enviarLead({
+            nome: val('nome'),
+            empresa: val('empresa'),
+            whatsapp: val('whatsapp'),
+            email: val('email'),
+            categoria: val('categoria'),
+            quantidade: val('quantidade'),
+            data: val('data'),
+            mensagem: val('mensagem'),
+            produtos: ler().map((i) => `${i.nome} (${i.codigo})`).join(' | '),
+            origem: location.pathname,
+          });
+
           const wa1 = form.dataset.wa1 || '';
           const wa2 = form.dataset.wa2 || '';
           const numero = new Date().getDate() % 2 === 0 ? wa1 : wa2;
           const url = `https://wa.me/${numero}?text=${encodeURIComponent(linhas.join('\n'))}`;
           try {
             (window as any).plausible?.('WhatsApp', { props: { pagina: '/orcamento/', atendente: 'form' } });
+            (window as any).gtag?.('event', 'gerar_lead', {
+              tem_email: Boolean(val('email')),
+              produtos_na_lista: ler().length,
+            });
           } catch (_) {}
           const win = window.open(url, '_blank', 'noopener');
           if (!win) window.location.href = url;

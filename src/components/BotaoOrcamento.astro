@@ -1,0 +1,103 @@
+---
+/*
+  Botão "Adicionar ao orçamento" — junta o produto na lista (localStorage) para
+  o cliente pedir vários de uma vez, em vez de mandar uma mensagem por item.
+
+  Não é e-commerce: sem preço, sem quantidade, sem checkout. Só uma lista que
+  vira uma mensagem de WhatsApp bem formatada.
+*/
+interface Props {
+  codigo: string;
+  nome: string;
+  url: string;
+  class?: string;
+}
+const { codigo, nome, url, class: klass = '' } = Astro.props;
+---
+<button
+  type="button"
+  class={`add-orc ${klass}`}
+  data-add-orcamento
+  data-codigo={codigo}
+  data-nome={nome}
+  data-url={url}
+  aria-pressed="false"
+>
+  <svg class="add-orc__icon add-orc__icon--mais" viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false">
+    <path fill="currentColor" d="M11 5h2v14h-2z"/><path fill="currentColor" d="M5 11h14v2H5z"/>
+  </svg>
+  <svg class="add-orc__icon add-orc__icon--check" viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" focusable="false">
+    <path fill="currentColor" d="M9.6 16.6L4.4 11.4 5.8 10l3.8 3.8L18.2 5.2l1.4 1.4z"/>
+  </svg>
+  <span class="add-orc__txt">Adicionar ao orçamento</span>
+</button>
+
+<style>
+  .add-orc {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.4rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--color-apice-blue);
+    background: var(--color-paper);
+    border: 2px solid var(--color-apice-blue);
+    border-radius: 999px;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  }
+  .add-orc:hover { background: color-mix(in srgb, var(--color-apice-blue) 8%, transparent); }
+  .add-orc:active { transform: scale(0.98); }
+  .add-orc:focus-visible { outline: 3px solid var(--color-apice-blue); outline-offset: 2px; }
+
+  .add-orc__icon { flex: none; }
+  .add-orc__icon--check { display: none; }
+
+  /* Estado "já está na lista" */
+  .add-orc[aria-pressed='true'] {
+    color: #fff;
+    background: var(--color-apice-blue);
+  }
+  .add-orc[aria-pressed='true'] .add-orc__icon--mais { display: none; }
+  .add-orc[aria-pressed='true'] .add-orc__icon--check { display: inline; }
+</style>
+
+<script>
+  import { alternar, temItem } from '../lib/lista-orcamento';
+
+  /*
+    Montagem via astro:page-load: com <ClientRouter /> este módulo não
+    re-executa a cada navegação. Sem isso, o botão fica morto a partir da 2ª
+    página aberta por link (armadilha nº1 deste repo).
+  */
+  function initBotoesOrcamento() {
+    document.querySelectorAll<HTMLButtonElement>('[data-add-orcamento]').forEach((btn) => {
+      const codigo = btn.dataset.codigo || '';
+      // Reflete o estado atual (a pessoa pode ter adicionado numa visita anterior)
+      const dentro = temItem(codigo);
+      btn.setAttribute('aria-pressed', String(dentro));
+      btn.querySelector('.add-orc__txt')!.textContent = dentro ? 'Na sua lista de orçamento' : 'Adicionar ao orçamento';
+
+      if (btn.dataset.wired) return;
+      btn.dataset.wired = '1';
+
+      btn.addEventListener('click', () => {
+        const agoraDentro = alternar({
+          codigo,
+          nome: btn.dataset.nome || '',
+          url: btn.dataset.url || '',
+        });
+        btn.setAttribute('aria-pressed', String(agoraDentro));
+        btn.querySelector('.add-orc__txt')!.textContent = agoraDentro
+          ? 'Na sua lista de orçamento'
+          : 'Adicionar ao orçamento';
+      });
+    });
+  }
+
+  document.addEventListener('astro:page-load', initBotoesOrcamento);
+</script>
