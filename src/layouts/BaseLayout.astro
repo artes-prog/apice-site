@@ -171,6 +171,41 @@ const categorias = categoriasRaw.map((c) => ({ nome: c.data.nome, slug: c.data.s
 
         const wa = target.closest('[data-wa]') as HTMLElement | null;
         if (wa) {
+          /*
+            Anexa os produtos da lista de orçamento à mensagem, em QUALQUER
+            botão de WhatsApp (falar direto com a atendente, CTA final, rodapé,
+            botão flutuante...). Sem isso, quem separa produtos e prefere falar
+            direto chegava na conversa sem os códigos.
+
+            O href é montado no build (site estático) e a lista só existe no
+            navegador — por isso a reescrita acontece aqui, no clique, logo
+            antes de o link ser seguido. Guardamos o href original para que
+            cliques repetidos não empilhem a lista várias vezes.
+          */
+          try {
+            const link = wa as HTMLAnchorElement;
+            if (link.tagName === 'A' && link.href.includes('wa.me')) {
+              if (!link.dataset.hrefOriginal) link.dataset.hrefOriginal = link.href;
+              const base = link.dataset.hrefOriginal;
+              const linhas = linhasDaMensagem();
+              if (linhas.length > 0) {
+                /*
+                  Montagem manual com encodeURIComponent de propósito:
+                  URLSearchParams codifica espaço como "+" (formato de
+                  formulário) e o WhatsApp mostraria os "+" literais no texto.
+                  O wa.me espera %20.
+                */
+                const [semQuery, query = ''] = base.split('?text=');
+                const texto = query ? decodeURIComponent(query) : '';
+                link.href = `${semQuery}?text=${encodeURIComponent(`${texto}\n${linhas.join('\n')}`)}`;
+              } else {
+                link.href = base; // lista vazia: volta ao texto original
+              }
+            }
+          } catch (_) {
+            /* nunca impedir o clique de ir para o WhatsApp */
+          }
+
           const pagina = wa.getAttribute('data-pagina') || location.pathname;
           const atendente = wa.getAttribute('data-atendente') || '';
           const label = `${pagina}-${atendente}`;
