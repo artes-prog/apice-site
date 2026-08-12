@@ -4,7 +4,7 @@
   "categoria": "ecologicos",
   "descricaoCurta": "A sacola que substitui plástico e circula pela cidade com sua marca em silk.",
   "imagens": [
-    "/Unimed-1.png"
+    "Unimed-1.png"
   ],
   "tecnica": "silk",
   "maisPedido": false,

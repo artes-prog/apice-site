@@ -53,6 +53,16 @@ function limparSvg(raw: string): string {
     svg = svg.replace(/<defs>\s*<style[\s\S]*?<\/style>\s*<\/defs>/, '');
   }
 
+  /*
+    Mesmo problema das classes, agora com os IDs: o Corel exporta ids fixos
+    ("Camada_x0020_1", "CorelCorpID_0Corel-Layer", "_1426100512144"). Como a
+    logo aparece 3x na mesma página (cabeçalho, rodapé e CTA final), esses ids
+    se repetem — HTML inválido, e leitores de tela/CSS podem casar o elemento
+    errado. Nada no SVG referencia esses ids (sem url(#…), clip-path, mask ou
+    use href), então removê-los é seguro e não muda o desenho.
+  */
+  svg = svg.replace(/\s+id="[^"]*"/g, '');
+
   return svg;
 }
 const logoColorida = limparSvg(logoColoridaRaw);

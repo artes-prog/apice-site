@@ -230,6 +230,20 @@ const categorias = categoriasRaw.map((c) => ({ nome: c.data.nome, slug: c.data.s
         form.dataset.wired = '1';
         form.addEventListener('submit', (e) => {
           e.preventDefault();
+
+          /*
+            O <form> tem `novalidate` (para não exibir o balão nativo antes da
+            hora), mas os campos continuam marcados como required. Sem checar
+            nada aqui, dava para enviar o formulário VAZIO: abria o WhatsApp
+            sem nome/telefone e ainda gerava um lead em branco no e-mail.
+            checkValidity() respeita os required mesmo com novalidate;
+            reportValidity() mostra a mensagem nativa e foca o campo errado.
+          */
+          if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+          }
+
           const val = (n: string) =>
             ((form.elements.namedItem(n) as HTMLInputElement | null)?.value || '').trim();
           const linhas = ['Olá! Vim pelo site da Ápice e quero um orçamento de brindes personalizados.', ''];

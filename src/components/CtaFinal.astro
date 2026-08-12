@@ -29,7 +29,7 @@ const {
   texto = 'Fale agora com a nossa equipe. Orçamento sem compromisso, resposta rápida em horário comercial.',
   mensagem = mensagens.generico,
   semente,
-} = Astro.props;
+}: Props = Astro.props;
 
 const alvo = atendentePorSemente(semente ?? Astro.url.pathname);
 const href = linkWhatsApp(alvo.whatsapp, mensagem);

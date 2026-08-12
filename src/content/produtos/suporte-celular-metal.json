@@ -4,7 +4,7 @@
   "categoria": "tecnologia",
   "descricaoCurta": "Fica na mesa do cliente o dia inteiro, com sua marca gravada a laser.",
   "imagens": [
-    "/Pneus Express.png"
+    "Pneus Express.png"
   ],
   "tecnica": "laser",
   "maisPedido": false,

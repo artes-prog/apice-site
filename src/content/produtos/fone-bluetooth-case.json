@@ -4,7 +4,7 @@
   "categoria": "tecnologia",
   "descricaoCurta": "Case com Silk Screen: sua marca aberta várias vezes por dia.",
   "imagens": [
-    "/Ventura.png"
+    "Ventura.png"
   ],
   "tecnica": "silk",
   "maisPedido": false,
