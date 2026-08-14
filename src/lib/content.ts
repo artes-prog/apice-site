@@ -12,6 +12,7 @@ export type Faq = CollectionEntry<'faq'>;
 export type Depoimento = CollectionEntry<'depoimentos'>;
 export type ItemPortfolio = CollectionEntry<'portfolio'>;
 export type CategoriaXbz = CollectionEntry<'catalogoXbz'>;
+export type Post = CollectionEntry<'blog'>;
 
 /** Categorias na ordem definida pelo campo `ordem`. */
 export async function getCategorias(): Promise<Categoria[]> {
@@ -54,6 +55,31 @@ export async function getDepoimentosPublicados(): Promise<Depoimento[]> {
 }
 
 /** Trabalhos de portfólio autorizados (publicar:true), na ordem definida. */
+/** Posts publicados, do mais recente para o mais antigo. Rascunho nunca aparece. */
+export async function getPostsPublicados(): Promise<Post[]> {
+  const posts = await getCollection('blog');
+  return posts
+    .filter((p) => p.data.publicar)
+    .sort((a, b) => b.data.publicadoEm.getTime() - a.data.publicadoEm.getTime());
+}
+
+/**
+ * Data no formato que o leitor entende (ex.: "14 de agosto de 2026").
+ *
+ * timeZone UTC de propósito: no frontmatter a data vem sem hora ("2026-08-14"),
+ * e o Astro a interpreta como meia-noite UTC. Formatando no fuso do Brasil
+ * (-3h), isso voltaria para as 21h do dia anterior e o post apareceria com a
+ * data errada — um dia a menos do que foi escrito no arquivo.
+ */
+export function dataPorExtenso(d: Date): string {
+  return d.toLocaleDateString('pt-BR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  });
+}
+
 export async function getPortfolioPublicado(): Promise<ItemPortfolio[]> {
   const itens = await getCollection('portfolio');
   return itens.filter((i) => i.data.publicar).sort((a, b) => a.data.ordem - b.data.ordem);

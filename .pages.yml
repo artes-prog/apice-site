@@ -330,6 +330,81 @@ content:
         description: "Só aparece no site quando estiver ligado."
 
   # -------------------------------------------------------------------------
+  #  BLOG — guias para empresas
+  # -------------------------------------------------------------------------
+  - name: blog
+    label: Blog
+    type: collection
+    path: src/content/blog
+    format: yaml-frontmatter
+    filename: "{fields.slug}.md"
+    view:
+      fields: [titulo, publicadoEm, publicar]
+      primary: titulo
+      sort: [publicadoEm]
+    fields:
+      - name: titulo
+        label: Título do post
+        type: string
+      - name: slug
+        label: Identificador (slug)
+        type: string
+        pattern:
+          regex: "^[a-z0-9-]+$"
+          message: "Só letras minúsculas, números e hífen — sem espaços nem acentos."
+        description: "Vai na URL. Ex.: kit-boas-vindas-novos-colaboradores"
+      - name: resumo
+        label: Resumo
+        type: text
+        description: "Aparece na listagem do blog e no Google. 1 a 2 frases."
+      - name: imagemCapa
+        label: Imagem de capa
+        type: image
+        options:
+          media: fotos
+          path: portfolio
+      - name: body
+        label: Conteúdo do post
+        type: rich-text
+      - name: publicadoEm
+        label: Data de publicação
+        type: date
+      - name: atualizadoEm
+        label: Data da última atualização
+        type: date
+        required: false
+      - name: publicar
+        label: Publicar no site?
+        type: boolean
+        description: "Enquanto estiver desligado, o post fica só como rascunho."
+      - name: categoriasRelacionadas
+        label: Categorias citadas no post
+        type: reference
+        required: false
+        options:
+          collection: categorias
+          multiple: true
+          value: "{fields.slug}"
+          label: "{fields.nome}"
+          search: nome
+      - name: faqSlugs
+        label: Perguntas do FAQ para exibir no fim
+        type: reference
+        required: false
+        options:
+          collection: faq
+          multiple: true
+          value: "{fields.slug}"
+          label: "{fields.pergunta}"
+          search: pergunta
+      - name: tituloSeo
+        label: Título no Google (SEO)
+        type: string
+      - name: descricaoSeo
+        label: Descrição no Google (SEO)
+        type: text
+
+  # -------------------------------------------------------------------------
   #  TÉCNICAS (páginas de Gravação a laser e Silk screen) — texto longo
   # -------------------------------------------------------------------------
   - name: tecnicas

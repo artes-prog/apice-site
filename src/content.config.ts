@@ -98,6 +98,30 @@ const depoimentos = defineCollection({
   }),
 });
 
+/*
+  Blog — conteúdo para atrair empresas (RH, marketing, compras) que ainda estão
+  pesquisando, antes de procurarem "brindes personalizados Goiânia".
+  Markdown: o corpo do texto é editável no painel CMS como texto rico.
+  Só entra no ar com publicar:true — rascunho nunca vaza.
+*/
+const blog = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/blog' }),
+  schema: z.object({
+    titulo: z.string(),
+    slug: z.string(),
+    resumo: z.string(),
+    publicadoEm: z.date(),
+    atualizadoEm: z.date().optional(),
+    imagemCapa: z.string(),
+    tituloSeo: z.string(),
+    descricaoSeo: z.string(),
+    // Categorias do site ligadas ao post (links internos = SEO + conversão).
+    categoriasRelacionadas: z.array(z.string()).optional().default([]),
+    faqSlugs: z.array(z.string()).optional().default([]),
+    publicar: z.boolean().default(false),
+  }),
+});
+
 const portfolio = defineCollection({
   loader: glob({ pattern: '**/*.json', base: './src/content/portfolio' }),
   schema: z.object({
@@ -139,4 +163,4 @@ const catalogoXbz = defineCollection({
   }),
 });
 
-export const collections = { categorias, produtos, tecnicas, faq, depoimentos, portfolio, catalogoXbz };
+export const collections = { categorias, produtos, tecnicas, faq, depoimentos, portfolio, catalogoXbz, blog };

@@ -1,0 +1,95 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import Foto from '../../components/Foto.astro';
+import CtaFinal from '../../components/CtaFinal.astro';
+import { getPostsPublicados, dataPorExtenso } from '../../lib/content';
+import { mensagens } from '../../lib/whatsapp';
+
+const posts = await getPostsPublicados();
+
+const title = 'Blog — Guias de Brindes Corporativos | Ápice Brindes';
+const description =
+  'Conteúdo para quem compra brindes na empresa: como escolher, quanto pedir, prazos e o que funciona de verdade. Escrito por quem produz há mais de 20 anos em Goiânia.';
+---
+<BaseLayout title={title} description={description} waMensagem={mensagens.generico} waSemente="blog">
+  <div class="container-site crumbs-wrap">
+    <Breadcrumbs items={[{ name: 'Início', href: '/' }, { name: 'Blog' }]} />
+  </div>
+
+  <section class="blog-hero">
+    <div class="container-site">
+      <h1 class="blog-hero__title">Guias de brindes para empresas</h1>
+      <p class="blog-hero__lead">
+        O que a gente aprendeu em mais de 20 anos de produção própria, para você comprar melhor:
+        como escolher a peça e a técnica, quanto pedir, quanto tempo leva e o que realmente funciona.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container-site">
+      {posts.length === 0 ? (
+        <p class="blog-vazio">Estamos preparando os primeiros conteúdos. Volte em breve.</p>
+      ) : (
+        <div class="blog-grid">
+          {posts.map((p, i) => (
+            <article class="post-card">
+              <a href={`/blog/${p.data.slug}/`} class="post-card__link" aria-label={p.data.titulo}>
+                <div class="post-card__media">
+                  <Foto src={p.data.imagemCapa} alt={p.data.titulo} ratio="16/9" priority={i === 0} />
+                </div>
+                <div class="post-card__body">
+                  <time class="post-card__data" datetime={p.data.publicadoEm.toISOString()}>
+                    {dataPorExtenso(p.data.publicadoEm)}
+                  </time>
+                  <h2 class="post-card__titulo">{p.data.titulo}</h2>
+                  <p class="post-card__resumo">{p.data.resumo}</p>
+                  <span class="post-card__ler">Ler o guia <span aria-hidden="true">→</span></span>
+                </div>
+              </a>
+            </article>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+
+  <CtaFinal semente="blog" mensagem={mensagens.generico} />
+</BaseLayout>
+
+<style>
+  .crumbs-wrap { padding-block: 1.1rem 0; }
+  .blog-hero { padding-block: clamp(1.5rem, 4vw, 2.5rem); }
+  .blog-hero__title { font-size: clamp(1.8rem, 5vw, 2.7rem); font-weight: 800; text-wrap: balance; }
+  .blog-hero__lead { margin-top: 0.9rem; color: var(--color-ink-soft); max-width: 62ch; font-size: 1.05rem; }
+
+  .section { padding-block: clamp(1.5rem, 4vw, 3rem); }
+  .blog-vazio { color: var(--color-ink-soft); }
+
+  .blog-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  @media (min-width: 700px) { .blog-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1050px) { .blog-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .post-card {
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    height: 100%;
+  }
+  .post-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-card-hover); }
+  .post-card__link { display: flex; flex-direction: column; height: 100%; }
+  .post-card__media :global(.foto) { border-radius: 0; }
+  .post-card__body { display: flex; flex-direction: column; gap: 0.55rem; padding: 1.1rem 1.2rem 1.3rem; flex: 1; }
+  .post-card__data { font-size: 0.78rem; font-weight: 600; color: var(--color-ink-soft); text-transform: uppercase; letter-spacing: 0.04em; }
+  .post-card__titulo { font-size: 1.12rem; line-height: 1.35; color: var(--color-apice-blue); text-wrap: balance; }
+  .post-card__resumo { font-size: 0.93rem; color: var(--color-ink-soft); line-height: 1.55; }
+  .post-card__ler { margin-top: auto; padding-top: 0.4rem; font-weight: 700; font-size: 0.9rem; color: var(--color-apice-blue); }
+</style>
