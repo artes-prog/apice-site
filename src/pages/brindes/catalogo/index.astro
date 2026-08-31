@@ -161,8 +161,16 @@ const description =
 
         const meta = document.createElement('span');
         meta.className = 'busca-item__meta';
-        meta.textContent = `${item.g} · Código ${item.c}`;
 
+        const cat = document.createElement('span');
+        cat.className = 'busca-item__cat';
+        cat.textContent = item.g;
+
+        const cod = document.createElement('span');
+        cod.className = 'busca-item__cod';
+        cod.textContent = `Código ${item.c}`;
+
+        meta.append(cat, cod);
         a.append(nome, meta);
         lista.append(a);
       }
@@ -258,37 +266,6 @@ const description =
   .busca-status { margin-top: 0.6rem; font-size: 0.88rem; color: var(--color-ink-soft); }
 
   .busca-resultados[hidden] { display: none; }
-  .busca-lista {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.7rem;
-  }
-  @media (min-width: 620px) { .busca-lista { grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 960px) { .busca-lista { grid-template-columns: repeat(3, 1fr); } }
-
-  .busca-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    padding: 0.85rem 1rem;
-    background: var(--color-paper);
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-card);
-    box-shadow: var(--shadow-card);
-    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-  }
-  .busca-item:hover {
-    transform: translateY(-2px);
-    border-color: var(--color-apice-blue);
-    box-shadow: var(--shadow-card-hover);
-  }
-  .busca-item__nome { font-weight: 700; color: var(--color-apice-blue); line-height: 1.3; }
-  .busca-item__meta { font-size: 0.82rem; color: var(--color-ink-soft); }
-  .busca-vazio {
-    padding: 2rem 1rem;
-    text-align: center;
-    color: var(--color-ink-soft);
-  }
 
   .cat-grid {
     display: grid;
@@ -312,4 +289,85 @@ const description =
   .cat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-card-hover); }
   .cat-card__nome { font-size: 1rem; font-weight: 700; color: var(--color-apice-blue); }
   .cat-card__count { font-size: 0.82rem; color: var(--color-ink-soft); }
+</style>
+
+<style is:global>
+  /*
+    Estilos dos RESULTADOS da busca.
+
+    Precisam ser globais porque os resultados são criados por JavaScript: o CSS
+    normal do Astro é escopado por página e só alcança o que já existe no HTML,
+    então regras escopadas não pegavam nesses elementos (era o motivo de a lista
+    sair sem formatação, como texto corrido).
+
+    Tudo abaixo está preso a #busca-resultados — não vaza para o resto do site.
+  */
+  #busca-resultados .busca-lista {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  @media (min-width: 640px) {
+    #busca-resultados .busca-lista { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 1000px) {
+    #busca-resultados .busca-lista { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  #busca-resultados .busca-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 0.9rem 1.05rem;
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+    border-left: 3px solid var(--color-apice-blue);
+    border-radius: var(--radius-card);
+    text-decoration: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+  #busca-resultados .busca-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card-hover);
+    border-color: var(--color-apice-blue);
+  }
+  #busca-resultados .busca-item:focus-visible {
+    outline: 2px solid var(--color-apice-blue);
+    outline-offset: 2px;
+  }
+
+  #busca-resultados .busca-item__nome {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.97rem;
+    line-height: 1.35;
+    color: var(--color-apice-blue);
+  }
+  #busca-resultados .busca-item__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.3rem 0.55rem;
+    font-size: 0.8rem;
+    color: var(--color-ink-soft);
+  }
+  #busca-resultados .busca-item__cat {
+    padding: 0.12rem 0.5rem;
+    border-radius: 999px;
+    background: var(--color-paper-soft);
+    border: 1px solid var(--color-line);
+  }
+  #busca-resultados .busca-item__cod { font-variant-numeric: tabular-nums; }
+
+  #busca-resultados .busca-vazio {
+    padding: 2.5rem 1rem;
+    text-align: center;
+    color: var(--color-ink-soft);
+    background: var(--color-paper-soft);
+    border: 1px dashed var(--color-line);
+    border-radius: var(--radius-card);
+  }
 </style>
