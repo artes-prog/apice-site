@@ -79,28 +79,24 @@ const description =
 
     Montagem via astro:page-load por causa do <ClientRouter />.
   */
-  type Item = { n: string; c: string; u: string; g: string; k?: string };
+  import { criarIndice, buscar, type ItemBusca, type Indice } from '../../../lib/busca-catalogo';
 
   const LIMITE = 60; // resultados exibidos; o resto fica no contador
 
-  const semAcento = (s: string) =>
-    s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  let indice: Indice | null = null;
+  let carregando: Promise<Indice> | null = null;
 
-  let cache: Item[] | null = null;
-  let carregando: Promise<Item[]> | null = null;
-
-  function carregarIndice(): Promise<Item[]> {
-    if (cache) return Promise.resolve(cache);
+  /*
+    O índice é montado UMA vez (vocabulário + índice invertido) e reaproveitado
+    em todas as buscas seguintes — digitar não refaz esse trabalho.
+  */
+  function carregarIndice(): Promise<Indice> {
+    if (indice) return Promise.resolve(indice);
     if (!carregando) {
       carregando = fetch('/catalogo-busca.json')
         .then((r) => (r.ok ? r.json() : []))
-        .then((dados: Item[]) => {
-          // pré-normaliza uma vez só: com milhares de itens, normalizar a cada
-          // tecla seria lento
-          cache = dados.map((i) => ({ ...i, _b: semAcento(`${i.n} ${i.c} ${i.g} ${i.k ?? ''}`) } as Item));
-          return cache;
-        })
-        .catch(() => (cache = []));
+        .then((dados: ItemBusca[]) => (indice = criarIndice(dados)))
+        .catch(() => (indice = criarIndice([])));
     }
     return carregando;
   }
@@ -115,9 +111,9 @@ const description =
     if (input.dataset.wired) return;
     input.dataset.wired = '1';
 
-    const desenhar = (termo: string, itens: Item[]) => {
-      const alvo = semAcento(termo);
-      const achados = alvo ? itens.filter((i) => (i as any)._b.includes(alvo)) : [];
+    const desenhar = (termo: string, idx: Indice | null) => {
+      const alvo = termo.trim();
+      const achados = alvo && idx ? buscar(idx, alvo, LIMITE) : [];
 
       caixa.replaceChildren();
 
@@ -143,14 +139,15 @@ const description =
         return;
       }
 
+      // buscar() já devolve no máximo LIMITE; quando vem cheio, avisamos que há mais
       status.textContent =
-        achados.length > LIMITE
-          ? `${achados.length} produtos encontrados. Mostrando os ${LIMITE} primeiros.`
+        achados.length >= LIMITE
+          ? `Mostrando os ${LIMITE} produtos mais relevantes. Refine a busca para ver menos.`
           : `${achados.length} ${achados.length === 1 ? 'produto encontrado' : 'produtos encontrados'}.`;
 
       const lista = document.createElement('div');
       lista.className = 'busca-lista';
-      for (const item of achados.slice(0, LIMITE)) {
+      for (const { item } of achados) {
         const a = document.createElement('a');
         a.href = item.u;
         a.className = 'busca-item';
@@ -178,13 +175,21 @@ const description =
     };
 
     let timer: number | undefined;
+    let ultimaBusca = 0;
     const aoDigitar = () => {
       const termo = input.value.trim();
       window.clearTimeout(timer);
-      // pequeno atraso: evita refiltrar a cada tecla em catálogos grandes
+      if (!termo) {
+        desenhar('', null); // limpar é imediato, não precisa esperar
+        return;
+      }
+      // debounce: só busca quando a pessoa faz uma pausa na digitação
       timer = window.setTimeout(async () => {
-        desenhar(termo, termo ? await carregarIndice() : []);
-      }, 120);
+        const marca = ++ultimaBusca;
+        const idx = await carregarIndice();
+        if (marca !== ultimaBusca) return; // chegou uma digitação mais nova
+        desenhar(input.value.trim(), idx);
+      }, 300);
     };
 
     input.addEventListener('input', aoDigitar);
@@ -192,7 +197,7 @@ const description =
     limpar.addEventListener('click', () => {
       input.value = '';
       input.focus();
-      desenhar('', []);
+      desenhar('', null);
     });
   }
 
