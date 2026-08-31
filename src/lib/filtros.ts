@@ -260,6 +260,7 @@ export const HEX_CORES: Record<string, string> = {
   preto: '#1a1a1a', branco: '#f7f7f7', cinza: '#8a8f98', prata: '#c7ccd1', dourado: '#c9a44a',
   azul: '#2563eb', verde: '#16a34a', vermelho: '#dc2626', amarelo: '#eab308', laranja: '#f97316',
   rosa: '#ec4899', roxo: '#7c3aed', marrom: '#7b4a2b', bege: '#d8c3a5', vinho: '#7b1e3a',
+  prateado: '#c7ccd1', // catálogo próprio usa "prateado"; o XBZ usa "prata"
   turquesa: '#14b8a6', lilás: '#c084fc', natural: '#e0cfa8', transparente: '#e8edf2', multicolor: '#9ca3af',
 };
 

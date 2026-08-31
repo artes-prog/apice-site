@@ -202,6 +202,126 @@ content:
       - { name: qtdMinima, label: Quantidade mínima, type: string, hidden: true, required: false }
 
   # -------------------------------------------------------------------------
+  #  CATÁLOGO PRÓPRIO — categorias (ex.: Botons e Pins)
+  # -------------------------------------------------------------------------
+  - name: catalogo_categorias
+    label: Catálogo — categorias
+    type: collection
+    path: src/content/catalogo-proprio-categorias
+    format: json
+    filename: "{fields.slug}.json"
+    view:
+      fields: [nome, ordem, publicar]
+      primary: nome
+      sort: [ordem]
+    fields:
+      - name: nome
+        label: Nome da categoria
+        type: string
+      - name: slug
+        label: Identificador (slug)
+        type: string
+        pattern:
+          regex: "^[a-z0-9-]+$"
+          message: "Só letras minúsculas, números e hífen — sem espaços nem acentos."
+        description: "Vai na URL: /brindes/catalogo/<slug>/. Evite mudar depois de publicado."
+      - name: descricao
+        label: Descrição
+        type: text
+        required: false
+      - name: subcategorias
+        label: Subcategorias
+        type: string
+        list: true
+        description: "Define a ORDEM dos filtros. Ex.: Redondo, Oval, Quadrado e Retangular."
+      - name: ordem
+        label: Ordem
+        type: number
+      - name: publicar
+        label: Publicar no site?
+        type: boolean
+
+  # -------------------------------------------------------------------------
+  #  CATÁLOGO PRÓPRIO — produtos (um arquivo por produto)
+  # -------------------------------------------------------------------------
+  - name: catalogo_produtos
+    label: Catálogo — produtos
+    type: collection
+    path: src/content/catalogo-proprio-produtos
+    format: json
+    filename: "{fields.nome}.json"
+    view:
+      fields: [nome, codigo, categoria, subcategoria, publicar]
+      primary: nome
+      sort: [ordem, nome]
+    fields:
+      - name: nome
+        label: Nome do produto
+        type: string
+      - name: codigo
+        label: Código
+        type: string
+        description: "Aparece no card e na URL. Ex.: B10"
+      - name: categoria
+        label: Categoria
+        type: reference
+        options:
+          collection: catalogo_categorias
+          value: "{fields.slug}"
+          label: "{fields.nome}"
+          search: nome
+      - name: subcategoria
+        label: Subcategoria
+        type: string
+        required: false
+        description: "Vira filtro na página da categoria. Ex.: Redondo, Oval."
+      - name: descricao
+        label: Descrição
+        type: text
+        required: false
+      - name: fotos
+        label: Fotos do produto
+        type: image
+        list: true
+        required: false
+        options:
+          media: fotos
+          path: catalogo
+        description: "Sem foto, o site mostra o placeholder padrão. A 1ª foto é a principal."
+      - name: especificacoes
+        label: Especificações (medidas etc.)
+        type: object
+        list: true
+        required: false
+        fields:
+          - { name: label, label: "Campo (ex.: Tamanho)", type: string }
+          - { name: valor, label: "Valor (ex.: 4,2 × 2,1 cm)", type: string }
+      - name: cores
+        label: Cores
+        type: string
+        list: true
+        required: false
+        description: "Viram filtro de cor. Ex.: Dourado, Prateado."
+      - name: variacoes
+        label: Variações (tamanhos do mesmo produto)
+        type: string
+        list: true
+        required: false
+        description: "Ex.: 2,5 cm, 3,5 cm. Não cria produtos separados."
+      - name: palavrasChave
+        label: Palavras-chave da busca
+        type: string
+        list: true
+        required: false
+        description: "Sinônimos para encontrar o produto. Ex.: boton, botton, pin, pino, alfinete."
+      - name: ordem
+        label: Ordem
+        type: number
+      - name: publicar
+        label: Publicar no site?
+        type: boolean
+
+  # -------------------------------------------------------------------------
   #  PERGUNTAS FREQUENTES (FAQ)
   # -------------------------------------------------------------------------
   - name: faq

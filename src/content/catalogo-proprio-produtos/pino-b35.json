@@ -1,0 +1,30 @@
+{
+  "codigo": "B35",
+  "nome": "Pino B35",
+  "categoria": "botons-e-pins",
+  "subcategoria": "Quadrado e Retangular",
+  "descricao": "",
+  "fotos": [],
+  "especificacoes": [
+    {
+      "label": "Tamanho",
+      "valor": "2,7 × 1,5 cm"
+    }
+  ],
+  "cores": [
+    "Dourado",
+    "Prateado"
+  ],
+  "variacoes": [],
+  "palavrasChave": [
+    "boton",
+    "botons",
+    "botton",
+    "bottons",
+    "pin",
+    "pins",
+    "broche"
+  ],
+  "ordem": 8,
+  "publicar": true
+}

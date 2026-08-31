@@ -1,0 +1,30 @@
+{
+  "codigo": "B28",
+  "nome": "Alfinete B28",
+  "categoria": "botons-e-pins",
+  "subcategoria": "Quadrado e Retangular",
+  "descricao": "",
+  "fotos": [],
+  "especificacoes": [
+    {
+      "label": "Tamanho",
+      "valor": "3,5 × 1,5 cm"
+    }
+  ],
+  "cores": [
+    "Dourado",
+    "Prateado"
+  ],
+  "variacoes": [],
+  "palavrasChave": [
+    "boton",
+    "botons",
+    "botton",
+    "bottons",
+    "pin",
+    "pins",
+    "broche"
+  ],
+  "ordem": 3,
+  "publicar": true
+}

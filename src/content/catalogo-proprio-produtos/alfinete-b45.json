@@ -1,0 +1,30 @@
+{
+  "codigo": "B45",
+  "nome": "Alfinete B45",
+  "categoria": "botons-e-pins",
+  "subcategoria": "Quadrado e Retangular",
+  "descricao": "",
+  "fotos": [],
+  "especificacoes": [
+    {
+      "label": "Tamanho",
+      "valor": "4,0 × 1,5 cm"
+    }
+  ],
+  "cores": [
+    "Dourado",
+    "Prateado"
+  ],
+  "variacoes": [],
+  "palavrasChave": [
+    "boton",
+    "botons",
+    "botton",
+    "bottons",
+    "pin",
+    "pins",
+    "broche"
+  ],
+  "ordem": 6,
+  "publicar": true
+}

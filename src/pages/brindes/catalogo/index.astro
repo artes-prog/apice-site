@@ -2,11 +2,11 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import CtaFinal from '../../../components/CtaFinal.astro';
-import { getCatalogoXbz } from '../../../lib/content';
+import { getCatalogoUnificado } from '../../../lib/content';
 import { mensagens } from '../../../lib/whatsapp';
 
-const categorias = await getCatalogoXbz();
-const totalProdutos = categorias.reduce((soma, c) => soma + c.data.produtos.length, 0);
+const categorias = await getCatalogoUnificado();
+const totalProdutos = categorias.reduce((soma, c) => soma + c.produtos.length, 0);
 
 const title = 'Catálogo Completo de Brindes | Ápice Brindes';
 const description =
@@ -29,11 +29,34 @@ const description =
 
   <section class="section">
     <div class="container-site">
-      <div class="cat-grid">
+      <!-- BUSCA GLOBAL: procura em todos os produtos do catálogo, de todas as categorias -->
+      <div class="busca-wrap">
+        <label class="busca-label" for="busca-catalogo">Buscar produto no catálogo</label>
+        <div class="busca-campo">
+          <svg class="busca-icone" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+            <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4-4"/>
+          </svg>
+          <input
+            type="search"
+            id="busca-catalogo"
+            class="busca-input"
+            placeholder="Busque por nome ou código — ex.: caneca, garrafa, botton, B10"
+            autocomplete="off"
+            aria-describedby="busca-status"
+          />
+          <button type="button" class="busca-limpar" id="busca-limpar" hidden aria-label="Limpar busca">✕</button>
+        </div>
+        <p class="busca-status" id="busca-status" role="status" aria-live="polite"></p>
+      </div>
+
+      <!-- Resultados da busca (só aparecem quando há termo digitado) -->
+      <div class="busca-resultados" id="busca-resultados" hidden></div>
+
+      <div class="cat-grid" id="cat-grid">
         {categorias.map((c) => (
-          <a href={`/brindes/catalogo/${c.data.slug}/`} class="cat-card">
-            <h2 class="cat-card__nome">{c.data.nome}</h2>
-            <span class="cat-card__count">{c.data.produtos.length} produtos</span>
+          <a href={`/brindes/catalogo/${c.slug}/`} class="cat-card">
+            <h2 class="cat-card__nome">{c.nome}</h2>
+            <span class="cat-card__count">{c.produtos.length} produtos</span>
           </a>
         ))}
       </div>
@@ -43,6 +66,131 @@ const description =
   <CtaFinal semente="catalogo-xbz" mensagem={mensagens.generico} titulo="Não achou a categoria que procurava?" />
 </BaseLayout>
 
+<script>
+  /*
+    Busca global do catálogo.
+
+    - Lê /catalogo-busca.json, gerado no build a partir da fonte REAL de dados
+      (catálogo próprio + XBZ). Produto criado depois no CMS entra sozinho.
+    - O arquivo só é baixado quando a pessoa usa a busca (foco ou digitação),
+      então a página continua leve para quem só navega por categoria.
+    - Sem acento e sem diferenciar maiúsculas; casa com nome, código,
+      categoria e palavras-chave (boton/botton/pin/pino/alfinete...).
+
+    Montagem via astro:page-load por causa do <ClientRouter />.
+  */
+  type Item = { n: string; c: string; u: string; g: string; k?: string };
+
+  const LIMITE = 60; // resultados exibidos; o resto fica no contador
+
+  const semAcento = (s: string) =>
+    s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+
+  let cache: Item[] | null = null;
+  let carregando: Promise<Item[]> | null = null;
+
+  function carregarIndice(): Promise<Item[]> {
+    if (cache) return Promise.resolve(cache);
+    if (!carregando) {
+      carregando = fetch('/catalogo-busca.json')
+        .then((r) => (r.ok ? r.json() : []))
+        .then((dados: Item[]) => {
+          // pré-normaliza uma vez só: com milhares de itens, normalizar a cada
+          // tecla seria lento
+          cache = dados.map((i) => ({ ...i, _b: semAcento(`${i.n} ${i.c} ${i.g} ${i.k ?? ''}`) } as Item));
+          return cache;
+        })
+        .catch(() => (cache = []));
+    }
+    return carregando;
+  }
+
+  function initBuscaCatalogo() {
+    const input = document.getElementById('busca-catalogo') as HTMLInputElement | null;
+    const caixa = document.getElementById('busca-resultados');
+    const grade = document.getElementById('cat-grid');
+    const status = document.getElementById('busca-status');
+    const limpar = document.getElementById('busca-limpar');
+    if (!input || !caixa || !grade || !status || !limpar) return;
+    if (input.dataset.wired) return;
+    input.dataset.wired = '1';
+
+    const desenhar = (termo: string, itens: Item[]) => {
+      const alvo = semAcento(termo);
+      const achados = alvo ? itens.filter((i) => (i as any)._b.includes(alvo)) : [];
+
+      caixa.replaceChildren();
+
+      if (!alvo) {
+        // campo vazio: volta a mostrar todas as categorias
+        caixa.hidden = true;
+        grade.hidden = false;
+        status.textContent = '';
+        limpar.hidden = true;
+        return;
+      }
+
+      limpar.hidden = false;
+      grade.hidden = true;
+      caixa.hidden = false;
+
+      if (achados.length === 0) {
+        const vazio = document.createElement('p');
+        vazio.className = 'busca-vazio';
+        vazio.textContent = 'Nenhum produto encontrado.';
+        caixa.append(vazio);
+        status.textContent = 'Nenhum produto encontrado.';
+        return;
+      }
+
+      status.textContent =
+        achados.length > LIMITE
+          ? `${achados.length} produtos encontrados. Mostrando os ${LIMITE} primeiros.`
+          : `${achados.length} ${achados.length === 1 ? 'produto encontrado' : 'produtos encontrados'}.`;
+
+      const lista = document.createElement('div');
+      lista.className = 'busca-lista';
+      for (const item of achados.slice(0, LIMITE)) {
+        const a = document.createElement('a');
+        a.href = item.u;
+        a.className = 'busca-item';
+
+        const nome = document.createElement('span');
+        nome.className = 'busca-item__nome';
+        nome.textContent = item.n; // textContent: nunca injeta HTML
+
+        const meta = document.createElement('span');
+        meta.className = 'busca-item__meta';
+        meta.textContent = `${item.g} · Código ${item.c}`;
+
+        a.append(nome, meta);
+        lista.append(a);
+      }
+      caixa.append(lista);
+    };
+
+    let timer: number | undefined;
+    const aoDigitar = () => {
+      const termo = input.value.trim();
+      window.clearTimeout(timer);
+      // pequeno atraso: evita refiltrar a cada tecla em catálogos grandes
+      timer = window.setTimeout(async () => {
+        desenhar(termo, termo ? await carregarIndice() : []);
+      }, 120);
+    };
+
+    input.addEventListener('input', aoDigitar);
+    input.addEventListener('focus', () => void carregarIndice(), { once: true });
+    limpar.addEventListener('click', () => {
+      input.value = '';
+      input.focus();
+      desenhar('', []);
+    });
+  }
+
+  document.addEventListener('astro:page-load', initBuscaCatalogo);
+</script>
+
 <style>
   .crumbs-wrap { padding-block: 1.1rem 0; }
   .cat-hero { padding-block: clamp(1.75rem, 4vw, 3rem); }
@@ -50,6 +198,97 @@ const description =
   .cat-hero__lead { margin-top: 1rem; color: var(--color-ink-soft); font-size: 1.05rem; max-width: 66ch; }
 
   .section { padding-block: clamp(1.5rem, 4vw, 3rem); }
+
+  /* ---------- Busca global do catálogo ---------- */
+  .busca-wrap { margin-bottom: 1.75rem; }
+  .busca-label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+    margin-bottom: 0.5rem;
+  }
+  .busca-campo {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .busca-icone {
+    position: absolute;
+    left: 1rem;
+    color: var(--color-ink-soft);
+    pointer-events: none;
+  }
+  .busca-input {
+    width: 100%;
+    padding: 0.9rem 2.8rem 0.9rem 2.9rem;
+    font-size: 1rem;
+    color: var(--color-ink);
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    box-shadow: var(--shadow-card);
+  }
+  .busca-input::placeholder { color: var(--color-ink-soft); }
+  .busca-input:focus {
+    outline: 2px solid var(--color-apice-blue);
+    outline-offset: 1px;
+    border-color: var(--color-apice-blue);
+  }
+  /* esconde o "x" nativo do Chrome: temos o nosso */
+  .busca-input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+  .busca-limpar {
+    position: absolute;
+    right: 0.75rem;
+    width: 1.9rem;
+    height: 1.9rem;
+    display: grid;
+    place-items: center;
+    border: none;
+    border-radius: 50%;
+    background: var(--color-paper-soft);
+    color: var(--color-ink-soft);
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  .busca-limpar:hover { background: var(--color-line); color: var(--color-ink); }
+  .busca-limpar[hidden] { display: none; }
+  .busca-status { margin-top: 0.6rem; font-size: 0.88rem; color: var(--color-ink-soft); }
+
+  .busca-resultados[hidden] { display: none; }
+  .busca-lista {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.7rem;
+  }
+  @media (min-width: 620px) { .busca-lista { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 960px) { .busca-lista { grid-template-columns: repeat(3, 1fr); } }
+
+  .busca-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.85rem 1rem;
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+  .busca-item:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-apice-blue);
+    box-shadow: var(--shadow-card-hover);
+  }
+  .busca-item__nome { font-weight: 700; color: var(--color-apice-blue); line-height: 1.3; }
+  .busca-item__meta { font-size: 0.82rem; color: var(--color-ink-soft); }
+  .busca-vazio {
+    padding: 2rem 1rem;
+    text-align: center;
+    color: var(--color-ink-soft);
+  }
 
   .cat-grid {
     display: grid;

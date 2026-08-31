@@ -1,0 +1,30 @@
+{
+  "codigo": "B5",
+  "nome": "Pino B5",
+  "categoria": "botons-e-pins",
+  "subcategoria": "Redondo",
+  "descricao": "",
+  "fotos": [],
+  "especificacoes": [
+    {
+      "label": "Diâmetro",
+      "valor": "2,6 cm"
+    }
+  ],
+  "cores": [
+    "Dourado",
+    "Prateado"
+  ],
+  "variacoes": [],
+  "palavrasChave": [
+    "boton",
+    "botons",
+    "botton",
+    "bottons",
+    "pin",
+    "pins",
+    "broche"
+  ],
+  "ordem": 14,
+  "publicar": true
+}

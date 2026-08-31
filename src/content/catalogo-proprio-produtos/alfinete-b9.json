@@ -1,0 +1,30 @@
+{
+  "codigo": "B9",
+  "nome": "Alfinete B9",
+  "categoria": "botons-e-pins",
+  "subcategoria": "Oval",
+  "descricao": "",
+  "fotos": [],
+  "especificacoes": [
+    {
+      "label": "Tamanho",
+      "valor": "3,7 × 2,8 cm"
+    }
+  ],
+  "cores": [
+    "Dourado",
+    "Prateado"
+  ],
+  "variacoes": [],
+  "palavrasChave": [
+    "boton",
+    "botons",
+    "botton",
+    "bottons",
+    "pin",
+    "pins",
+    "broche"
+  ],
+  "ordem": 1,
+  "publicar": true
+}

@@ -163,4 +163,64 @@ const catalogoXbz = defineCollection({
   }),
 });
 
-export const collections = { categorias, produtos, tecnicas, faq, depoimentos, portfolio, catalogoXbz, blog };
+/*
+  ============================================================================
+  CATÁLOGO PRÓPRIO — categorias e produtos da própria Ápice
+  ============================================================================
+  Por que uma collection separada da catalogo-xbz, e não os mesmos arquivos:
+
+  1. IMAGEM. O catálogo XBZ é espelhado e as fotos são hotlinked do servidor
+     deles (urlImagemXbz). Aqui as fotos são ARQUIVOS NOSSOS, enviados pelo
+     CMS para src/assets/img — sem URL externa, sem hotlink.
+  2. SYNC. scratch/sync-catalog.js reescreve os 48 arquivos da XBZ toda semana.
+     Produto nosso ali seria sobrescrito/perdido.
+  3. CMS. A pasta da XBZ fica de fora do painel justamente por ser automática;
+     esta aqui é 100% editável.
+
+  A ESTRUTURA é a mesma (mesmas rotas, mesmos cards, mesma página de produto):
+  as páginas leem as duas fontes por uma camada única em lib/content.ts.
+  Um arquivo por produto — igual à collection `produtos` que o CMS já usa.
+  ============================================================================
+*/
+const catalogoProprioCategorias = defineCollection({
+  loader: glob({ pattern: '**/*.json', base: './src/content/catalogo-proprio-categorias' }),
+  schema: z.object({
+    nome: z.string(),
+    slug: z.string(),
+    descricao: z.string().optional().default(''),
+    // Ordem das subcategorias nos filtros. Subcategoria usada por um produto
+    // e ausente daqui ainda aparece (o filtro é derivado dos produtos).
+    subcategorias: z.array(z.string()).optional().default([]),
+    ordem: z.number().default(0),
+    publicar: z.boolean().default(true),
+  }),
+});
+
+const catalogoProprioProdutos = defineCollection({
+  loader: glob({ pattern: '**/*.json', base: './src/content/catalogo-proprio-produtos' }),
+  schema: z.object({
+    codigo: z.string(),
+    nome: z.string(),
+    categoria: z.string(), // slug em catalogo-proprio-categorias
+    subcategoria: z.string().optional().default(''),
+    descricao: z.string().optional().default(''),
+    // Fotos LOCAIS (caminho relativo a src/assets/img). Vazio => o site usa o
+    // mesmo placeholder dos demais produtos sem foto (Foto.astro).
+    fotos: z.array(z.string()).optional().default([]),
+    // Genérico como no XBZ: cada produto tem specs diferentes.
+    especificacoes: z.array(z.object({ label: z.string(), valor: z.string() })).optional().default([]),
+    cores: z.array(z.string()).optional().default([]),
+    // Variações do MESMO produto (ex.: tamanhos do botton americano) — não
+    // viram produtos separados.
+    variacoes: z.array(z.string()).optional().default([]),
+    // Sinônimos para a busca (boton/botton/pin/pino/alfinete...). Editável no CMS.
+    palavrasChave: z.array(z.string()).optional().default([]),
+    ordem: z.number().default(0),
+    publicar: z.boolean().default(true),
+  }),
+});
+
+export const collections = {
+  categorias, produtos, tecnicas, faq, depoimentos, portfolio, blog,
+  catalogoXbz, catalogoProprioCategorias, catalogoProprioProdutos,
+};

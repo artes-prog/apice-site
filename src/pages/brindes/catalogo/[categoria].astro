@@ -3,26 +3,61 @@ import type { GetStaticPaths } from 'astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import CtaFinal from '../../../components/CtaFinal.astro';
-import { getCatalogoXbz, urlImagemXbz, codigoSlug } from '../../../lib/content';
+import Foto from '../../../components/Foto.astro';
+import { getCatalogoUnificado, urlImagemXbz, codigoSlug } from '../../../lib/content';
 import { mensagens } from '../../../lib/whatsapp';
 import { FILTRO_SEP, criarPlanoDeFiltros, formatarLabelFiltro, extrairCor, extrairCoresDisponiveis, HEX_CORES } from '../../../lib/filtros';
 
 export const getStaticPaths = (async () => {
-  const categorias = await getCatalogoXbz();
-  return categorias.map((c) => ({ params: { categoria: c.data.slug }, props: { categoria: c } }));
+  const categorias = await getCatalogoUnificado();
+  return categorias.map((c) => ({ params: { categoria: c.slug }, props: { categoria: c } }));
 }) satisfies GetStaticPaths;
 
 const { categoria } = Astro.props;
-const d = categoria.data;
+const d = categoria;
 const msg = mensagens.categoria(d.nome.toLowerCase());
 
 /*
-  Filtros são extraídos automaticamente das tags reais da XBZ (e, na
-  ausência delas, das palavras do nome) em src/lib/filtros.ts — reaproveitado
-  também pelo script de auditoria que garante que nenhum filtro fique "morto".
+  Filtros por TIPO.
+  - Catálogo próprio: as subcategorias são a fonte (Redondo, Oval...). São
+    exibidas todas, mesmo com um único produto — diferente da heurística da
+    XBZ, que descarta tag rara. Uma subcategoria nova criada no CMS aparece
+    aqui sozinha, sem mexer em código.
+  - Catálogo XBZ: segue a extração automática das tags reais (lib/filtros.ts).
 */
-const { filtros, chavesPorProduto } = criarPlanoDeFiltros(d.produtos, d.nome);
-const cores = extrairCoresDisponiveis(d.produtos);
+const ehPropria = d.fonte === 'propria';
+
+const subsUsadas = [...new Set(d.produtos.map((p) => p.subcategoria).filter(Boolean))];
+// Respeita a ordem definida na categoria; sobras entram no fim (ordem alfabética).
+const subsOrdenadas = [
+  ...d.subcategorias.filter((s) => subsUsadas.includes(s)),
+  ...subsUsadas.filter((s) => !d.subcategorias.includes(s)).sort((a, b) => a.localeCompare(b, 'pt-BR')),
+];
+
+const planoXbz = ehPropria ? null : criarPlanoDeFiltros(d.produtos, d.nome);
+const filtros = ehPropria ? subsOrdenadas.map((s) => s.toLowerCase()) : planoXbz!.filtros;
+const chavesPorProduto = ehPropria
+  ? d.produtos.map((p) => (p.subcategoria ? [p.subcategoria.toLowerCase()] : []))
+  : planoXbz!.chavesPorProduto;
+
+/*
+  Cores. No catálogo próprio elas são um campo do produto e um produto pode ter
+  VÁRIAS (dourado e prateado). No XBZ a cor é deduzida do nome/arquivo da foto e
+  é sempre uma. Por isso data-cor virou lista (mesmo separador dos filtros):
+  o XBZ continua com lista de um item, comportamento idêntico ao de antes.
+*/
+const coresPorProduto: string[][] = ehPropria
+  ? d.produtos.map((p) => p.cores.map((c) => c.toLowerCase()))
+  : d.produtos.map((p) => {
+      const c = extrairCor(p);
+      return c ? [c] : [];
+    });
+
+const cores = ehPropria
+  ? [...new Set(coresPorProduto.flat())]
+      .sort((a, b) => a.localeCompare(b, 'pt-BR'))
+      .map((cor) => ({ cor }))
+  : extrairCoresDisponiveis(d.produtos);
 
 // Só oferece "filtre por tipo/cor" no texto quando a categoria de fato tem esses filtros.
 const temFiltros = filtros.length > 0 || cores.length > 0;
@@ -97,10 +132,16 @@ const description = `Todas as opções de ${d.nome.toLowerCase()} do nosso catá
             data-nome={p.nome.toLowerCase()}
             data-codigo={p.codigo.toLowerCase()}
             data-filtros={chavesPorProduto[i].join(FILTRO_SEP)}
-            data-cor={extrairCor(p) ?? ''}
+            data-cor={coresPorProduto[i].join(FILTRO_SEP)}
           >
             <div class="produto-card__img">
-              <img src={urlImagemXbz(p.imagem)} alt={p.nome} loading="lazy" width="300" height="300" />
+              {p.fonte === 'xbz' ? (
+                <img src={urlImagemXbz(p.imagem)} alt={p.nome} loading="lazy" width="300" height="300" />
+              ) : (
+                /* Catálogo próprio: arquivo local. Sem foto ainda => o mesmo
+                   placeholder que o resto do site usa (Foto.astro). */
+                <Foto src={p.imagem} alt={p.nome} ratio="1/1" sizes="(max-width: 620px) 45vw, 240px" widthHint={400} />
+              )}
             </div>
             <div class="produto-card__body">
               <p class="produto-card__nome">{p.nome}</p>
@@ -153,7 +194,9 @@ const description = `Todas as opções de ${d.nome.toLowerCase()} do nosso catá
         const cor = card.dataset.cor ?? '';
         const bateBusca = !termo || nome.includes(termo) || codigo.includes(termo);
         const bateFiltro = filtroAtivo === '__todos__' || tags.split(FILTRO_SEP).includes(filtroAtivo);
-        const bateCor = corAtiva === '__todas__' || cor === corAtiva;
+        // data-cor é lista: no catálogo próprio um produto pode ter mais de uma
+        // cor (dourado e prateado). No XBZ a lista tem um item só.
+        const bateCor = corAtiva === '__todas__' || cor.split(FILTRO_SEP).includes(corAtiva);
         const mostra = bateBusca && bateFiltro && bateCor;
         card.hidden = !mostra;
         if (mostra) visiveis++;

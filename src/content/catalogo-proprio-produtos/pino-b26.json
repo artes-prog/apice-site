@@ -1,0 +1,30 @@
+{
+  "codigo": "B26",
+  "nome": "Pino B26",
+  "categoria": "botons-e-pins",
+  "subcategoria": "Outras Formas",
+  "descricao": "",
+  "fotos": [],
+  "especificacoes": [
+    {
+      "label": "Tamanho",
+      "valor": "2,3 × 2,0 cm"
+    }
+  ],
+  "cores": [
+    "Dourado",
+    "Prateado"
+  ],
+  "variacoes": [],
+  "palavrasChave": [
+    "boton",
+    "botons",
+    "botton",
+    "bottons",
+    "pin",
+    "pins",
+    "broche"
+  ],
+  "ordem": 16,
+  "publicar": true
+}

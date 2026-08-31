@@ -91,6 +91,117 @@ export async function getCatalogoXbz(): Promise<CategoriaXbz[]> {
   return cats.sort((a, b) => a.data.nome.localeCompare(b.data.nome, 'pt-BR'));
 }
 
+/*
+  ============================================================================
+  CATÁLOGO UNIFICADO — XBZ (espelhado) + próprio (nosso, editável no CMS)
+  ============================================================================
+  As páginas do catálogo NÃO devem saber de qual fonte veio o produto: as rotas,
+  os cards, os filtros e a busca são os mesmos. A única diferença real é a
+  imagem — a da XBZ é hotlink no servidor deles, a nossa é arquivo local — e
+  por isso cada produto carrega o campo `fonte`, usado só na hora de renderizar.
+  ============================================================================
+*/
+export type FonteCatalogo = 'xbz' | 'propria';
+
+export interface ProdutoCatalogo {
+  fonte: FonteCatalogo;
+  codigo: string;
+  nome: string;
+  subcategoria: string;
+  /** XBZ: caminho no servidor deles. Própria: caminho em src/assets/img (ou vazio). */
+  imagem: string;
+  fotos: string[];
+  descricao: string;
+  especificacoes: { label: string; valor: string }[];
+  tags: { nome: string; href: string }[];
+  cores: string[];
+  variacoes: string[];
+  palavrasChave: string[];
+}
+
+export interface CategoriaCatalogo {
+  fonte: FonteCatalogo;
+  nome: string;
+  slug: string;
+  descricao: string;
+  /** Ordem preferida das subcategorias nos filtros (só no catálogo próprio). */
+  subcategorias: string[];
+  produtos: ProdutoCatalogo[];
+}
+
+function normalizarProdutoXbz(p: CategoriaXbz['data']['produtos'][number]): ProdutoCatalogo {
+  return {
+    fonte: 'xbz',
+    codigo: p.codigo,
+    nome: p.nome,
+    subcategoria: '',
+    imagem: p.imagem,
+    fotos: p.fotos ?? [],
+    descricao: p.descricao ?? '',
+    especificacoes: p.especificacoes ?? [],
+    tags: p.tags ?? [],
+    cores: [],
+    variacoes: [],
+    palavrasChave: [],
+  };
+}
+
+/**
+ * Todas as categorias do catálogo (própria + XBZ), em ordem alfabética.
+ * As nossas vêm primeiro dentro do mesmo nome só por desempate.
+ */
+export async function getCatalogoUnificado(): Promise<CategoriaCatalogo[]> {
+  const [xbz, cats, prods] = await Promise.all([
+    getCollection('catalogoXbz'),
+    getCollection('catalogoProprioCategorias'),
+    getCollection('catalogoProprioProdutos'),
+  ]);
+
+  const proprias: CategoriaCatalogo[] = cats
+    .filter((c) => c.data.publicar)
+    .sort((a, b) => a.data.ordem - b.data.ordem)
+    .map((c) => ({
+      fonte: 'propria' as const,
+      nome: c.data.nome,
+      slug: c.data.slug,
+      descricao: c.data.descricao,
+      subcategorias: c.data.subcategorias,
+      produtos: prods
+        .filter((p) => p.data.publicar && p.data.categoria === c.data.slug)
+        .sort((a, b) => a.data.ordem - b.data.ordem || a.data.nome.localeCompare(b.data.nome, 'pt-BR'))
+        .map((p) => ({
+          fonte: 'propria' as const,
+          codigo: p.data.codigo,
+          nome: p.data.nome,
+          subcategoria: p.data.subcategoria,
+          imagem: p.data.fotos[0] ?? '',
+          fotos: p.data.fotos,
+          descricao: p.data.descricao,
+          especificacoes: p.data.especificacoes,
+          tags: [],
+          cores: p.data.cores,
+          variacoes: p.data.variacoes,
+          palavrasChave: p.data.palavrasChave,
+        })),
+    }));
+
+  const doXbz: CategoriaCatalogo[] = xbz.map((c) => ({
+    fonte: 'xbz' as const,
+    nome: c.data.nome,
+    slug: c.data.slug,
+    descricao: '',
+    subcategorias: [],
+    produtos: c.data.produtos.map(normalizarProdutoXbz),
+  }));
+
+  return [...proprias, ...doXbz].sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+}
+
+/** Uma categoria do catálogo (qualquer fonte) pelo slug. */
+export async function getCategoriaCatalogo(slug: string): Promise<CategoriaCatalogo | undefined> {
+  return (await getCatalogoUnificado()).find((c) => c.slug === slug);
+}
+
 /** Uma categoria do catálogo XBZ pelo slug. */
 export async function getCategoriaXbz(slug: string): Promise<CategoriaXbz | undefined> {
   const cats = await getCollection('catalogoXbz');

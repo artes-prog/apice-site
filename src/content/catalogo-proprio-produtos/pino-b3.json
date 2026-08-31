@@ -1,0 +1,30 @@
+{
+  "codigo": "B3",
+  "nome": "Pino B3",
+  "categoria": "botons-e-pins",
+  "subcategoria": "Redondo",
+  "descricao": "",
+  "fotos": [],
+  "especificacoes": [
+    {
+      "label": "Diâmetro",
+      "valor": "2,1 cm"
+    }
+  ],
+  "cores": [
+    "Dourado",
+    "Prateado"
+  ],
+  "variacoes": [],
+  "palavrasChave": [
+    "boton",
+    "botons",
+    "botton",
+    "bottons",
+    "pin",
+    "pins",
+    "broche"
+  ],
+  "ordem": 12,
+  "publicar": true
+}

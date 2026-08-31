@@ -1,0 +1,30 @@
+{
+  "codigo": "B34",
+  "nome": "Alfinete B34",
+  "categoria": "botons-e-pins",
+  "subcategoria": "Quadrado e Retangular",
+  "descricao": "",
+  "fotos": [],
+  "especificacoes": [
+    {
+      "label": "Tamanho",
+      "valor": "3,5 × 1,9 cm"
+    }
+  ],
+  "cores": [
+    "Dourado",
+    "Prateado"
+  ],
+  "variacoes": [],
+  "palavrasChave": [
+    "boton",
+    "botons",
+    "botton",
+    "bottons",
+    "pin",
+    "pins",
+    "broche"
+  ],
+  "ordem": 4,
+  "publicar": true
+}

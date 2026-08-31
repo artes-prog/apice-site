@@ -1,0 +1,30 @@
+{
+  "codigo": "B10",
+  "nome": "Alfinete B10",
+  "categoria": "botons-e-pins",
+  "subcategoria": "Oval",
+  "descricao": "",
+  "fotos": [],
+  "especificacoes": [
+    {
+      "label": "Tamanho",
+      "valor": "4,2 × 2,1 cm"
+    }
+  ],
+  "cores": [
+    "Dourado",
+    "Prateado"
+  ],
+  "variacoes": [],
+  "palavrasChave": [
+    "boton",
+    "botons",
+    "botton",
+    "bottons",
+    "pin",
+    "pins",
+    "broche"
+  ],
+  "ordem": 0,
+  "publicar": true
+}

@@ -1,0 +1,30 @@
+{
+  "codigo": "B6",
+  "nome": "Alfinete B6",
+  "categoria": "botons-e-pins",
+  "subcategoria": "Redondo",
+  "descricao": "",
+  "fotos": [],
+  "especificacoes": [
+    {
+      "label": "Diâmetro",
+      "valor": "3,0 cm"
+    }
+  ],
+  "cores": [
+    "Dourado",
+    "Prateado"
+  ],
+  "variacoes": [],
+  "palavrasChave": [
+    "boton",
+    "botons",
+    "botton",
+    "bottons",
+    "pin",
+    "pins",
+    "broche"
+  ],
+  "ordem": 9,
+  "publicar": true
+}

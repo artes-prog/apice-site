@@ -1,0 +1,30 @@
+{
+  "codigo": "B44",
+  "nome": "Alfinete B44",
+  "categoria": "botons-e-pins",
+  "subcategoria": "Quadrado e Retangular",
+  "descricao": "",
+  "fotos": [],
+  "especificacoes": [
+    {
+      "label": "Tamanho",
+      "valor": "4,5 × 1,2 cm"
+    }
+  ],
+  "cores": [
+    "Dourado",
+    "Prateado"
+  ],
+  "variacoes": [],
+  "palavrasChave": [
+    "boton",
+    "botons",
+    "botton",
+    "bottons",
+    "pin",
+    "pins",
+    "broche"
+  ],
+  "ordem": 5,
+  "publicar": true
+}

@@ -1,0 +1,30 @@
+{
+  "codigo": "B17",
+  "nome": "Alfinete B17",
+  "categoria": "botons-e-pins",
+  "subcategoria": "Outras Formas",
+  "descricao": "",
+  "fotos": [],
+  "especificacoes": [
+    {
+      "label": "Tamanho",
+      "valor": "3,1 × 2,8 cm"
+    }
+  ],
+  "cores": [
+    "Dourado",
+    "Prateado"
+  ],
+  "variacoes": [],
+  "palavrasChave": [
+    "boton",
+    "botons",
+    "botton",
+    "bottons",
+    "pin",
+    "pins",
+    "broche"
+  ],
+  "ordem": 15,
+  "publicar": true
+}

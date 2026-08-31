@@ -5,16 +5,19 @@ import Breadcrumbs from '../../../../components/Breadcrumbs.astro';
 import CtaWhatsApp from '../../../../components/CtaWhatsApp.astro';
 import BotaoOrcamento from '../../../../components/BotaoOrcamento.astro';
 import CtaFinal from '../../../../components/CtaFinal.astro';
-import { getCatalogoXbz, urlImagemXbz, codigoSlug } from '../../../../lib/content';
+import Foto from '../../../../components/Foto.astro';
+import { getImage } from 'astro:assets';
+import { getCatalogoUnificado, urlImagemXbz, codigoSlug } from '../../../../lib/content';
+import type { CategoriaCatalogo, ProdutoCatalogo } from '../../../../lib/content';
 import { mensagens } from '../../../../lib/whatsapp';
 
 export const getStaticPaths = (async () => {
-  const categorias = await getCatalogoXbz();
+  const categorias = await getCatalogoUnificado();
   const paths = [];
   for (const cat of categorias) {
-    for (const produto of cat.data.produtos) {
+    for (const produto of cat.produtos) {
       paths.push({
-        params: { categoria: cat.data.slug, codigo: codigoSlug(produto.codigo) },
+        params: { categoria: cat.slug, codigo: codigoSlug(produto.codigo) },
         props: { categoria: cat, produto },
       });
     }
@@ -22,12 +25,33 @@ export const getStaticPaths = (async () => {
   return paths;
 }) satisfies GetStaticPaths;
 
-const { categoria, produto } = Astro.props as {
-  categoria: Awaited<ReturnType<typeof getCatalogoXbz>>[number];
-  produto: Awaited<ReturnType<typeof getCatalogoXbz>>[number]['data']['produtos'][number];
-};
+const { categoria, produto } = Astro.props as { categoria: CategoriaCatalogo; produto: ProdutoCatalogo };
 
-const fotos = produto.fotos && produto.fotos.length > 0 ? produto.fotos : [produto.imagem];
+/*
+  URLs finais das fotos, iguais para as duas fontes — assim a galeria (que troca
+  a foto principal pelo `src` guardado em data-foto) funciona sem saber a origem.
+    XBZ      -> hotlink no servidor deles.
+    Própria  -> arquivo local, otimizado no build pelo astro:assets.
+  Se o produto do catálogo próprio ainda não tem foto (caso dos bottons recém
+  cadastrados), a lista fica vazia e a página cai no placeholder padrão do site.
+*/
+const modulosImg = import.meta.glob<ImageMetadata>(
+  '/src/assets/img/**/*.{jpg,jpeg,png,webp,avif}',
+  { eager: true, import: 'default' }
+);
+
+let urlsFotos: string[] = [];
+if (produto.fonte === 'xbz') {
+  const brutas = produto.fotos.length > 0 ? produto.fotos : [produto.imagem];
+  urlsFotos = brutas.filter(Boolean).map(urlImagemXbz);
+} else {
+  for (const caminho of produto.fotos) {
+    const mod = modulosImg[`/src/assets/img/${caminho.replace(/^\/+/, '')}`];
+    if (!mod) continue; // foto cadastrada mas arquivo ainda não enviado
+    urlsFotos.push((await getImage({ src: mod, width: 700, format: 'webp' })).src);
+  }
+}
+const temFoto = urlsFotos.length > 0;
 const msg = mensagens.produto(`${produto.nome} (código ${produto.codigo})`);
 
 const title = `${produto.nome} — Código ${produto.codigo} | Ápice Brindes`;
@@ -39,7 +63,7 @@ const description = `${produto.nome} do catálogo completo Ápice Brindes. Códi
       { name: 'Início', href: '/' },
       { name: 'Brindes', href: '/brindes-personalizados/' },
       { name: 'Catálogo completo', href: '/brindes/catalogo/' },
-      { name: categoria.data.nome, href: `/brindes/catalogo/${categoria.data.slug}/` },
+      { name: categoria.nome, href: `/brindes/catalogo/${categoria.slug}/` },
       { name: produto.nome },
     ]} />
   </div>
@@ -48,13 +72,18 @@ const description = `${produto.nome} do catálogo completo Ápice Brindes. Códi
     <div class="container-site produto-grid">
       <div class="produto-fotos">
         <div class="produto-foto-principal">
-          <img id="foto-principal" src={urlImagemXbz(fotos[0])} alt={produto.nome} width="600" height="600" />
+          {temFoto ? (
+            <img id="foto-principal" src={urlsFotos[0]} alt={produto.nome} width="600" height="600" />
+          ) : (
+            /* Produto sem foto ainda: mesmo placeholder do resto do site. */
+            <Foto src="" alt={produto.nome} ratio="1/1" priority widthHint={700} />
+          )}
         </div>
-        {fotos.length > 1 && (
+        {urlsFotos.length > 1 && (
           <div class="produto-foto-miniaturas" id="foto-galeria">
-            {fotos.map((f, i) => (
-              <button type="button" class="miniatura" class:list={{ 'is-ativa': i === 0 }} data-foto={urlImagemXbz(f)}>
-                <img src={urlImagemXbz(f)} alt={`${produto.nome} — foto ${i + 1}`} width="90" height="90" loading="lazy" />
+            {urlsFotos.map((u, i) => (
+              <button type="button" class="miniatura" class:list={{ 'is-ativa': i === 0 }} data-foto={u}>
+                <img src={u} alt={`${produto.nome} — foto ${i + 1}`} width="90" height="90" loading="lazy" />
               </button>
             ))}
           </div>
@@ -78,6 +107,30 @@ const description = `${produto.nome} do catálogo completo Ápice Brindes. Códi
           </dl>
         )}
 
+        {produto.variacoes.length > 0 && (
+          <div class="produto-bloco">
+            <p class="produto-bloco__rot">Tamanhos disponíveis</p>
+            <div class="produto-tags">
+              {produto.variacoes.map((v) => <span class="produto-tag produto-tag--var">{v}</span>)}
+            </div>
+          </div>
+        )}
+
+        {produto.cores.length > 0 && (
+          <div class="produto-bloco">
+            <p class="produto-bloco__rot">Cores</p>
+            <div class="produto-tags">
+              {produto.cores.map((c) => <span class="produto-tag produto-tag--var">{c}</span>)}
+            </div>
+          </div>
+        )}
+
+        {produto.subcategoria && (
+          <div class="produto-tags produto-tags--sub">
+            <span class="produto-tag">{produto.subcategoria}</span>
+          </div>
+        )}
+
         {produto.tags && produto.tags.length > 0 && (
           <div class="produto-tags">
             {produto.tags.map((t) => <span class="produto-tag">{t.nome}</span>)}
@@ -94,12 +147,12 @@ const description = `${produto.nome} do catálogo completo Ápice Brindes. Códi
           <BotaoOrcamento
             codigo={produto.codigo}
             nome={produto.nome}
-            url={`/brindes/catalogo/${categoria.data.slug}/${codigoSlug(produto.codigo)}/`}
+            url={`/brindes/catalogo/${categoria.slug}/${codigoSlug(produto.codigo)}/`}
           />
         </div>
         <p class="produto-dica">Vai pedir mais de um item? Adicione à lista e mande tudo numa mensagem só.</p>
 
-        <a href={`/brindes/catalogo/${categoria.data.slug}/`} class="produto-voltar">← Voltar para {categoria.data.nome}</a>
+        <a href={`/brindes/catalogo/${categoria.slug}/`} class="produto-voltar">← Voltar para {categoria.nome}</a>
       </div>
     </div>
   </section>
@@ -184,6 +237,23 @@ const description = `${produto.nome} do catálogo completo Ápice Brindes. Códi
   }
   .produto-specs dt { font-weight: 700; color: var(--color-apice-blue); }
   .produto-specs dd { color: var(--color-ink-soft); }
+
+  .produto-bloco { margin-top: 1.25rem; }
+  .produto-bloco__rot {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+    margin-bottom: 0.5rem;
+  }
+  .produto-bloco .produto-tags { margin-top: 0; }
+  .produto-tag--var {
+    color: var(--color-apice-blue);
+    background: color-mix(in srgb, var(--color-apice-blue) 8%, transparent);
+    border-color: color-mix(in srgb, var(--color-apice-blue) 25%, transparent);
+  }
+  .produto-tags--sub { margin-top: 1rem; }
 
   .produto-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.25rem; }
   .produto-tag {

@@ -1,0 +1,30 @@
+{
+  "codigo": "B33",
+  "nome": "Pino B33",
+  "categoria": "botons-e-pins",
+  "subcategoria": "Oval",
+  "descricao": "",
+  "fotos": [],
+  "especificacoes": [
+    {
+      "label": "Tamanho",
+      "valor": "3,2 × 1,6 cm"
+    }
+  ],
+  "cores": [
+    "Dourado",
+    "Prateado"
+  ],
+  "variacoes": [],
+  "palavrasChave": [
+    "boton",
+    "botons",
+    "botton",
+    "bottons",
+    "pin",
+    "pins",
+    "broche"
+  ],
+  "ordem": 2,
+  "publicar": true
+}

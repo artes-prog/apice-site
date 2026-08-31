@@ -1,0 +1,34 @@
+{
+  "codigo": "BOTTON-AMERICANO",
+  "nome": "Botton Americano Personalizado",
+  "categoria": "botons-e-pins",
+  "subcategoria": "Botton Americano",
+  "descricao": "Botton americano personalizado, ideal para empresas, eventos, campanhas promocionais, ações de marketing, escolas, organizações e eventos corporativos. Disponível em diversos tamanhos e personalizado com a arte ou identidade visual do cliente.",
+  "fotos": [],
+  "especificacoes": [
+    {
+      "label": "Formato",
+      "valor": "Redondo"
+    }
+  ],
+  "cores": [],
+  "variacoes": [
+    "2,5 cm",
+    "3,5 cm",
+    "4,5 cm",
+    "5,5 cm"
+  ],
+  "palavrasChave": [
+    "boton",
+    "botons",
+    "botton",
+    "bottons",
+    "pin",
+    "pins",
+    "broche",
+    "americano",
+    "botton americano"
+  ],
+  "ordem": 17,
+  "publicar": true
+}
