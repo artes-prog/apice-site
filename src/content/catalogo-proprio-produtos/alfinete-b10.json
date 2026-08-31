@@ -1,10 +1,13 @@
 {
-  "codigo": "B10",
   "nome": "Alfinete B10",
+  "codigo": "B10",
   "categoria": "botons-e-pins",
   "subcategoria": "Oval",
-  "descricao": "",
-  "fotos": [],
+  "descricao": "Personalizamos este item com Impressão Digital ou gravação a Fiber Laser, conforme o material. Fale com a gente pelo código para confirmar técnica, prazo e quantidade.",
+  "fotos": [
+    "/Alfinete-B10-42x21cm-Prateado-1.webp",
+    "/Alfinete-B10-42x21cm-Dourado-1.webp"
+  ],
   "especificacoes": [
     {
       "label": "Tamanho",
@@ -15,7 +18,6 @@
     "Dourado",
     "Prateado"
   ],
-  "variacoes": [],
   "palavrasChave": [
     "boton",
     "botons",
