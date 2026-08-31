@@ -1,10 +1,10 @@
 {
-  "nome": "Caderno Ecológico com Capa de Bambu",
+  "nome": "Caderno Ecológico com Capa Similar ao Bambu",
   "slug": "caderno-bambu",
   "categoria": "ecologicos",
-  "descricaoCurta": "Capa de bambu com Silk Screen: o eco premium que impressiona.",
+  "descricaoCurta": "Capa similar ao bambu com Silk Screen: o eco premium que impressiona.",
   "imagens": [
-    "Capa UFG.png"
+    "/Capa UFG.png"
   ],
   "tecnica": "silk",
   "maisPedido": true,
