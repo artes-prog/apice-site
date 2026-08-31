@@ -54,6 +54,18 @@ if (produto.fonte === 'xbz') {
 const temFoto = urlsFotos.length > 0;
 const msg = mensagens.produto(`${produto.nome} (código ${produto.codigo})`);
 
+/*
+  Nota de personalização: cada categoria tem a sua técnica (botons e pins não são
+  personalizados como canecas), então o texto vem da categoria, editável no CMS.
+  Categoria própria manda no texto — inclusive deixar vazio, que esconde a nota.
+  Categoria XBZ não é editável no CMS e cai na nota padrão do site.
+*/
+const NOTA_PADRAO =
+  'Personalizamos este item com Silk Screen ou gravação a Fiber Laser, conforme o material. ' +
+  'Fale com a gente pelo código para confirmar técnica, prazo e quantidade.';
+const notaPersonalizacao =
+  categoria.fonte === 'propria' ? categoria.notaPersonalizacao : NOTA_PADRAO;
+
 const title = `${produto.nome} — Código ${produto.codigo} | Ápice Brindes`;
 const description = `${produto.nome} do catálogo completo Ápice Brindes. Código ${produto.codigo}. Peça orçamento e personalização no WhatsApp.`;
 ---
@@ -137,10 +149,7 @@ const description = `${produto.nome} do catálogo completo Ápice Brindes. Códi
           </div>
         )}
 
-        <p class="produto-nota">
-          Personalizamos este item com Silk Screen ou gravação a Fiber Laser, conforme o material. Fale com a gente
-          pelo código para confirmar técnica, prazo e quantidade.
-        </p>
+        {notaPersonalizacao && <p class="produto-nota">{notaPersonalizacao}</p>}
 
         <div class="produto-acoes">
           <CtaWhatsApp variante="primario" mensagem={msg} semente={`produto-${produto.codigo}`} label="Pedir orçamento deste produto" />

@@ -188,6 +188,13 @@ const catalogoProprioCategorias = defineCollection({
     nome: z.string(),
     slug: z.string(),
     descricao: z.string().optional().default(''),
+    /*
+      Texto que aparece na página de cada produto desta categoria, logo acima
+      dos botões de orçamento, explicando COMO personalizamos. Cada categoria
+      tem a sua técnica: botons e pins não são personalizados do mesmo jeito que
+      canecas. Vazio esconde o parágrafo.
+    */
+    notaPersonalizacao: z.string().optional().default(''),
     // Ordem das subcategorias nos filtros. Subcategoria usada por um produto
     // e ausente daqui ainda aparece (o filtro é derivado dos produtos).
     subcategorias: z.array(z.string()).optional().default([]),

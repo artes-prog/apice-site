@@ -229,6 +229,11 @@ content:
         label: Descrição
         type: text
         required: false
+      - name: notaPersonalizacao
+        label: Como personalizamos (aparece na página de cada produto)
+        type: text
+        required: false
+        description: "Texto acima dos botões de orçamento, em TODOS os produtos desta categoria. Cada categoria tem a sua técnica. Deixe em branco para não mostrar nada."
       - name: subcategorias
         label: Subcategorias
         type: string

@@ -124,6 +124,11 @@ export interface CategoriaCatalogo {
   nome: string;
   slug: string;
   descricao: string;
+  /**
+   * Como personalizamos os produtos desta categoria, exibido na página do
+   * produto. Vazio = o site usa a nota padrão (caso das categorias XBZ).
+   */
+  notaPersonalizacao: string;
   /** Ordem preferida das subcategorias nos filtros (só no catálogo próprio). */
   subcategorias: string[];
   produtos: ProdutoCatalogo[];
@@ -165,6 +170,7 @@ export async function getCatalogoUnificado(): Promise<CategoriaCatalogo[]> {
       nome: c.data.nome,
       slug: c.data.slug,
       descricao: c.data.descricao,
+      notaPersonalizacao: c.data.notaPersonalizacao,
       subcategorias: c.data.subcategorias,
       produtos: prods
         .filter((p) => p.data.publicar && p.data.categoria === c.data.slug)
@@ -190,6 +196,8 @@ export async function getCatalogoUnificado(): Promise<CategoriaCatalogo[]> {
     nome: c.data.nome,
     slug: c.data.slug,
     descricao: '',
+    // Categoria XBZ não é editável no CMS: cai na nota padrão do site.
+    notaPersonalizacao: '',
     subcategorias: [],
     produtos: c.data.produtos.map(normalizarProdutoXbz),
   }));
