@@ -1,10 +1,12 @@
 {
-  "codigo": "B9",
   "nome": "Alfinete B9",
+  "codigo": "B9",
   "categoria": "botons-e-pins",
   "subcategoria": "Oval",
-  "descricao": "",
-  "fotos": [],
+  "fotos": [
+    "/Alfinete-B9-37x28cm-Dourado.webp",
+    "/Alfinete-B9-37x28cm-Prateado-1.webp"
+  ],
   "especificacoes": [
     {
       "label": "Tamanho",
@@ -15,7 +17,6 @@
     "Dourado",
     "Prateado"
   ],
-  "variacoes": [],
   "palavrasChave": [
     "boton",
     "botons",
