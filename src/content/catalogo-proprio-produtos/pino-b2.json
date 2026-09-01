@@ -1,10 +1,12 @@
 {
-  "codigo": "B2",
   "nome": "Pino B2",
+  "codigo": "B2",
   "categoria": "botons-e-pins",
   "subcategoria": "Redondo",
-  "descricao": "",
-  "fotos": [],
+  "fotos": [
+    "/Pino-B1-15cm-Dourado-1.webp",
+    "/Pino-B1-15cm-Prateado-1.webp"
+  ],
   "especificacoes": [
     {
       "label": "Diâmetro",
@@ -15,7 +17,6 @@
     "Dourado",
     "Prateado"
   ],
-  "variacoes": [],
   "palavrasChave": [
     "boton",
     "botons",
