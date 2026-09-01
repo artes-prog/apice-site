@@ -1,10 +1,12 @@
 {
-  "codigo": "B45",
   "nome": "Alfinete B45",
+  "codigo": "B45",
   "categoria": "botons-e-pins",
   "subcategoria": "Quadrado e Retangular",
-  "descricao": "",
-  "fotos": [],
+  "fotos": [
+    "/Alfinete-B45-40x15cm-Prateado.webp",
+    "/Alfinete-B45-40x15cm-Douradoo.webp"
+  ],
   "especificacoes": [
     {
       "label": "Tamanho",
@@ -15,7 +17,6 @@
     "Dourado",
     "Prateado"
   ],
-  "variacoes": [],
   "palavrasChave": [
     "boton",
     "botons",
