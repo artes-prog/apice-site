@@ -1,10 +1,12 @@
 {
-  "codigo": "B17",
   "nome": "Alfinete B17",
+  "codigo": "B17",
   "categoria": "botons-e-pins",
   "subcategoria": "Outras Formas",
-  "descricao": "",
-  "fotos": [],
+  "fotos": [
+    "/Alfinete-B17-31x28cm-Dourado.webp",
+    "/Alfinete-B17-31x28cm-Prateado-600x600.webp"
+  ],
   "especificacoes": [
     {
       "label": "Tamanho",
@@ -15,7 +17,6 @@
     "Dourado",
     "Prateado"
   ],
-  "variacoes": [],
   "palavrasChave": [
     "boton",
     "botons",
