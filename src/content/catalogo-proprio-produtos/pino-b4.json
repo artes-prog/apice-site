@@ -1,10 +1,12 @@
 {
-  "codigo": "B4",
   "nome": "Pino B4",
+  "codigo": "B4",
   "categoria": "botons-e-pins",
   "subcategoria": "Redondo",
-  "descricao": "",
-  "fotos": [],
+  "fotos": [
+    "/Pino-B3-21cm-Dourado-1.webp",
+    "/Pino-B3-21cm-Prateado-1.webp"
+  ],
   "especificacoes": [
     {
       "label": "Diâmetro",
@@ -14,7 +16,6 @@
   "cores": [
     "Dourado"
   ],
-  "variacoes": [],
   "palavrasChave": [
     "boton",
     "botons",
