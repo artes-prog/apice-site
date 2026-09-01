@@ -1,10 +1,12 @@
 {
-  "codigo": "B6",
   "nome": "Alfinete B6",
+  "codigo": "B6",
   "categoria": "botons-e-pins",
   "subcategoria": "Redondo",
-  "descricao": "",
-  "fotos": [],
+  "fotos": [
+    "/Alfinete-B6-3cm-Dourado (1).webp",
+    "/Alfinete-B6-3cm-Prateado.webp"
+  ],
   "especificacoes": [
     {
       "label": "Diâmetro",
@@ -15,7 +17,6 @@
     "Dourado",
     "Prateado"
   ],
-  "variacoes": [],
   "palavrasChave": [
     "boton",
     "botons",
