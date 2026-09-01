@@ -1,10 +1,12 @@
 {
-  "codigo": "B3",
   "nome": "Pino B3",
+  "codigo": "B3",
   "categoria": "botons-e-pins",
   "subcategoria": "Redondo",
-  "descricao": "",
-  "fotos": [],
+  "fotos": [
+    "/Pino-B3-21cm-Prateado.webp",
+    "/Pino-B3-21cm-Dourado.webp"
+  ],
   "especificacoes": [
     {
       "label": "Diâmetro",
@@ -15,7 +17,6 @@
     "Dourado",
     "Prateado"
   ],
-  "variacoes": [],
   "palavrasChave": [
     "boton",
     "botons",
