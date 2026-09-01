@@ -1,10 +1,12 @@
 {
-  "codigo": "B11",
   "nome": "Pino B11",
+  "codigo": "B11",
   "categoria": "botons-e-pins",
   "subcategoria": "Quadrado e Retangular",
-  "descricao": "",
-  "fotos": [],
+  "fotos": [
+    "/Pino-B11-20x20cm-Dourado.webp",
+    "/Pino-B11-20x20cm-Prateado.webp"
+  ],
   "especificacoes": [
     {
       "label": "Tamanho",
@@ -15,7 +17,6 @@
     "Dourado",
     "Prateado"
   ],
-  "variacoes": [],
   "palavrasChave": [
     "boton",
     "botons",
