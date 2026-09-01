@@ -1,10 +1,12 @@
 {
-  "codigo": "B26",
   "nome": "Pino B26",
+  "codigo": "B26",
   "categoria": "botons-e-pins",
   "subcategoria": "Outras Formas",
-  "descricao": "",
-  "fotos": [],
+  "fotos": [
+    "/Pino-B26-23x20cm-Prateado.webp",
+    "/Pino-B26-23x20cm-Dourado.webp"
+  ],
   "especificacoes": [
     {
       "label": "Tamanho",
@@ -15,7 +17,6 @@
     "Dourado",
     "Prateado"
   ],
-  "variacoes": [],
   "palavrasChave": [
     "boton",
     "botons",
