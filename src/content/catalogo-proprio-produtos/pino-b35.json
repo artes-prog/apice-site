@@ -1,10 +1,12 @@
 {
-  "codigo": "B35",
   "nome": "Pino B35",
+  "codigo": "B35",
   "categoria": "botons-e-pins",
   "subcategoria": "Quadrado e Retangular",
-  "descricao": "",
-  "fotos": [],
+  "fotos": [
+    "/Pino-B35-27x15cm-Prateado.webp",
+    "/Pino-B35-27x15cm-Dourado.webp"
+  ],
   "especificacoes": [
     {
       "label": "Tamanho",
@@ -15,7 +17,6 @@
     "Dourado",
     "Prateado"
   ],
-  "variacoes": [],
   "palavrasChave": [
     "boton",
     "botons",
