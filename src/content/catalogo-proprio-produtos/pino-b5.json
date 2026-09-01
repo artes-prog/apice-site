@@ -1,10 +1,12 @@
 {
-  "codigo": "B5",
   "nome": "Pino B5",
+  "codigo": "B5",
   "categoria": "botons-e-pins",
   "subcategoria": "Redondo",
-  "descricao": "",
-  "fotos": [],
+  "fotos": [
+    "/Pino-B5-26cm-Prateado-600x600.webp",
+    "/Pino-B5-26cm-Dourado.webp"
+  ],
   "especificacoes": [
     {
       "label": "Diâmetro",
@@ -15,7 +17,6 @@
     "Dourado",
     "Prateado"
   ],
-  "variacoes": [],
   "palavrasChave": [
     "boton",
     "botons",
