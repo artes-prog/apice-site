@@ -1,18 +1,21 @@
 ---
 import Logo from './Logo.astro';
-import { site, enderecoLinha, redesFooter } from '../data/site';
+import { site, enderecoLinha } from '../data/site';
 import { linkWhatsApp, mensagens } from '../lib/whatsapp';
 
 /*
   Rodapé institucional (azul = estrutura/confiança, Guia §1.2).
   NAP (nome/endereço/telefone) vem de src/data/site.ts — a MESMA fonte do
   /contato/ e do JSON-LD, garantindo NAP idêntico caractere a caractere (§5.4).
+
+  Redes sociais: só o Instagram tem destaque aqui (Facebook removido a
+  pedido do cliente). /contato/ ainda usa redesFooter() para uma lista
+  genérica — aqui o tratamento é dedicado, não a lista compartilhada.
 */
 interface Props {
   categorias: { nome: string; slug: string }[];
 }
 const { categorias } = Astro.props;
-const redes = redesFooter();
 const ano = new Date().getFullYear();
 
 /*
@@ -41,20 +44,25 @@ const paginas = [
       <Logo variant="branco" class="footer-logo" />
       <p class="footer-slogan">{site.slogan}</p>
       <p class="footer-selo">{site.anosDeMercado} de mercado · Produção própria de silk e Fiber Laser em Goiânia.</p>
-      {redes.length > 0 && (
-        <ul class="footer-social" aria-label="Redes sociais">
-          {redes.map((r) => (
-            <li>
-              <a href={r.url} target="_blank" rel="noopener noreferrer" aria-label={r.nome}>
-                {r.nome === 'Instagram' ? (
-                  <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.3 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .3-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.3-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.3 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 3.2A6.6 6.6 0 1 0 12 18.6 6.6 6.6 0 0 0 12 5.4zm0 10.9A4.3 4.3 0 1 1 12 7.7a4.3 4.3 0 0 1 0 8.6zm6.8-11.2a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/></svg>
-                ) : (
-                  <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0 0 22 12z"/></svg>
-                )}
-              </a>
-            </li>
-          ))}
-        </ul>
+      {site.instagram && (
+        <a
+          href={site.instagram}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="footer-instagram-destaque"
+          data-instagram
+          data-origem="footer"
+          aria-label="Novo Instagram oficial da Ápice Brindes — seguir @apicebrindes"
+        >
+          <span class="footer-instagram-destaque__icone">
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.3 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.3 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .3-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.3-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.3-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.3 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 3.2A6.6 6.6 0 1 0 12 18.6 6.6 6.6 0 0 0 12 5.4zm0 10.9A4.3 4.3 0 1 1 12 7.7a4.3 4.3 0 0 1 0 8.6zm6.8-11.2a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/></svg>
+          </span>
+          <span class="footer-instagram-destaque__texto">
+            <strong class="footer-instagram-destaque__titulo">Novo Instagram oficial da Ápice Brindes</strong>
+            <span class="footer-instagram-destaque__sub">Fique por dentro de todas as novidades</span>
+            <span class="footer-instagram-destaque__handle">@apicebrindes</span>
+          </span>
+        </a>
       )}
     </div>
 
@@ -160,25 +168,57 @@ const paginas = [
     color: rgba(255, 255, 255, 0.72);
     max-width: 34ch;
   }
-  .footer-social {
-    list-style: none;
-    display: flex;
-    gap: 0.75rem;
-    padding: 0;
-    margin-top: 1.1rem;
-  }
-  .footer-social a {
+  /* Instagram em destaque — único ponto social do rodapé desde a remoção
+     do Facebook. Cartão levemente elevado sobre o azul, não um ícone solto. */
+  .footer-instagram-destaque {
     display: inline-flex;
-    width: 40px;
-    height: 40px;
+    align-items: center;
+    gap: 0.85rem;
+    margin-top: 1.15rem;
+    padding: 0.85rem 1.15rem;
+    max-width: 340px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: var(--radius-card);
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+  }
+  .footer-instagram-destaque:hover {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.42);
+    transform: translateY(-1px);
+  }
+  .footer-instagram-destaque__icone {
+    flex: none;
+    display: inline-flex;
+    width: 42px;
+    height: 42px;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
     color: #fff;
-    transition: background 0.15s ease;
   }
-  .footer-social a:hover { background: rgba(255, 255, 255, 0.14); }
+  .footer-instagram-destaque__texto {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+  .footer-instagram-destaque__titulo {
+    font-size: 0.88rem;
+    line-height: 1.3;
+    color: #fff;
+  }
+  .footer-instagram-destaque__sub {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.72);
+  }
+  .footer-instagram-destaque__handle {
+    margin-top: 0.15rem;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #fff;
+  }
 
   /* Rótulo de seção: caixa-alta pequena pede MAIS tracking pra ficar legível/elegante,
      e um "tick" vermelho curto dá estrutura visual sem pesar. */

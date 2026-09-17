@@ -215,6 +215,19 @@ const categorias = categoriasRaw.map((c) => ({ nome: c.data.nome, slug: c.data.s
             (window as any).plausible?.('WhatsApp', { props: { pagina, atendente, label } });
             (window as any).gtag?.('event', 'whatsapp_click', { pagina, atendente });
           } catch (_) {}
+          return;
+        }
+
+        // Mesmo padrão do WhatsApp acima: qualquer link marcado com
+        // data-instagram (rodapé, seção da home...) dispara o evento, com a
+        // origem do clique para saber de onde vêm os acessos ao perfil.
+        const ig = target.closest('[data-instagram]');
+        if (ig) {
+          const origem = ig.getAttribute('data-origem') || location.pathname;
+          try {
+            (window as any).plausible?.('Instagram', { props: { origem } });
+            (window as any).gtag?.('event', 'instagram_click', { origem });
+          } catch (_) {}
         }
       });
 
