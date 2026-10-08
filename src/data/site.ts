@@ -33,6 +33,7 @@ export const site = {
   atendentes: raw.atendentes as Atendente[],
   horario: raw.horario,
   instagram: limpo(raw.instagram),
+  avisoInstagram: raw.avisoInstagram,
   facebook: limpo(raw.facebook),
   googleBusiness: limpo((raw as any).googleBusiness),
   // Coordenadas do endereço (preencher para reforçar o SEO local no JSON-LD).

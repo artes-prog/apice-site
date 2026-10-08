@@ -24,6 +24,7 @@ const depoimentos = await getDepoimentosPublicados();
 
 const todosProdutos = await getCollection('produtos');
 const maisPedidos = todosProdutos.filter((p) => p.data.maisPedido).slice(0, 6);
+const instagramHandle = site.instagram ? `@${new URL(site.instagram).pathname.split('/').filter(Boolean)[0]}` : '';
 
 const title = 'Brindes Personalizados em Goiânia | Ápice Brindes';
 const description =
@@ -45,6 +46,23 @@ const description =
           <CtaWhatsApp variante="primario" mensagem={mensagens.home} semente="home" label="Pedir orçamento no WhatsApp" />
           <a href="/brindes-personalizados/" class="hero__link">Ver categorias de brindes</a>
         </div>
+        {site.instagram && (
+          <aside class="hero__instagram" aria-label={site.avisoInstagram.titulo}>
+            <span class="hero__instagram-icon"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="5" />
+              <circle cx="12" cy="12" r="4" />
+              <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+            </svg></span>
+            <div class="hero__instagram-body">
+              <p class="hero__instagram-title">{site.avisoInstagram.titulo}</p>
+              <p class="hero__instagram-handle">{instagramHandle}</p>
+              <p class="hero__instagram-text">{site.avisoInstagram.texto}</p>
+              <a href={site.instagram} target="_blank" rel="noopener noreferrer" data-instagram data-origem="home_hero">
+                {site.avisoInstagram.linkTexto} <span aria-hidden="true">↗</span>
+              </a>
+            </div>
+          </aside>
+        )}
       </div>
       <div class="hero__media">
         <Foto src="home/hero.jpg" alt="Brindes corporativos personalizados pela Ápice Brindes em Goiânia" ratio="4/3" priority widthHint={960} />
@@ -214,6 +232,35 @@ const description =
   }
   .hero__link { font-weight: 700; color: var(--color-apice-blue); border-bottom: 2px solid transparent; }
   .hero__link:hover { border-color: var(--color-apice-blue); }
+  .hero__instagram {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding: 1.2rem;
+    background: linear-gradient(115deg, #fff8f5, #faf6ff) padding-box,
+      linear-gradient(120deg, #f9a14a, #d92d7a, #7547c9) border-box;
+    border: 1px solid transparent;
+    border-radius: var(--radius-lg);
+    max-width: 50ch;
+    box-shadow: 0 6px 22px rgba(117, 71, 201, 0.08);
+  }
+  .hero__instagram-icon {
+    display: grid; place-items: center; flex-shrink: 0;
+    width: 52px; height: 52px; border-radius: 15px; color: #fff;
+    background: linear-gradient(145deg, #7844bd, #cb2570 60%, #df7130);
+  }
+  .hero__instagram-body { min-width: 0; }
+  .hero__instagram-title { font-weight: 700; font-size: 0.8rem; color: #703477; }
+  .hero__instagram-handle { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.1rem, 3.5vw, 1.35rem); color: var(--color-apice-blue); overflow-wrap: anywhere; }
+  .hero__instagram-text { margin-top: 0.3rem; font-size: 0.85rem; color: var(--color-ink-soft); }
+  .hero__instagram a {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    margin-top: 0.7rem; padding: 0.6rem 1rem; min-height: 44px;
+    border-radius: 999px; background: #773580; color: #fff;
+    font-weight: 700; font-size: 0.85rem;
+  }
+  .hero__instagram a:hover { background: #592560; }
 
   .section { padding-block: clamp(2.5rem, 5vw, 4rem); }
   .section--alt { background: var(--color-paper-soft); }

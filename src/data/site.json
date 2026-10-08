@@ -22,6 +22,11 @@
   ],
   "horario": "Segunda a sexta, das 8h às 18h",
   "instagram": "https://www.instagram.com/apicebrindes/",
+  "avisoInstagram": {
+    "titulo": "Nosso Instagram está de cara nova!",
+    "texto": "Bastidores da produção, novidades e ideias para a sua marca. Vem acompanhar!",
+    "linkTexto": "Seguir a Ápice"
+  },
   "facebook": null,
   "googleBusiness": "https://maps.app.goo.gl/rx9T1MzgDshtQWFo7",
   "geo": {
