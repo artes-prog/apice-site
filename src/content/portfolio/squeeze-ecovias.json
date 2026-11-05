@@ -1,1 +1,9 @@
-{"slug": "squeeze-ecovias", "cliente": "ecoVIAS do Araguaia", "produto": "Squeeze Personalizado", "tecnica": "silk", "foto": "portfolio/squeeze-ecovias.jpg", "ordem": 22, "publicar": true}
+{
+  "cliente": "Ecovias do Araguaia",
+  "produto": "Squeeze Personalizado",
+  "foto": "/portfolio/squeeze-ecovias.jpg",
+  "tecnica": "silk",
+  "slug": "squeeze-ecovias",
+  "ordem": 22,
+  "publicar": true
+}
