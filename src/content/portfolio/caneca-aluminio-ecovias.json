@@ -1,1 +1,9 @@
-{"slug": "caneca-aluminio-ecovias", "cliente": "ecoVIAS do Araguaia", "produto": "Caneca de Alumínio 500ml", "tecnica": "silk", "foto": "portfolio/caneca-aluminio-ecovias.jpg", "ordem": 8, "publicar": true}
+{
+  "cliente": "Ecovias do Araguaia",
+  "produto": "Caneca de Alumínio 500ml",
+  "foto": "/portfolio/caneca-aluminio-ecovias.jpg",
+  "tecnica": "silk",
+  "slug": "caneca-aluminio-ecovias",
+  "ordem": 8,
+  "publicar": true
+}
