@@ -1,1 +1,9 @@
-{"slug": "ecobag-ecovias-workshop", "cliente": "ecoVIAS do Araguaia", "produto": "Ecobag para Workshop Corporativo", "tecnica": "silk", "foto": "portfolio/ecobag-ecovias-workshop.jpg", "ordem": 11, "publicar": true}
+{
+  "cliente": "Ecovias do Araguaia",
+  "produto": "Ecobag para Workshop Corporativo",
+  "foto": "/portfolio/ecobag-ecovias-workshop.jpg",
+  "tecnica": "silk",
+  "slug": "ecobag-ecovias-workshop",
+  "ordem": 11,
+  "publicar": true
+}
