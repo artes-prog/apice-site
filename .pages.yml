@@ -75,6 +75,22 @@ content:
         fields:
           - { name: lat, label: Latitude, type: number, required: false }
           - { name: lng, label: Longitude, type: number, required: false }
+      - name: natal
+        label: Decoracao de Natal (sazonal)
+        type: object
+        fields:
+          - name: ativo
+            label: Ligar a decoracao de Natal
+            type: boolean
+            description: Liga a etiqueta de Natal no cabecalho. Desmarcado, o enfeite sai do site por completo na proxima publicacao.
+          - name: inicio
+            label: Aparece a partir de (AAAA-MM-DD)
+            type: string
+            description: Primeiro dia em que a etiqueta aparece. Use ano-mes-dia, por exemplo 2026-12-01.
+          - name: fim
+            label: Sai depois de (AAAA-MM-DD)
+            type: string
+            description: Ultimo dia em que a etiqueta aparece. Passada essa data ela desaparece sozinha, sem precisar mexer no site.
       - name: areaAtendimento
         label: Cidades atendidas
         type: string

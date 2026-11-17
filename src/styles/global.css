@@ -45,6 +45,11 @@
   --radius-lg: 20px;
   --shadow-card: 0 4px 24px rgba(0, 61, 165, 0.08);
   --shadow-card-hover: 0 8px 32px rgba(0, 61, 165, 0.14);
+
+  /* Sazonal - Natal (ver NatalApice.astro). Verde garrafa e decoracao:
+     nunca em elemento clicavel, para nao disputar com o verde do WhatsApp. */
+  --color-natal-verde: #0B3D2E;
+  --color-natal-ouro: #C9A227;
 }
 
 /* Container central do site (1200px) */

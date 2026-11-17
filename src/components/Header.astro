@@ -1,5 +1,15 @@
 ---
 import Logo from './Logo.astro';
+import NatalApice from './NatalApice.astro';
+import site from '../data/site.json';
+
+// A decoração de Natal é decidida AQUI, não só dentro do componente: o Astro
+// embarca o <script> de um componente pelo que é renderizado, então com a
+// condição aqui o JS do tema não viaja quando ele está desligado.
+// (Import dinâmico foi testado e é pior: tira o CSS, mas faz o script ir
+// inline nas 4364 páginas.) O CSS ainda entra no bundle compartilhado, que é
+// cacheado uma vez; o componente trata disso com :has(#natal-gatilho).
+const natalAtivo = site.natal?.ativo === true;
 
 /*
   Cabeçalho fixo. Azul da marca = estrutura/confiança (Guia §1.2).
@@ -35,6 +45,7 @@ const isActive = (href: string) =>
     </nav>
 
     <a href="/orcamento/" class="header-cta">Peça seu orçamento</a>
+    {natalAtivo && <NatalApice />}
 
     <button
       class="header-toggle"

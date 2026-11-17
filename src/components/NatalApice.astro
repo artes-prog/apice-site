@@ -1,0 +1,512 @@
+---
+import site from '../data/site.json';
+
+/*
+  Decoração sazonal — SÓ o cabeçalho.
+
+  Conceito: a Ápice personaliza por gravação a laser, então o site se
+  personaliza pela técnica da casa. Clicar na etiqueta faz um cabeçote de
+  gravação dar UMA passada no header, da direita para a esquerda, e "queimar"
+  três detalhes onde passou. Nada de neve, pinheirinho ou ícone em versão
+  natalina — aquilo é o que o fornecedor faz.
+
+  O calor é do FEIXE, não das marcas. Cada marca nasce já dourada e o brilho
+  âmbar vem do bloom do feixe passando por cima. Marca que acende por dentro
+  é fisicamente errada: a fonte de calor é o cabeçote.
+
+  Verde garrafa (--color-natal-verde) é decoração: fundo de etiqueta, fita,
+  filete. Nunca botão/pílula/badge/link — o verde vivo do WhatsApp segue
+  reservado ao WhatsApp, que é o sinal de conversão (Guia §1.2).
+
+  Liga/desliga: painel > Empresa > "Decoração de Natal (sazonal)".
+  - 'ativo' é avaliado no BUILD: false não renderiza nada (nem markup, nem CSS).
+  - A janela de datas é avaliada no CLIENTE. O site é estático: se a data
+    fosse avaliada no build, o tema não sairia sozinho em janeiro.
+*/
+const natal = site.natal;
+const ativo = natal?.ativo === true;
+---
+
+{ativo && (
+  <>
+    <button
+      id="natal-gatilho"
+      class="natal-gatilho"
+      type="button"
+      aria-pressed="false"
+      aria-label="Ativar decoração de Natal"
+      data-inicio={natal.inicio ?? ''}
+      data-fim={natal.fim ?? ''}
+    >
+      <span class="natal-etiqueta" aria-hidden="true">
+        <span class="natal-cordao"></span>
+        <span class="natal-tag"></span>
+      </span>
+    </button>
+
+    <span id="natal-camada" aria-hidden="true">
+      <span id="natal-rastro"></span>
+      <span id="natal-feixe"></span>
+    </span>
+  </>
+)}
+
+<style is:global>
+  /* =========================================================================
+     Tudo preso a #natal-* ou a .site-header: nada aqui vaza do cabeçalho.
+     Os estilos do header são escopados dentro do Header.astro, então estes
+     seletores precisam ser globais — a classe sobrevive ao escopo, o que o
+     Astro acrescenta lá é só um atributo [data-astro-cid-*].
+     ========================================================================= */
+
+  /* -------------------------------------------------------------------------
+     Tempos. Cada detalhe queima quando o feixe CHEGA nele, não num
+     escalonamento fixo: o feixe entra pela direita, logo a fita do CTA queima
+     primeiro, o menu no meio e o logo por último. Os valores saem da curva
+     cubic-bezier(.65,0,.35,1) sobre 900ms, que gasta pouco tempo nas pontas e
+     cruza o meio rápido.
+     ------------------------------------------------------------------------- */
+  .site-header {
+    --natal-ease: cubic-bezier(0.2, 0.75, 0.3, 1);
+    --natal-dir: normal;  /* a passada de volta troca por 'reverse' */
+    --natal-t: 220ms;
+    --natal-d1: 650ms;    /* logo: ponta esquerda, último a queimar */
+    --natal-d2: 175ms;    /* menu: 1º link, o mais à direita */
+    --natal-d3: 140ms;    /* CTA: quase na borda de entrada */
+    --natal-passo: 35ms;  /* intervalo entre um link e o próximo */
+  }
+  /* Passada de volta (desligando): o feixe vem da esquerda polindo, então a
+     ordem inverte. Um bloco de variáveis resolve os três detalhes e o
+     escalonamento do menu de uma vez — o passo negativo faz o menu apagar
+     da esquerda para a direita. */
+  .site-header[data-natal="off"] {
+    --natal-dir: reverse;   /* os mesmos keyframes, tocados de volta */
+    --natal-t: 240ms;
+    --natal-ease: ease-in;
+    --natal-d1: 250ms;
+    --natal-d2: 725ms;
+    --natal-d3: 760ms;
+    --natal-passo: -35ms;
+  }
+
+  /* ---- etiqueta (o gatilho) ---------------------------------------------- */
+  .natal-gatilho {
+    flex: none;
+    align-self: flex-start;
+    position: relative;
+    width: 30px;
+    height: 52px;        /* espaço reservado desde o 1º paint: CLS = 0 */
+    padding: 0;
+    border: 0;
+    background: none;
+    border-radius: 8px;
+    cursor: pointer;
+    visibility: hidden;  /* o JS libera só dentro da janela de datas */
+  }
+  .natal-gatilho[data-janela] { visibility: visible; }
+  .natal-gatilho:focus-visible {
+    outline: 2px solid var(--color-apice-blue);
+    outline-offset: 2px;
+  }
+
+  .natal-etiqueta {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 26px;
+    height: 48px;
+    margin-left: -13px;
+    transform-origin: 50% 2px;   /* pivô no nó do cordão, não no centro */
+  }
+  .natal-cordao {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 2px;
+    height: 20px;
+    margin-left: -1px;
+    background: var(--color-natal-ouro);
+  }
+  .natal-tag {
+    position: absolute;
+    top: 14px;
+    left: 0;
+    width: 26px;
+    height: 34px;
+    border: 1px solid #c9a22790;
+    border-radius: 4px;
+    background: var(--color-natal-verde);
+    box-shadow: 0 2px 6px #0b3d2e47;
+    rotate: -7deg;
+  }
+  /* Balanço leve no hover/foco: amortece e para. Sem loop, sem perpétuo. */
+  .natal-gatilho:hover .natal-etiqueta,
+  .natal-gatilho:focus-visible .natal-etiqueta {
+    animation: natal-balanco 1.15s ease-out both;
+  }
+  @keyframes natal-balanco {
+    0%   { rotate: 0deg; }
+    18%  { rotate: 6.5deg; }
+    42%  { rotate: -4.4deg; }
+    64%  { rotate: 2.3deg; }
+    82%  { rotate: -1deg; }
+    100% { rotate: 0deg; }
+  }
+
+  /* ---- camada do feixe --------------------------------------------------- */
+  /* .site-header é sticky, logo já é o contexto de posicionamento: inset: 0
+     cobre o header inteiro sem mexer no .header-inner (que é flex e
+     provavelmente a referência do .mobile-nav). */
+  #natal-camada {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 0;
+  }
+  #natal-camada[data-on] { opacity: 1; }
+
+  #natal-feixe {
+    position: absolute;
+    inset: -6% auto -6% 0;
+    width: 2px;
+    background: linear-gradient(#ffb44300, #fff3da 50%, #ffb44300);
+    /* O bloom é o calor da cena. Estático: quem anima é translate/scale. */
+    box-shadow: 0 0 10px 2px #ffaa3ce0;
+    translate: -40px;
+  }
+  #natal-rastro {
+    position: absolute;
+    inset: 0 auto 0 -22px;
+    width: 44px;
+    background: #ff9628;
+    filter: blur(9px);   /* dissipação é blur estático + opacidade */
+    opacity: 0;
+    translate: -40px;
+  }
+
+  /* -------------------------------------------------------------------------
+     OS TRÊS DETALHES
+     Base comum agrupada; cada um tem só a sua geometria.
+     ------------------------------------------------------------------------- */
+  .site-header .header-logo,
+  .site-header .nav-link,
+  .site-header .header-cta { position: relative; }
+
+  /* O :has(#natal-gatilho) não é enfeite: o CSS deste componente entra no
+     bundle compartilhado mesmo com o tema desligado no painel, e 'content'
+     é o que faz o ::after existir. Com a guarda, desligado não cria
+     pseudo-elemento nenhum — as regras de geometria abaixo não têm
+     'content', então sozinhas não geram nada. */
+  .site-header:has(#natal-gatilho) .header-logo::after,
+  .site-header:has(#natal-gatilho) .nav-link:not(.active)::after,
+  .site-header:has(#natal-gatilho) .header-cta::after {
+    content: "";
+    position: absolute;
+    opacity: 0;
+    /* o enfeite não pode virar área clicável do logo/link/botão */
+    pointer-events: none;
+  }
+
+  /* 1. micro-ornamento gravado ao lado do logo: losango dourado */
+  .site-header .header-logo::after {
+    top: 50%;
+    right: -15px;
+    width: 9px;
+    height: 9px;
+    margin-top: -5px;
+    border: 1px solid var(--color-natal-ouro);
+    border-radius: 1px;
+    rotate: 45deg;
+    scale: 0.4;
+  }
+
+  /* 2. filete dourado sob os links, com cara de sulco.
+     Mora exatamente no trilho de 2px que o .nav-link já reserva no
+     border-bottom, então o menu ganha um trilho só, não uma segunda linha.
+     O link ativo fica de fora: aquele trilho já é dele, com o vermelho da
+     marca, e empilhar ouro ali deixaria o marcador de página ambíguo.
+     1px escuro em cima + 1px ouro embaixo = canal escavado. */
+  .site-header .nav-link:not(.active)::after {
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: 2px;
+    background: linear-gradient(#7d6318 0 1px, var(--color-natal-ouro) 1px);
+    transform-origin: 100% 50%;   /* o corte abre da direita p/ a esquerda */
+    scale: 0 1;
+  }
+
+  /* 3. fio dourado gravado por dentro da pílula do CTA.
+     A primeira tentativa foi o canto de fita verde do briefing, e ela não
+     sobrevive à geometria: a pílula só tem 18px entre a borda e o texto,
+     então a faixa fica presa na curva do cap e sai cortada em bico — lê
+     como defeito de render no botão mais importante do site. O fio contorna
+     a forma que já existe, que é o que um laser faria numa peça redonda.
+     Cresce da direita para a esquerda, junto com o feixe, pelos mesmos
+     keyframes do sulco do menu. */
+  .site-header .header-cta::after {
+    inset: 3px;
+    border: 1px solid var(--color-natal-ouro);
+    border-radius: 999px;
+    transform-origin: 100% 50%;
+    scale: 0 1;
+  }
+
+  /* ---- a queima ---------------------------------------------------------- */
+  /* Uma regra por detalhe serve para ligar E para desligar: [data-natal] só
+     existe enquanto o feixe está passando, e o bloco de variáveis acima
+     inverte direção, duração, curva e ordem. O estado parado é outro
+     atributo (data-pronto), senão a marca reanimaria a cada navegação.
+
+     fill: both em vez de forwards porque 'backwards' resolve a espera: no
+     desligar, o detalhe segue visível durante o delay (1º quadro da
+     reprodução invertida) sem precisar repetir opacity/scale na mão.
+
+     O delay vem em longhand DEPOIS do atalho: o atalho 'animation' zeraria
+     o animation-delay se viesse por último. */
+  .site-header[data-natal] .header-logo::after {
+    animation: natal-gravar var(--natal-t) var(--natal-ease) var(--natal-dir) both;
+    animation-delay: var(--natal-d1);
+  }
+  .site-header[data-natal] .header-cta::after {
+    animation: natal-sulco var(--natal-t) var(--natal-ease) var(--natal-dir) both;
+    animation-delay: var(--natal-d3);
+  }
+  .site-header[data-natal] .nav-link:not(.active)::after {
+    animation: natal-sulco var(--natal-t) var(--natal-ease) var(--natal-dir) both;
+    animation-delay: calc(var(--natal-d2) + var(--natal-n, 7) * var(--natal-passo));
+  }
+
+  /* Escalonamento do menu. O feixe vem da direita, então o link mais à
+     direita queima primeiro: nth-last-child conta dessa ponta. Se um dia
+     entrar um 9º link, ele cai no fallback var(--natal-n, 7) e queima junto
+     com o último — degrada, não quebra. */
+  .nav-link:nth-last-child(1) { --natal-n: 0; }
+  .nav-link:nth-last-child(2) { --natal-n: 1; }
+  .nav-link:nth-last-child(3) { --natal-n: 2; }
+  .nav-link:nth-last-child(4) { --natal-n: 3; }
+  .nav-link:nth-last-child(5) { --natal-n: 4; }
+  .nav-link:nth-last-child(6) { --natal-n: 5; }
+  .nav-link:nth-last-child(7) { --natal-n: 6; }
+  .nav-link:nth-last-child(8) { --natal-n: 7; }
+
+  /* Estado parado, depois da passada: sobrevive à navegação client-side sem
+     reanimar nada. */
+  .site-header[data-pronto] .header-logo::after,
+  .site-header[data-pronto] .nav-link:not(.active)::after,
+  .site-header[data-pronto] .header-cta::after {
+    opacity: 1;
+    scale: 1;
+  }
+
+  @keyframes natal-gravar {
+    0%   { opacity: 0; scale: 0.4; }
+    55%  { opacity: 1; scale: 1.14; }   /* leve estouro: a marca "assenta" */
+    100% { opacity: 1; scale: 1; }
+  }
+  @keyframes natal-sulco {
+    0%   { opacity: 0.5; scale: 0 1; }
+    100% { opacity: 1; scale: 1 1; }
+  }
+
+  /* ---- mobile: a etiqueta vai pra direita, antes do hambúrguer ----------- */
+  /* O .header-toggle tem margin-left:auto; sem neutralizar, os dois autos
+     dividiriam a sobra e a etiqueta pararia no meio do header.
+     Abaixo de 960px .header-nav e .header-cta são display:none, então só o
+     detalhe do logo aparece — e é o certo: o laser não grava o que não está
+     na mesa. */
+  /* (width < 960px) é o complemento exato do min-width: 960px que o
+     Header.astro já usa — sem o vão de 0,02px do max-width. */
+  @media (width < 960px) {
+    .natal-gatilho { margin-left: auto; }
+    .site-header:has(#natal-gatilho) .header-toggle { margin-left: 0.35rem; }
+    .site-header { --natal-d1: 520ms; }  /* header estreito: feixe chega antes */
+  }
+
+  /* ---- a faixa onde o header não tem espaço ------------------------------ */
+  /* Medido em 1024px: logo 174 + menu 567 + CTA 194 + 3 gaps de 16 = 967 de
+     969 disponíveis. Ou seja, o header já estava com 2px de sobra ANTES da
+     etiqueta, e ela precisa de 46px (30 da caixa + 16 do gap). Nessa faixa
+     não cabe em fluxo, e em posição absoluta encostaria na pílula do CTA,
+     que também já toca a borda do container.
+     Decoração não empurra conteúdo e não estoura a viewport: entre 960px e
+     1100px o gatilho simplesmente não aparece. Abaixo de 960px o menu e o
+     CTA somem e o espaço volta; acima de 1100px há folga de sobra. */
+  @media (960px <= width < 1100px) {
+    .natal-gatilho { display: none; }
+  }
+
+  /* ---- movimento é opcional ---------------------------------------------- */
+  /* global.css:103 já força animation-duration: 0.01ms !important aqui, e com
+     fill: forwards isso entrega o estado final na hora: os detalhes aparecem
+     direto, sem feixe. Só preciso tirar a camada do caminho. */
+  @media (prefers-reduced-motion: reduce) {
+    #natal-camada { display: none; }
+    /* A regra global zera a DURAÇÃO, não o ATRASO. Sem o feixe para explicar
+       a espera, os detalhes ficariam pipocando ao longo de 650ms sem motivo
+       visível. Aqui eles entram juntos, de uma vez. */
+    .site-header {
+      --natal-d1: 0ms;
+      --natal-d2: 0ms;
+      --natal-d3: 0ms;
+      --natal-passo: 0ms;
+    }
+  }
+</style>
+
+<script>
+  // Trap: BaseLayout tem <ClientRouter />. Script de módulo NÃO re-executa em
+  // navegação client-side — tudo pendura em astro:page-load e limpa no swap.
+  const EASE = 'cubic-bezier(0.65, 0, 0.35, 1)';
+  const T_FEIXE = 900;
+
+  let ligado = false;          // sobrevive às navegações (módulo não re-executa)
+  let anims: Animation[] = [];
+  let timers: number[] = [];
+
+  function limpar() {
+    for (const a of anims) {
+      try { a.cancel(); } catch (e) { /* animação já descartada */ }
+    }
+    anims = [];
+    for (const t of timers) clearTimeout(t);
+    timers = [];
+  }
+
+  function hojeISO() {
+    const d = new Date();                       // data LOCAL, não UTC
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const dia = String(d.getDate()).padStart(2, '0');
+    return d.getFullYear() + '-' + m + '-' + dia;
+  }
+
+  function naJanela(btn: HTMLElement) {
+    const h = hojeISO();
+    const i = btn.dataset.inicio || '';
+    const f = btn.dataset.fim || '';
+    if (i && h < i) return false;
+    if (f && h > f) return false;
+    return true;
+  }
+
+  function passada(header: HTMLElement, camada: HTMLElement, reverso: boolean) {
+    const L = header.getBoundingClientRect().width;
+    const de = reverso ? -16 : L + 16;
+    const para = reverso ? L + 16 : -16;
+    const feixe = camada.querySelector<HTMLElement>('#natal-feixe');
+    const rastro = camada.querySelector<HTMLElement>('#natal-rastro');
+    if (!feixe || !rastro) return;
+
+    camada.dataset.on = '1';
+
+    // fase 2: percorre o header. Nunca linear.
+    anims.push(feixe.animate(
+      [{ translate: de + 'px' }, { translate: para + 'px' }],
+      { duration: T_FEIXE, easing: EASE, fill: 'forwards' }
+    ));
+    // fase 1 + saída: o ponto entra pela direita e estica até virar linha.
+    // 'scale' é propriedade independente, não disputa com o 'translate'.
+    anims.push(feixe.animate(
+      [
+        { opacity: 0, scale: '1 0.1', offset: 0 },
+        { opacity: 1, scale: '1 1', offset: 0.13 },
+        { opacity: 1, scale: '1 1', offset: 0.84 },
+        { opacity: 0, scale: '1 0.55', offset: 1 },
+      ],
+      { duration: T_FEIXE + 140, easing: 'linear', fill: 'forwards' }
+    ));
+    // fase 4: a trilha de calor vem atrasada e dissipa
+    anims.push(rastro.animate(
+      [{ translate: de + 'px' }, { translate: para + 'px' }],
+      { duration: T_FEIXE, delay: 70, easing: EASE, fill: 'forwards' }
+    ));
+    anims.push(rastro.animate(
+      [{ opacity: 0, offset: 0 }, { opacity: 0.55, offset: 0.14 }, { opacity: 0, offset: 1 }],
+      { duration: T_FEIXE + 320, delay: 70, easing: 'ease-out', fill: 'forwards' }
+    ));
+  }
+
+  // fase 5: o feixe passa pela etiqueta (ela fica à direita, é a primeira
+  // coisa no caminho) e ela assenta em 2 balanços amortecidos
+  function assentar(etq: HTMLElement) {
+    anims.push(etq.animate(
+      [
+        { rotate: '0deg' },
+        { rotate: '7deg', offset: 0.17 },
+        { rotate: '-4.6deg', offset: 0.41 },
+        { rotate: '2.4deg', offset: 0.63 },
+        { rotate: '-1deg', offset: 0.83 },
+        { rotate: '0deg', offset: 1 },
+      ],
+      { duration: 1120, delay: 120, easing: 'ease-out' }
+    ));
+  }
+
+  function alternar(btn: HTMLElement, header: HTMLElement, camada: HTMLElement) {
+    limpar();
+    const reduz = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const etq = btn.querySelector<HTMLElement>('.natal-etiqueta');
+
+    ligado = !ligado;
+    btn.setAttribute('aria-pressed', String(ligado));
+    btn.setAttribute(
+      'aria-label',
+      ligado ? 'Desativar decoração de Natal' : 'Ativar decoração de Natal'
+    );
+
+    if (ligado) {
+      delete header.dataset.pronto;
+      header.dataset.natal = 'on';
+      if (!reduz) {
+        passada(header, camada, false);
+        if (etq) assentar(etq);
+      }
+      timers.push(window.setTimeout(() => {
+        // sai do estado "passando" e entra no estado parado
+        header.dataset.pronto = '1';
+        delete header.dataset.natal;
+        delete camada.dataset.on;
+      }, reduz ? 160 : 1500));
+    } else {
+      delete header.dataset.pronto;
+      header.dataset.natal = 'off';
+      if (!reduz) {
+        passada(header, camada, true);
+        if (etq) assentar(etq);
+      }
+      timers.push(window.setTimeout(() => {
+        header.removeAttribute('data-natal');
+        delete camada.dataset.on;
+      }, reduz ? 160 : 1500));
+    }
+  }
+
+  function initNatal() {
+    const btn = document.getElementById('natal-gatilho');
+    if (!btn || btn.dataset.wired) return;
+    btn.dataset.wired = '1';
+
+    const header = btn.closest<HTMLElement>('.site-header');
+    const camada = document.getElementById('natal-camada');
+    if (!header || !camada) return;
+
+    // Janela de datas no cliente. Fora dela o gatilho fica invisível, mas
+    // continua ocupando o lugar: removê-lo deslocaria o header (CLS).
+    if (!naJanela(btn)) return;
+    btn.dataset.janela = '1';
+
+    if (ligado) {
+      header.dataset.pronto = '1';
+      btn.setAttribute('aria-pressed', 'true');
+      btn.setAttribute('aria-label', 'Desativar decoração de Natal');
+    }
+
+    // <button> de verdade: Enter/Espaço já chegam como click
+    btn.addEventListener('click', () => alternar(btn, header, camada));
+  }
+
+  document.addEventListener('astro:page-load', initNatal);
+  document.addEventListener('astro:before-swap', limpar);
+</script>

@@ -40,5 +40,10 @@
     "Senador Canedo",
     "Trindade",
     "Região metropolitana de Goiânia"
-  ]
+  ],
+  "natal": {
+    "ativo": true,
+    "inicio": "2026-12-01",
+    "fim": "2027-01-06"
+  }
 }
