@@ -1,512 +1,366 @@
 ---
+import { Image, getImage } from 'astro:assets';
 import site from '../data/site.json';
 
+import pinheiroAlto from '../assets/img/natal/pinheiro-alto.png';
+import pinheiroBaixo from '../assets/img/natal/pinheiro-baixo.png';
+import bonecoNeve from '../assets/img/natal/boneco-neve.png';
+import casa from '../assets/img/natal/casa.png';
+import laser from '../assets/img/natal/laser.png';
+import esteira from '../assets/img/natal/esteira.png';
+import prensa from '../assets/img/natal/prensa.png';
+import mesa from '../assets/img/natal/mesa.png';
+import fita from '../assets/img/natal/fita.png';
+import arvore from '../assets/img/natal/arvore-presentes.png';
+import treno from '../assets/img/natal/treno.png';
+import rena from '../assets/img/natal/rena.png';
+import caixa from '../assets/img/natal/caixa.png';
+import presenteVermelho from '../assets/img/natal/presente-vermelho.png';
+import caneca from '../assets/img/natal/caneca.png';
+import garrafa from '../assets/img/natal/garrafa.png';
+import caderneta from '../assets/img/natal/caderneta.png';
+import botton from '../assets/img/natal/botton.png';
+import caneta from '../assets/img/natal/caneta.png';
+import gorroSrc from '../assets/img/natal/gorro.png';
+import luzesSrc from '../assets/img/natal/luzes.png';
+
 /*
-  Decoração sazonal — SÓ o cabeçalho.
+  FAIXA SAZONAL DE NATAL — só o cabeçalho.
 
-  Conceito: a Ápice personaliza por gravação a laser, então o site se
-  personaliza pela técnica da casa. Clicar na etiqueta faz um cabeçote de
-  gravação dar UMA passada no header, da direita para a esquerda, e "queimar"
-  três detalhes onde passou. Nada de neve, pinheirinho ou ícone em versão
-  natalina — aquilo é o que o fornecedor faz.
+  Conceito: a oficina do Papai Noel, só que ela fabrica BRINDE CORPORATIVO.
+  Da esquerda para a direita: pinheiros, a oficina, a máquina de gravação a
+  laser marcando uma caneca, a esteira com os brindes desfilando, a prensa de
+  silk, a mesa de embrulho, a árvore montada de caixas de presente, o trenó
+  carregado e a rena.
 
-  O calor é do FEIXE, não das marcas. Cada marca nasce já dourada e o brilho
-  âmbar vem do bloom do feixe passando por cima. Marca que acende por dentro
-  é fisicamente errada: a fonte de calor é o cabeçote.
+  Por que a oficina fica no CENTRO e em destaque: pinheiro, boneco de neve,
+  trenó e rena são o repertório genérico de Natal — é exatamente a vila nevada
+  do fornecedor. Enfileirar isso devolveria a sensação de cópia. Os genéricos
+  entram só nas pontas, enquadrando; quem conta a história é a oficina.
 
-  Verde garrafa (--color-natal-verde) é decoração: fundo de etiqueta, fita,
-  filete. Nunca botão/pílula/badge/link — o verde vivo do WhatsApp segue
-  reservado ao WhatsApp, que é o sinal de conversão (Guia §1.2).
+  Interação: a árvore de presentes é um <button>. Clicar apaga e acende as
+  luzes, e a escolha fica salva no navegador.
 
   Liga/desliga: painel > Empresa > "Decoração de Natal (sazonal)".
-  - 'ativo' é avaliado no BUILD: false não renderiza nada (nem markup, nem CSS).
-  - A janela de datas é avaliada no CLIENTE. O site é estático: se a data
-    fosse avaliada no build, o tema não sairia sozinho em janeiro.
+  - 'ativo' é avaliado no BUILD: false não renderiza nada (nem markup, nem CSS,
+    nem JS). A condição também existe no Header, porque o Astro embarca
+    <style>/<script> pelo grafo de import, não pelo que a expressão renderiza.
+  - A janela de datas é avaliada no CLIENTE. O site é estático: avaliada no
+    build, a faixa não sairia sozinha em janeiro.
 */
 const natal = site.natal;
 const ativo = natal?.ativo === true;
+
+/* O gorro entra como background de ::after no logo — o logo está fora deste
+   componente, então a URL viaja por variável CSS. */
+const gorro = ativo ? await getImage({ src: gorroSrc, height: 72, format: 'webp' }) : null;
+const luzes = ativo ? await getImage({ src: luzesSrc, height: 36, format: 'webp' }) : null;
+
+/* A esteira roda com esta lista duplicada, para o loop fechar sem salto. */
+const naEsteira = [
+  { src: caneca, h: 23 },
+  { src: garrafa, h: 27 },
+  { src: presenteVermelho, h: 22 },
+  { src: caderneta, h: 22 },
+  { src: botton, h: 18 },
+  { src: caneta, h: 11 },
+];
+
+/* Neve: posição, atraso e duração variados na mão — aleatório no build geraria
+   HTML diferente a cada deploy e sujaria o diff. */
+const flocos = [
+  [4, 0.0, 9.5, 3], [11, 2.8, 11.0, 2], [18, 5.6, 8.5, 3], [25, 1.4, 12.0, 2],
+  [32, 7.2, 10.0, 3], [39, 3.1, 9.0, 2], [46, 8.4, 11.5, 3], [53, 0.7, 10.5, 2],
+  [60, 5.0, 8.8, 3], [67, 9.1, 12.5, 2], [74, 2.2, 9.8, 3], [81, 6.3, 11.2, 2],
+  [88, 4.0, 10.2, 3], [95, 7.8, 9.3, 2],
+];
 ---
 
+{/*
+  As URLs das imagens saem do astro:assets com hash, então viajam por variável
+  CSS. Elas moram no .site-header, e não na faixa: o gorro é um ::after do
+  .header-logo, que está FORA da faixa — variável declarada na faixa não
+  chegaria lá, porque custom property só desce na árvore.
+  `is:inline` é obrigatório: o Astro não processa <style> dentro de expressão
+  condicional, e sem isso a regra não entra no bundle.
+*/}
 {ativo && (
-  <>
-    <button
-      id="natal-gatilho"
-      class="natal-gatilho"
-      type="button"
-      aria-pressed="false"
-      aria-label="Ativar decoração de Natal"
-      data-inicio={natal.inicio ?? ''}
-      data-fim={natal.fim ?? ''}
-    >
-      <span class="natal-etiqueta" aria-hidden="true">
-        <span class="natal-cordao"></span>
-        <span class="natal-tag"></span>
-      </span>
-    </button>
+  <style
+    is:inline
+    set:html={`.site-header{--natal-gorro:url(${gorro!.src});--natal-luzes:url(${luzes!.src})}`}
+  />
+)}
 
-    <span id="natal-camada" aria-hidden="true">
-      <span id="natal-rastro"></span>
-      <span id="natal-feixe"></span>
-    </span>
-  </>
+{ativo && (
+  <div
+    id="natal-faixa"
+    class="natal-faixa"
+    data-inicio={natal.inicio ?? ''}
+    data-fim={natal.fim ?? ''}
+  >
+    <svg class="natal-fundo" viewBox="0 0 1440 64" preserveAspectRatio="none" aria-hidden="true">
+      <rect x="0" y="0" width="1440" height="64" fill="#F7FBFE" />
+      <path d="M0 44 L150 18 L280 44 Z" fill="#E6EFF8" />
+      <path d="M220 44 L380 14 L530 44 Z" fill="#DEEAF6" />
+      <path d="M640 44 L790 20 L930 44 Z" fill="#E6EFF8" />
+      <path d="M980 44 L1140 16 L1290 44 Z" fill="#DEEAF6" />
+      <path d="M0 48 Q240 40 480 48 Q720 56 960 48 Q1200 40 1440 48 L1440 64 L0 64 Z" fill="#FFFFFF" />
+    </svg>
+
+    <div class="natal-luzes" aria-hidden="true"></div>
+
+    <div class="natal-cena" aria-hidden="true">
+      <Image class="p" src={pinheiroAlto} alt="" height={100} format="webp" style="left:8px;height:50px" />
+      <Image class="p" src={pinheiroBaixo} alt="" height={80} format="webp" style="left:58px;height:38px" />
+      <Image class="p" src={bonecoNeve} alt="" height={88} format="webp" style="left:104px;height:42px" />
+      <Image class="p" src={casa} alt="" height={112} format="webp" style="left:156px;height:54px" />
+
+      <div class="natal-laser">
+        <Image class="p" src={laser} alt="" height={80} format="webp" style="left:0;height:38px" />
+        <span class="natal-feixe"></span>
+        <Image class="p" src={caneca} alt="" height={56} format="webp" style="left:46px;height:22px" />
+      </div>
+
+      <Image class="p" src={esteira} alt="" height={90} format="webp" style="left:392px;width:300px;height:20px" />
+      <div class="natal-trilho">
+        <div class="natal-corre">
+          {[0, 1].map(() => naEsteira.map((o) => (
+            <Image class="natal-item" src={o.src} alt="" height={70} format="webp" style={`height:${o.h}px`} />
+          )))}
+        </div>
+      </div>
+
+      <Image class="p" src={prensa} alt="" height={80} format="webp" style="left:706px;height:38px" />
+      <Image class="p" src={mesa} alt="" height={64} format="webp" style="left:788px;height:28px" />
+      <Image class="p" src={fita} alt="" height={44} format="webp" style="left:800px;bottom:28px;height:18px" />
+
+      <button
+        id="natal-arvore"
+        class="natal-arvore"
+        type="button"
+        aria-pressed="true"
+        aria-label="Apagar as luzes de Natal"
+      >
+        <Image src={arvore} alt="" height={116} format="webp" style="height:56px" />
+        <span class="natal-brilho natal-b1"></span>
+        <span class="natal-brilho natal-b2"></span>
+        <span class="natal-brilho natal-b3"></span>
+      </button>
+
+      <Image class="p" src={treno} alt="" height={76} format="webp" style="left:996px;height:34px" />
+      <Image class="p" src={rena} alt="" height={86} format="webp" style="left:1086px;height:41px" />
+      <Image class="p" src={caixa} alt="" height={64} format="webp" style="left:1148px;height:26px" />
+      <Image class="p" src={pinheiroBaixo} alt="" height={80} format="webp" style="left:1206px;height:36px" />
+      <Image class="p" src={pinheiroAlto} alt="" height={100} format="webp" style="left:1256px;height:48px" />
+      <Image class="p" src={presenteVermelho} alt="" height={56} format="webp" style="left:1320px;height:24px" />
+      <Image class="p" src={pinheiroBaixo} alt="" height={80} format="webp" style="left:1368px;height:34px" />
+    </div>
+
+    <div class="natal-neve" aria-hidden="true">
+      {flocos.map(([x, atraso, dur, tam]) => (
+        <span style={`left:${x}%;animation-delay:-${atraso}s;animation-duration:${dur}s;width:${tam}px;height:${tam}px`}></span>
+      ))}
+    </div>
+  </div>
 )}
 
 <style is:global>
-  /* =========================================================================
-     Tudo preso a #natal-* ou a .site-header: nada aqui vaza do cabeçalho.
-     Os estilos do header são escopados dentro do Header.astro, então estes
-     seletores precisam ser globais — a classe sobrevive ao escopo, o que o
-     Astro acrescenta lá é só um atributo [data-astro-cid-*].
-     ========================================================================= */
+    /*
+      Este bloco fica no NÍVEL RAIZ do componente de propósito. O Astro extrai
+      <style> estaticamente: dentro de uma expressão condicional o estilo não
+      é processado e simplesmente não entra no bundle.
 
-  /* -------------------------------------------------------------------------
-     Tempos. Cada detalhe queima quando o feixe CHEGA nele, não num
-     escalonamento fixo: o feixe entra pela direita, logo a fita do CTA queima
-     primeiro, o menu no meio e o logo por último. Os valores saem da curva
-     cubic-bezier(.65,0,.35,1) sobre 900ms, que gasta pouco tempo nas pontas e
-     cruza o meio rápido.
-     ------------------------------------------------------------------------- */
-  .site-header {
-    --natal-ease: cubic-bezier(0.2, 0.75, 0.3, 1);
-    --natal-dir: normal;  /* a passada de volta troca por 'reverse' */
-    --natal-t: 220ms;
-    --natal-d1: 650ms;    /* logo: ponta esquerda, último a queimar */
-    --natal-d2: 175ms;    /* menu: 1º link, o mais à direita */
-    --natal-d3: 140ms;    /* CTA: quase na borda de entrada */
-    --natal-passo: 35ms;  /* intervalo entre um link e o próximo */
-  }
-  /* Passada de volta (desligando): o feixe vem da esquerda polindo, então a
-     ordem inverte. Um bloco de variáveis resolve os três detalhes e o
-     escalonamento do menu de uma vez — o passo negativo faz o menu apagar
-     da esquerda para a direita. */
-  .site-header[data-natal="off"] {
-    --natal-dir: reverse;   /* os mesmos keyframes, tocados de volta */
-    --natal-t: 240ms;
-    --natal-ease: ease-in;
-    --natal-d1: 250ms;
-    --natal-d2: 725ms;
-    --natal-d3: 760ms;
-    --natal-passo: -35ms;
-  }
+      Tudo aqui está preso a #natal-faixa / .natal-*, que só existem quando o
+      Header renderiza o componente. Com a decoração desligada o CSS viaja
+      inerte — não cria nada e fica em cache único para o site inteiro.
+    */
 
-  /* ---- etiqueta (o gatilho) ---------------------------------------------- */
-  .natal-gatilho {
-    flex: none;
-    align-self: flex-start;
-    position: relative;
-    width: 30px;
-    height: 52px;        /* espaço reservado desde o 1º paint: CLS = 0 */
-    padding: 0;
-    border: 0;
-    background: none;
-    border-radius: 8px;
-    cursor: pointer;
-    visibility: hidden;  /* o JS libera só dentro da janela de datas */
-  }
-  .natal-gatilho[data-janela] { visibility: visible; }
-  .natal-gatilho:focus-visible {
-    outline: 2px solid var(--color-apice-blue);
-    outline-offset: 2px;
-  }
+    /* A faixa só aparece dentro da janela de datas, liberada pelo JS.
+       Fora dela não ocupa espaço: o header volta exatamente ao que era. */
+    #natal-faixa { display: none; }
+    #natal-faixa[data-janela] { display: block; }
 
-  .natal-etiqueta {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    width: 26px;
-    height: 48px;
-    margin-left: -13px;
-    transform-origin: 50% 2px;   /* pivô no nó do cordão, não no centro */
-  }
-  .natal-cordao {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    width: 2px;
-    height: 20px;
-    margin-left: -1px;
-    background: var(--color-natal-ouro);
-  }
-  .natal-tag {
-    position: absolute;
-    top: 14px;
-    left: 0;
-    width: 26px;
-    height: 34px;
-    border: 1px solid #c9a22790;
-    border-radius: 4px;
-    background: var(--color-natal-verde);
-    box-shadow: 0 2px 6px #0b3d2e47;
-    rotate: -7deg;
-  }
-  /* Balanço leve no hover/foco: amortece e para. Sem loop, sem perpétuo. */
-  .natal-gatilho:hover .natal-etiqueta,
-  .natal-gatilho:focus-visible .natal-etiqueta {
-    animation: natal-balanco 1.15s ease-out both;
-  }
-  @keyframes natal-balanco {
-    0%   { rotate: 0deg; }
-    18%  { rotate: 6.5deg; }
-    42%  { rotate: -4.4deg; }
-    64%  { rotate: 2.3deg; }
-    82%  { rotate: -1deg; }
-    100% { rotate: 0deg; }
-  }
-
-  /* ---- camada do feixe --------------------------------------------------- */
-  /* .site-header é sticky, logo já é o contexto de posicionamento: inset: 0
-     cobre o header inteiro sem mexer no .header-inner (que é flex e
-     provavelmente a referência do .mobile-nav). */
-  #natal-camada {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    overflow: hidden;
-    pointer-events: none;
-    opacity: 0;
-  }
-  #natal-camada[data-on] { opacity: 1; }
-
-  #natal-feixe {
-    position: absolute;
-    inset: -6% auto -6% 0;
-    width: 2px;
-    background: linear-gradient(#ffb44300, #fff3da 50%, #ffb44300);
-    /* O bloom é o calor da cena. Estático: quem anima é translate/scale. */
-    box-shadow: 0 0 10px 2px #ffaa3ce0;
-    translate: -40px;
-  }
-  #natal-rastro {
-    position: absolute;
-    inset: 0 auto 0 -22px;
-    width: 44px;
-    background: #ff9628;
-    filter: blur(9px);   /* dissipação é blur estático + opacidade */
-    opacity: 0;
-    translate: -40px;
-  }
-
-  /* -------------------------------------------------------------------------
-     OS TRÊS DETALHES
-     Base comum agrupada; cada um tem só a sua geometria.
-     ------------------------------------------------------------------------- */
-  .site-header .header-logo,
-  .site-header .nav-link,
-  .site-header .header-cta { position: relative; }
-
-  /* O :has(#natal-gatilho) não é enfeite: o CSS deste componente entra no
-     bundle compartilhado mesmo com o tema desligado no painel, e 'content'
-     é o que faz o ::after existir. Com a guarda, desligado não cria
-     pseudo-elemento nenhum — as regras de geometria abaixo não têm
-     'content', então sozinhas não geram nada. */
-  .site-header:has(#natal-gatilho) .header-logo::after,
-  .site-header:has(#natal-gatilho) .nav-link:not(.active)::after,
-  .site-header:has(#natal-gatilho) .header-cta::after {
-    content: "";
-    position: absolute;
-    opacity: 0;
-    /* o enfeite não pode virar área clicável do logo/link/botão */
-    pointer-events: none;
-  }
-
-  /* 1. micro-ornamento gravado ao lado do logo: losango dourado */
-  .site-header .header-logo::after {
-    top: 50%;
-    right: -15px;
-    width: 9px;
-    height: 9px;
-    margin-top: -5px;
-    border: 1px solid var(--color-natal-ouro);
-    border-radius: 1px;
-    rotate: 45deg;
-    scale: 0.4;
-  }
-
-  /* 2. filete dourado sob os links, com cara de sulco.
-     Mora exatamente no trilho de 2px que o .nav-link já reserva no
-     border-bottom, então o menu ganha um trilho só, não uma segunda linha.
-     O link ativo fica de fora: aquele trilho já é dele, com o vermelho da
-     marca, e empilhar ouro ali deixaria o marcador de página ambíguo.
-     1px escuro em cima + 1px ouro embaixo = canal escavado. */
-  .site-header .nav-link:not(.active)::after {
-    left: 0;
-    right: 0;
-    bottom: -2px;
-    height: 2px;
-    background: linear-gradient(#7d6318 0 1px, var(--color-natal-ouro) 1px);
-    transform-origin: 100% 50%;   /* o corte abre da direita p/ a esquerda */
-    scale: 0 1;
-  }
-
-  /* 3. fio dourado gravado por dentro da pílula do CTA.
-     A primeira tentativa foi o canto de fita verde do briefing, e ela não
-     sobrevive à geometria: a pílula só tem 18px entre a borda e o texto,
-     então a faixa fica presa na curva do cap e sai cortada em bico — lê
-     como defeito de render no botão mais importante do site. O fio contorna
-     a forma que já existe, que é o que um laser faria numa peça redonda.
-     Cresce da direita para a esquerda, junto com o feixe, pelos mesmos
-     keyframes do sulco do menu. */
-  .site-header .header-cta::after {
-    inset: 3px;
-    border: 1px solid var(--color-natal-ouro);
-    border-radius: 999px;
-    transform-origin: 100% 50%;
-    scale: 0 1;
-  }
-
-  /* ---- a queima ---------------------------------------------------------- */
-  /* Uma regra por detalhe serve para ligar E para desligar: [data-natal] só
-     existe enquanto o feixe está passando, e o bloco de variáveis acima
-     inverte direção, duração, curva e ordem. O estado parado é outro
-     atributo (data-pronto), senão a marca reanimaria a cada navegação.
-
-     fill: both em vez de forwards porque 'backwards' resolve a espera: no
-     desligar, o detalhe segue visível durante o delay (1º quadro da
-     reprodução invertida) sem precisar repetir opacity/scale na mão.
-
-     O delay vem em longhand DEPOIS do atalho: o atalho 'animation' zeraria
-     o animation-delay se viesse por último. */
-  .site-header[data-natal] .header-logo::after {
-    animation: natal-gravar var(--natal-t) var(--natal-ease) var(--natal-dir) both;
-    animation-delay: var(--natal-d1);
-  }
-  .site-header[data-natal] .header-cta::after {
-    animation: natal-sulco var(--natal-t) var(--natal-ease) var(--natal-dir) both;
-    animation-delay: var(--natal-d3);
-  }
-  .site-header[data-natal] .nav-link:not(.active)::after {
-    animation: natal-sulco var(--natal-t) var(--natal-ease) var(--natal-dir) both;
-    animation-delay: calc(var(--natal-d2) + var(--natal-n, 7) * var(--natal-passo));
-  }
-
-  /* Escalonamento do menu. O feixe vem da direita, então o link mais à
-     direita queima primeiro: nth-last-child conta dessa ponta. Se um dia
-     entrar um 9º link, ele cai no fallback var(--natal-n, 7) e queima junto
-     com o último — degrada, não quebra. */
-  .nav-link:nth-last-child(1) { --natal-n: 0; }
-  .nav-link:nth-last-child(2) { --natal-n: 1; }
-  .nav-link:nth-last-child(3) { --natal-n: 2; }
-  .nav-link:nth-last-child(4) { --natal-n: 3; }
-  .nav-link:nth-last-child(5) { --natal-n: 4; }
-  .nav-link:nth-last-child(6) { --natal-n: 5; }
-  .nav-link:nth-last-child(7) { --natal-n: 6; }
-  .nav-link:nth-last-child(8) { --natal-n: 7; }
-
-  /* Estado parado, depois da passada: sobrevive à navegação client-side sem
-     reanimar nada. */
-  .site-header[data-pronto] .header-logo::after,
-  .site-header[data-pronto] .nav-link:not(.active)::after,
-  .site-header[data-pronto] .header-cta::after {
-    opacity: 1;
-    scale: 1;
-  }
-
-  @keyframes natal-gravar {
-    0%   { opacity: 0; scale: 0.4; }
-    55%  { opacity: 1; scale: 1.14; }   /* leve estouro: a marca "assenta" */
-    100% { opacity: 1; scale: 1; }
-  }
-  @keyframes natal-sulco {
-    0%   { opacity: 0.5; scale: 0 1; }
-    100% { opacity: 1; scale: 1 1; }
-  }
-
-  /* ---- mobile: a etiqueta vai pra direita, antes do hambúrguer ----------- */
-  /* O .header-toggle tem margin-left:auto; sem neutralizar, os dois autos
-     dividiriam a sobra e a etiqueta pararia no meio do header.
-     Abaixo de 960px .header-nav e .header-cta são display:none, então só o
-     detalhe do logo aparece — e é o certo: o laser não grava o que não está
-     na mesa. */
-  /* (width < 960px) é o complemento exato do min-width: 960px que o
-     Header.astro já usa — sem o vão de 0,02px do max-width. */
-  @media (width < 960px) {
-    .natal-gatilho { margin-left: auto; }
-    .site-header:has(#natal-gatilho) .header-toggle { margin-left: 0.35rem; }
-    .site-header { --natal-d1: 520ms; }  /* header estreito: feixe chega antes */
-  }
-
-  /* ---- a faixa onde o header não tem espaço ------------------------------ */
-  /* Medido em 1024px: logo 174 + menu 567 + CTA 194 + 3 gaps de 16 = 967 de
-     969 disponíveis. Ou seja, o header já estava com 2px de sobra ANTES da
-     etiqueta, e ela precisa de 46px (30 da caixa + 16 do gap). Nessa faixa
-     não cabe em fluxo, e em posição absoluta encostaria na pílula do CTA,
-     que também já toca a borda do container.
-     Decoração não empurra conteúdo e não estoura a viewport: entre 960px e
-     1100px o gatilho simplesmente não aparece. Abaixo de 960px o menu e o
-     CTA somem e o espaço volta; acima de 1100px há folga de sobra. */
-  @media (960px <= width < 1100px) {
-    .natal-gatilho { display: none; }
-  }
-
-  /* ---- movimento é opcional ---------------------------------------------- */
-  /* global.css:103 já força animation-duration: 0.01ms !important aqui, e com
-     fill: forwards isso entrega o estado final na hora: os detalhes aparecem
-     direto, sem feixe. Só preciso tirar a camada do caminho. */
-  @media (prefers-reduced-motion: reduce) {
-    #natal-camada { display: none; }
-    /* A regra global zera a DURAÇÃO, não o ATRASO. Sem o feixe para explicar
-       a espera, os detalhes ficariam pipocando ao longo de 650ms sem motivo
-       visível. Aqui eles entram juntos, de uma vez. */
-    .site-header {
-      --natal-d1: 0ms;
-      --natal-d2: 0ms;
-      --natal-d3: 0ms;
-      --natal-passo: 0ms;
+    .natal-faixa {
+      position: relative;
+      height: 64px;
+      overflow: hidden;
+      border-bottom: 2px solid var(--color-apice-blue);
+      contain: paint;
     }
-  }
+    .natal-fundo { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+    .natal-luzes {
+      position: absolute; top: 0; left: 0; right: 0; height: 18px;
+      background-image: var(--natal-luzes);
+      background-repeat: repeat-x;
+      background-size: auto 18px;
+      transition: opacity .45s ease;
+    }
+
+    .natal-cena {
+      position: absolute; inset: 0;
+      width: 1440px; margin-inline: auto;
+      left: 50%; transform: translateX(-50%);
+      /* Decoração não intercepta clique. Sem isto a camada de neve, que cobre
+         a faixa inteira e vem por cima, engole o clique na árvore. */
+      pointer-events: none;
+    }
+    .natal-fundo, .natal-luzes, .natal-neve { pointer-events: none; }
+    .natal-cena .p,
+    .natal-arvore { position: absolute; bottom: 4px; width: auto; }
+
+    .natal-laser { position: absolute; left: 306px; bottom: 4px; width: 90px; height: 44px; }
+    .natal-laser .p { bottom: 0; }
+    .natal-feixe {
+      position: absolute; left: 53px; bottom: 20px;
+      width: 2px; height: 14px;
+      background: #C9A227;
+      box-shadow: 0 0 5px 2px rgba(201,162,39,.75);
+      animation: natal-pulso 1.5s ease-in-out infinite;
+    }
+
+    .natal-trilho {
+      position: absolute; left: 392px; bottom: 23px;
+      width: 300px; height: 30px; overflow: hidden;
+    }
+    .natal-corre {
+      display: flex; align-items: flex-end; gap: 28px;
+      height: 100%; width: max-content;
+      animation: natal-esteira 16s linear infinite;
+    }
+    .natal-item { width: auto; flex: none; }
+
+    .natal-arvore {
+      left: 882px; bottom: 3px;
+      padding: 0; border: 0; background: none; cursor: pointer;
+      line-height: 0;
+      pointer-events: auto;  /* reabilita só o que é clicável */
+    }
+    .natal-arvore img { width: auto; display: block; }
+    .natal-arvore:focus-visible { outline: 2px solid var(--color-apice-blue); outline-offset: 2px; }
+
+    .natal-brilho {
+      position: absolute; width: 5px; height: 5px; border-radius: 50%;
+      background: #FFE680;
+      box-shadow: 0 0 6px 2px rgba(255,214,61,.9);
+      animation: natal-pisca 1.8s steps(1, end) infinite;
+    }
+    .natal-b1 { left: 22px; top: 14px; }
+    .natal-b2 { left: 8px;  top: 32px; animation-delay: .6s; }
+    .natal-b3 { left: 34px; top: 40px; animation-delay: 1.2s; }
+
+    .natal-neve { position: absolute; inset: 0; }
+    .natal-neve span {
+      position: absolute; top: -6px;
+      border-radius: 50%; background: #FFFFFF; opacity: .92;
+      animation-name: natal-cai;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+
+    /* Gorro no logo. O logo vive fora deste componente, então a imagem chega
+       por variável CSS e entra como ::after — sem tocar no Header.astro. */
+    .site-header:has(#natal-faixa[data-janela]) .header-logo { position: relative; }
+    .site-header:has(#natal-faixa[data-janela]) .header-logo::after {
+      content: ''; position: absolute;
+      top: -9px; right: -13px;
+      width: 34px; height: 34px;
+      background-image: var(--natal-gorro);
+      background-size: contain; background-repeat: no-repeat;
+      transform: rotate(14deg);
+      pointer-events: none;
+    }
+
+    /* Luzes apagadas pelo clique na árvore */
+    #natal-faixa[data-luzes='0'] .natal-luzes { opacity: .28; }
+    #natal-faixa[data-luzes='0'] .natal-brilho { animation: none; opacity: 0; }
+
+    @keyframes natal-cai {
+      0%   { transform: translateY(-6px) translateX(0); }
+      100% { transform: translateY(72px) translateX(10px); }
+    }
+    @keyframes natal-esteira {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    @keyframes natal-pisca {
+      0%, 49%   { opacity: 1; }
+      50%, 100% { opacity: .15; }
+    }
+    @keyframes natal-pulso {
+      0%, 100% { opacity: .5; }
+      50%      { opacity: 1; }
+    }
+
+    @media (max-width: 900px) {
+      .natal-faixa { height: 44px; }
+      .natal-cena { width: 820px; transform: translateX(-50%) scale(.68); transform-origin: bottom center; }
+      .site-header:has(#natal-faixa[data-janela]) .header-logo::after {
+        width: 26px; height: 26px; top: -7px; right: -10px;
+      }
+    }
+
+    /* A regra global de global.css zera a DURAÇÃO das animações, não impede
+       que elas rodem. Aqui elas são desligadas de vez: a cena fica parada,
+       com tudo visível. */
+    @media (prefers-reduced-motion: reduce) {
+      .natal-neve { display: none; }
+      .natal-corre, .natal-brilho, .natal-feixe { animation: none; }
+      .natal-brilho { opacity: 1; }
+    }
 </style>
 
-<script>
-  // Trap: BaseLayout tem <ClientRouter />. Script de módulo NÃO re-executa em
-  // navegação client-side — tudo pendura em astro:page-load e limpa no swap.
-  const EASE = 'cubic-bezier(0.65, 0, 0.35, 1)';
-  const T_FEIXE = 900;
+<script is:inline>
+    (function () {
+      var CHAVE = 'apice:natal:luzes';
 
-  let ligado = false;          // sobrevive às navegações (módulo não re-executa)
-  let anims: Animation[] = [];
-  let timers: number[] = [];
-
-  function limpar() {
-    for (const a of anims) {
-      try { a.cancel(); } catch (e) { /* animação já descartada */ }
-    }
-    anims = [];
-    for (const t of timers) clearTimeout(t);
-    timers = [];
-  }
-
-  function hojeISO() {
-    const d = new Date();                       // data LOCAL, não UTC
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const dia = String(d.getDate()).padStart(2, '0');
-    return d.getFullYear() + '-' + m + '-' + dia;
-  }
-
-  function naJanela(btn: HTMLElement) {
-    const h = hojeISO();
-    const i = btn.dataset.inicio || '';
-    const f = btn.dataset.fim || '';
-    if (i && h < i) return false;
-    if (f && h > f) return false;
-    return true;
-  }
-
-  function passada(header: HTMLElement, camada: HTMLElement, reverso: boolean) {
-    const L = header.getBoundingClientRect().width;
-    const de = reverso ? -16 : L + 16;
-    const para = reverso ? L + 16 : -16;
-    const feixe = camada.querySelector<HTMLElement>('#natal-feixe');
-    const rastro = camada.querySelector<HTMLElement>('#natal-rastro');
-    if (!feixe || !rastro) return;
-
-    camada.dataset.on = '1';
-
-    // fase 2: percorre o header. Nunca linear.
-    anims.push(feixe.animate(
-      [{ translate: de + 'px' }, { translate: para + 'px' }],
-      { duration: T_FEIXE, easing: EASE, fill: 'forwards' }
-    ));
-    // fase 1 + saída: o ponto entra pela direita e estica até virar linha.
-    // 'scale' é propriedade independente, não disputa com o 'translate'.
-    anims.push(feixe.animate(
-      [
-        { opacity: 0, scale: '1 0.1', offset: 0 },
-        { opacity: 1, scale: '1 1', offset: 0.13 },
-        { opacity: 1, scale: '1 1', offset: 0.84 },
-        { opacity: 0, scale: '1 0.55', offset: 1 },
-      ],
-      { duration: T_FEIXE + 140, easing: 'linear', fill: 'forwards' }
-    ));
-    // fase 4: a trilha de calor vem atrasada e dissipa
-    anims.push(rastro.animate(
-      [{ translate: de + 'px' }, { translate: para + 'px' }],
-      { duration: T_FEIXE, delay: 70, easing: EASE, fill: 'forwards' }
-    ));
-    anims.push(rastro.animate(
-      [{ opacity: 0, offset: 0 }, { opacity: 0.55, offset: 0.14 }, { opacity: 0, offset: 1 }],
-      { duration: T_FEIXE + 320, delay: 70, easing: 'ease-out', fill: 'forwards' }
-    ));
-  }
-
-  // fase 5: o feixe passa pela etiqueta (ela fica à direita, é a primeira
-  // coisa no caminho) e ela assenta em 2 balanços amortecidos
-  function assentar(etq: HTMLElement) {
-    anims.push(etq.animate(
-      [
-        { rotate: '0deg' },
-        { rotate: '7deg', offset: 0.17 },
-        { rotate: '-4.6deg', offset: 0.41 },
-        { rotate: '2.4deg', offset: 0.63 },
-        { rotate: '-1deg', offset: 0.83 },
-        { rotate: '0deg', offset: 1 },
-      ],
-      { duration: 1120, delay: 120, easing: 'ease-out' }
-    ));
-  }
-
-  function alternar(btn: HTMLElement, header: HTMLElement, camada: HTMLElement) {
-    limpar();
-    const reduz = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const etq = btn.querySelector<HTMLElement>('.natal-etiqueta');
-
-    ligado = !ligado;
-    btn.setAttribute('aria-pressed', String(ligado));
-    btn.setAttribute(
-      'aria-label',
-      ligado ? 'Desativar decoração de Natal' : 'Ativar decoração de Natal'
-    );
-
-    if (ligado) {
-      delete header.dataset.pronto;
-      header.dataset.natal = 'on';
-      if (!reduz) {
-        passada(header, camada, false);
-        if (etq) assentar(etq);
+      function hojeISO() {
+        var d = new Date();
+        return d.getFullYear() + '-' +
+          String(d.getMonth() + 1).padStart(2, '0') + '-' +
+          String(d.getDate()).padStart(2, '0');
       }
-      timers.push(window.setTimeout(() => {
-        // sai do estado "passando" e entra no estado parado
-        header.dataset.pronto = '1';
-        delete header.dataset.natal;
-        delete camada.dataset.on;
-      }, reduz ? 160 : 1500));
-    } else {
-      delete header.dataset.pronto;
-      header.dataset.natal = 'off';
-      if (!reduz) {
-        passada(header, camada, true);
-        if (etq) assentar(etq);
+
+      function naJanela(el) {
+        var h = hojeISO();
+        var i = el.dataset.inicio || '';
+        var f = el.dataset.fim || '';
+        if (i && h < i) return false;
+        if (f && h > f) return false;
+        return true;
       }
-      timers.push(window.setTimeout(() => {
-        header.removeAttribute('data-natal');
-        delete camada.dataset.on;
-      }, reduz ? 160 : 1500));
-    }
-  }
 
-  function initNatal() {
-    const btn = document.getElementById('natal-gatilho');
-    if (!btn || btn.dataset.wired) return;
-    btn.dataset.wired = '1';
+      function initNatal() {
+        var faixa = document.getElementById('natal-faixa');
+        if (!faixa || faixa.dataset.wired) return;
+        faixa.dataset.wired = '1';
 
-    const header = btn.closest<HTMLElement>('.site-header');
-    const camada = document.getElementById('natal-camada');
-    if (!header || !camada) return;
+        // Fora da janela de datas a faixa nem aparece — e como ela é display:none,
+        // o header volta à altura original, sem sobra nem deslocamento.
+        if (!naJanela(faixa)) return;
+        faixa.dataset.janela = '1';
 
-    // Janela de datas no cliente. Fora dela o gatilho fica invisível, mas
-    // continua ocupando o lugar: removê-lo deslocaria o header (CLS).
-    if (!naJanela(btn)) return;
-    btn.dataset.janela = '1';
+        var arvore = document.getElementById('natal-arvore');
+        if (!arvore) return;
 
-    if (ligado) {
-      header.dataset.pronto = '1';
-      btn.setAttribute('aria-pressed', 'true');
-      btn.setAttribute('aria-label', 'Desativar decoração de Natal');
-    }
+        var acesas = true;
+        try { acesas = localStorage.getItem(CHAVE) !== '0'; } catch (e) {}
+        aplicar(acesas);
 
-    // <button> de verdade: Enter/Espaço já chegam como click
-    btn.addEventListener('click', () => alternar(btn, header, camada));
-  }
+        function aplicar(on) {
+          faixa.dataset.luzes = on ? '1' : '0';
+          arvore.setAttribute('aria-pressed', String(on));
+          arvore.setAttribute('aria-label', on ? 'Apagar as luzes de Natal' : 'Acender as luzes de Natal');
+        }
 
-  document.addEventListener('astro:page-load', initNatal);
-  document.addEventListener('astro:before-swap', limpar);
+        arvore.addEventListener('click', function () {
+          acesas = !acesas;
+          aplicar(acesas);
+          try { localStorage.setItem(CHAVE, acesas ? '1' : '0'); } catch (e) {}
+        });
+      }
+
+      // <ClientRouter /> não re-executa módulos: monta no page-load, sempre.
+      document.addEventListener('astro:page-load', initNatal);
+    })();
 </script>
