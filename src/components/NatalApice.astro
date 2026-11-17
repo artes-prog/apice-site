@@ -110,29 +110,29 @@ const flocos = [
     <div class="natal-luzes" aria-hidden="true"></div>
 
     <div class="natal-cena" aria-hidden="true">
-      <Image class="p" src={pinheiroAlto} alt="" height={100} format="webp" style="left:8px;height:50px" />
-      <Image class="p" src={pinheiroBaixo} alt="" height={80} format="webp" style="left:58px;height:38px" />
-      <Image class="p" src={bonecoNeve} alt="" height={88} format="webp" style="left:104px;height:42px" />
-      <Image class="p" src={casa} alt="" height={112} format="webp" style="left:156px;height:54px" />
+      <Image class="p" src={pinheiroAlto} alt="" height={100} format="webp" loading="eager" style="left:8px;height:50px" />
+      <Image class="p" src={pinheiroBaixo} alt="" height={80} format="webp" loading="eager" style="left:58px;height:38px" />
+      <Image class="p" src={bonecoNeve} alt="" height={88} format="webp" loading="eager" style="left:104px;height:42px" />
+      <Image class="p" src={casa} alt="" height={112} format="webp" loading="eager" style="left:156px;height:54px" />
 
       <div class="natal-laser">
-        <Image class="p" src={laser} alt="" height={80} format="webp" style="left:0;height:38px" />
+        <Image class="p" src={laser} alt="" height={80} format="webp" loading="eager" style="left:0;height:38px" />
         <span class="natal-feixe"></span>
-        <Image class="p" src={caneca} alt="" height={56} format="webp" style="left:46px;height:22px" />
+        <Image class="p" src={caneca} alt="" height={56} format="webp" loading="eager" style="left:46px;height:22px" />
       </div>
 
-      <Image class="p" src={esteira} alt="" height={90} format="webp" style="left:392px;width:300px;height:20px" />
+      <Image class="p" src={esteira} alt="" height={90} format="webp" loading="eager" style="left:392px;width:300px;height:20px" />
       <div class="natal-trilho">
         <div class="natal-corre">
           {[0, 1].map(() => naEsteira.map((o) => (
-            <Image class="natal-item" src={o.src} alt="" height={70} format="webp" style={`height:${o.h}px`} />
+            <Image class="natal-item" src={o.src} alt="" height={70} format="webp" loading="eager" style={`height:${o.h}px`} />
           )))}
         </div>
       </div>
 
-      <Image class="p" src={prensa} alt="" height={80} format="webp" style="left:706px;height:38px" />
-      <Image class="p" src={mesa} alt="" height={64} format="webp" style="left:788px;height:28px" />
-      <Image class="p" src={fita} alt="" height={44} format="webp" style="left:800px;bottom:28px;height:18px" />
+      <Image class="p" src={prensa} alt="" height={80} format="webp" loading="eager" style="left:706px;height:38px" />
+      <Image class="p" src={mesa} alt="" height={64} format="webp" loading="eager" style="left:788px;height:28px" />
+      <Image class="p" src={fita} alt="" height={44} format="webp" loading="eager" style="left:800px;bottom:28px;height:18px" />
 
       <button
         id="natal-arvore"
@@ -141,19 +141,19 @@ const flocos = [
         aria-pressed="true"
         aria-label="Apagar as luzes de Natal"
       >
-        <Image src={arvore} alt="" height={116} format="webp" style="height:56px" />
+        <Image src={arvore} alt="" height={116} format="webp" loading="eager" style="height:56px" />
         <span class="natal-brilho natal-b1"></span>
         <span class="natal-brilho natal-b2"></span>
         <span class="natal-brilho natal-b3"></span>
       </button>
 
-      <Image class="p" src={treno} alt="" height={76} format="webp" style="left:996px;height:34px" />
-      <Image class="p" src={rena} alt="" height={86} format="webp" style="left:1086px;height:41px" />
-      <Image class="p" src={caixa} alt="" height={64} format="webp" style="left:1148px;height:26px" />
-      <Image class="p" src={pinheiroBaixo} alt="" height={80} format="webp" style="left:1206px;height:36px" />
-      <Image class="p" src={pinheiroAlto} alt="" height={100} format="webp" style="left:1256px;height:48px" />
-      <Image class="p" src={presenteVermelho} alt="" height={56} format="webp" style="left:1320px;height:24px" />
-      <Image class="p" src={pinheiroBaixo} alt="" height={80} format="webp" style="left:1368px;height:34px" />
+      <Image class="p" src={treno} alt="" height={76} format="webp" loading="eager" style="left:996px;height:34px" />
+      <Image class="p" src={rena} alt="" height={86} format="webp" loading="eager" style="left:1086px;height:41px" />
+      <Image class="p" src={caixa} alt="" height={64} format="webp" loading="eager" style="left:1148px;height:26px" />
+      <Image class="p" src={pinheiroBaixo} alt="" height={80} format="webp" loading="eager" style="left:1206px;height:36px" />
+      <Image class="p" src={pinheiroAlto} alt="" height={100} format="webp" loading="eager" style="left:1256px;height:48px" />
+      <Image class="p" src={presenteVermelho} alt="" height={56} format="webp" loading="eager" style="left:1320px;height:24px" />
+      <Image class="p" src={pinheiroBaixo} alt="" height={80} format="webp" loading="eager" style="left:1368px;height:34px" />
     </div>
 
     <div class="natal-neve" aria-hidden="true">
@@ -200,7 +200,7 @@ const flocos = [
     .natal-cena {
       position: absolute; inset: 0;
       width: 1440px; margin-inline: auto;
-      left: 50%; transform: translateX(-50%);
+      left: 50%; transform: translateX(-50%); transform-origin: bottom center;
       /* Decoração não intercepta clique. Sem isto a camada de neve, que cobre
          a faixa inteira e vem por cima, engole o clique na árvore. */
       pointer-events: none;
@@ -292,9 +292,18 @@ const flocos = [
       50%      { opacity: 1; }
     }
 
+    /* A cena tem largura fixa de 1440px. Em tela menor ela e reduzida por
+       transform, com origem no rodape, para caber inteira. Sem isto as pontas
+       (pinheiros, casa, boneco, trenó) caem fora da tela: em 1024px a cena
+       comeca em x=-215 e a casinha some. */
+    @media (max-width: 1460px) { .natal-cena { transform: translateX(-50%) scale(.90); } }
+    @media (max-width: 1300px) { .natal-cena { transform: translateX(-50%) scale(.80); } }
+    @media (max-width: 1150px) { .natal-cena { transform: translateX(-50%) scale(.72); } }
+    @media (max-width: 1000px) { .natal-cena { transform: translateX(-50%) scale(.64); } }
+
     @media (max-width: 900px) {
       .natal-faixa { height: 44px; }
-      .natal-cena { width: 820px; transform: translateX(-50%) scale(.68); transform-origin: bottom center; }
+      .natal-cena { transform: translateX(-50%) scale(.56); }
       .site-header:has(#natal-faixa[data-janela]) .header-logo::after {
         width: 26px; height: 26px; top: -7px; right: -10px;
       }
