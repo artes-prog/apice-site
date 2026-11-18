@@ -22,7 +22,6 @@ import botton from '../assets/img/natal/botton.png';
 import caneta from '../assets/img/natal/caneta.png';
 import gorroSrc from '../assets/img/natal/gorro.png';
 import ramoEsqSrc from '../assets/img/natal/logo-ramo-esq.png';
-import ramoDirSrc from '../assets/img/natal/logo-ramo-dir.png';
 import luzesSrc from '../assets/img/natal/luzes.png';
 
 /*
@@ -57,7 +56,6 @@ const ativo = natal?.ativo === true;
 const gorro = ativo ? await getImage({ src: gorroSrc, height: 72, format: 'webp' }) : null;
 const luzes = ativo ? await getImage({ src: luzesSrc, height: 36, format: 'webp' }) : null;
 const ramoEsq = ativo ? await getImage({ src: ramoEsqSrc, height: 120, format: 'webp' }) : null;
-const ramoDir = ativo ? await getImage({ src: ramoDirSrc, height: 100, format: 'webp' }) : null;
 
 /* A esteira roda com esta lista duplicada, para o loop fechar sem salto. */
 const naEsteira = [
@@ -90,7 +88,7 @@ const flocos = [
 {ativo && (
   <style
     is:inline
-    set:html={`.site-header{--natal-gorro:url(${gorro!.src});--natal-luzes:url(${luzes!.src});--natal-ramo-esq:url(${ramoEsq!.src});--natal-ramo-dir:url(${ramoDir!.src})}`}
+    set:html={`.site-header{--natal-gorro:url(${gorro!.src});--natal-luzes:url(${luzes!.src});--natal-ramo-esq:url(${ramoEsq!.src})}`}
   />
 )}
 
@@ -292,11 +290,15 @@ const flocos = [
     .site-header:has(#natal-faixa[data-janela]) .header-logo { position: relative; }
     .site-header:has(#natal-faixa[data-janela]) .header-logo::after {
       content: ''; position: absolute;
-      /* O gorro fica à ESQUERDA, sobre o "Á" — é onde ele cai na arte de
-         referência. A inclinação já vem desenhada na imagem, então nada de
-         rotate aqui. Proporção nativa 1,22:1. */
-      top: -15px; left: 6px;
-      width: 38px; height: 31px;
+      /* Gorro CHAPADO, do mesmo sprite da faixa. Tentei usar o gorro
+         fotorrealista da arte enviada e ficou ruim: brilho e textura ao lado
+         de um logo vetorial chapado leem como adesivo colado por cima.
+         Discreto e no estilo da marca funciona melhor. Proporcao 1,22:1. */
+      /* 22% da largura do logo cai sobre o apice do "A". Em px o gorro
+         descolava: a borda esquerda do bloco e a ponta fina do swoosh, nao
+         uma letra, e ele flutuava no vazio. */
+      top: -12px; left: 22%;
+      width: 26px; height: 21px;
       background-image: var(--natal-gorro);
       background-size: contain; background-repeat: no-repeat;
       pointer-events: none;
@@ -310,16 +312,6 @@ const flocos = [
        mesmo canto e juntos engoliam o swoosh. Sobrou gorro sobre o "A" e um
        ramo discreto no fim. O arquivo logo-ramo-esq.png fica no repo caso o
        logo mude de proporcao. */
-    .logo-ramo-dir { display: none; }
-    .site-header:has(#natal-faixa[data-janela]) .logo-ramo-dir {
-      display: block; position: absolute;
-      bottom: -4px; right: -15px;
-      width: 22px; height: 34px;
-      background-image: var(--natal-ramo-dir);
-      background-size: contain; background-repeat: no-repeat;
-      pointer-events: none;
-    }
-
     /* Luzes apagadas pelo clique na árvore */
     #natal-faixa[data-luzes='0'] .natal-luzes { opacity: .28; }
     #natal-faixa[data-luzes='0'] .natal-brilho { animation: none; opacity: 0; }
@@ -354,7 +346,7 @@ const flocos = [
       .natal-faixa { height: 44px; }
       .natal-cena { transform: translateX(-50%) scale(.56); }
       .site-header:has(#natal-faixa[data-janela]) .header-logo::after {
-        width: 30px; height: 25px; top: -12px; left: 4px;
+        width: 22px; height: 18px; top: -10px; left: 22%;
       }
     }
 
