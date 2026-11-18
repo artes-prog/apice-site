@@ -7,7 +7,6 @@ import pinheiroBaixo from '../assets/img/natal/pinheiro-baixo.png';
 import bonecoNeve from '../assets/img/natal/boneco-neve.png';
 import casa from '../assets/img/natal/casa.png';
 import laser from '../assets/img/natal/laser.png';
-import esteira from '../assets/img/natal/esteira.png';
 import prensa from '../assets/img/natal/prensa.png';
 import mesa from '../assets/img/natal/mesa.png';
 import fita from '../assets/img/natal/fita.png';
@@ -22,6 +21,8 @@ import caderneta from '../assets/img/natal/caderneta.png';
 import botton from '../assets/img/natal/botton.png';
 import caneta from '../assets/img/natal/caneta.png';
 import gorroSrc from '../assets/img/natal/gorro.png';
+import ramoEsqSrc from '../assets/img/natal/logo-ramo-esq.png';
+import ramoDirSrc from '../assets/img/natal/logo-ramo-dir.png';
 import luzesSrc from '../assets/img/natal/luzes.png';
 
 /*
@@ -55,6 +56,8 @@ const ativo = natal?.ativo === true;
    componente, então a URL viaja por variável CSS. */
 const gorro = ativo ? await getImage({ src: gorroSrc, height: 72, format: 'webp' }) : null;
 const luzes = ativo ? await getImage({ src: luzesSrc, height: 36, format: 'webp' }) : null;
+const ramoEsq = ativo ? await getImage({ src: ramoEsqSrc, height: 120, format: 'webp' }) : null;
+const ramoDir = ativo ? await getImage({ src: ramoDirSrc, height: 100, format: 'webp' }) : null;
 
 /* A esteira roda com esta lista duplicada, para o loop fechar sem salto. */
 const naEsteira = [
@@ -87,7 +90,7 @@ const flocos = [
 {ativo && (
   <style
     is:inline
-    set:html={`.site-header{--natal-gorro:url(${gorro!.src});--natal-luzes:url(${luzes!.src})}`}
+    set:html={`.site-header{--natal-gorro:url(${gorro!.src});--natal-luzes:url(${luzes!.src});--natal-ramo-esq:url(${ramoEsq!.src});--natal-ramo-dir:url(${ramoDir!.src})}`}
   />
 )}
 
@@ -121,7 +124,15 @@ const flocos = [
         <Image class="p" src={caneca} alt="" height={56} format="webp" loading="eager" style="left:46px;height:22px" />
       </div>
 
-      <Image class="p" src={esteira} alt="" height={90} format="webp" loading="eager" style="left:392px;width:300px;height:20px" />
+      {/*
+        A esteira é desenhada em CSS, não é imagem. A arte gerada tem formato
+        nativo ~1,9:1; esticada para os 300x20 que a cena precisa virava 15:1 e
+        achatava. Barra + roletes em CSS escalam para qualquer largura sem
+        distorcer, e ainda pesam zero.
+      */}
+      <div class="natal-esteira">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
       <div class="natal-trilho">
         <div class="natal-corre">
           {[0, 1].map(() => naEsteira.map((o) => (
@@ -219,6 +230,24 @@ const flocos = [
       animation: natal-pulso 1.5s ease-in-out infinite;
     }
 
+    .natal-esteira {
+      position: absolute; left: 392px; bottom: 4px;
+      width: 300px; height: 14px;
+      background: #C3D0DE;
+      border-radius: 7px;
+    }
+    .natal-esteira span {
+      position: absolute; top: 4px;
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #FFFFFF;
+      box-shadow: 0 0 0 1.5px #9FB1C6;
+    }
+    .natal-esteira span:nth-child(1) { left: 22px; }
+    .natal-esteira span:nth-child(2) { left: 88px; }
+    .natal-esteira span:nth-child(3) { left: 150px; }
+    .natal-esteira span:nth-child(4) { left: 212px; }
+    .natal-esteira span:nth-child(5) { left: 274px; }
+
     .natal-trilho {
       position: absolute; left: 392px; bottom: 23px;
       width: 300px; height: 30px; overflow: hidden;
@@ -263,11 +292,31 @@ const flocos = [
     .site-header:has(#natal-faixa[data-janela]) .header-logo { position: relative; }
     .site-header:has(#natal-faixa[data-janela]) .header-logo::after {
       content: ''; position: absolute;
-      top: -9px; right: -13px;
-      width: 34px; height: 34px;
+      /* O gorro fica à ESQUERDA, sobre o "Á" — é onde ele cai na arte de
+         referência. A inclinação já vem desenhada na imagem, então nada de
+         rotate aqui. Proporção nativa 1,22:1. */
+      top: -15px; left: 6px;
+      width: 38px; height: 31px;
       background-image: var(--natal-gorro);
       background-size: contain; background-repeat: no-repeat;
-      transform: rotate(14deg);
+      pointer-events: none;
+    }
+
+    /* Ramos de pinheiro com bolinhas, extraidos da arte da logo de Natal.
+       Ficam para FORA do bloco do logo, espiando por tras dos cantos — dai os
+       offsets negativos. Proporcoes nativas: 1,14:1 e 0,63:1. */
+    /* O ramo ESQUERDO foi removido de proposito. Nosso logo e 3,96:1, bem mais
+       achatado que a arte de referencia (2,59:1): ramo e gorro disputavam o
+       mesmo canto e juntos engoliam o swoosh. Sobrou gorro sobre o "A" e um
+       ramo discreto no fim. O arquivo logo-ramo-esq.png fica no repo caso o
+       logo mude de proporcao. */
+    .logo-ramo-dir { display: none; }
+    .site-header:has(#natal-faixa[data-janela]) .logo-ramo-dir {
+      display: block; position: absolute;
+      bottom: -4px; right: -15px;
+      width: 22px; height: 34px;
+      background-image: var(--natal-ramo-dir);
+      background-size: contain; background-repeat: no-repeat;
       pointer-events: none;
     }
 
@@ -305,7 +354,7 @@ const flocos = [
       .natal-faixa { height: 44px; }
       .natal-cena { transform: translateX(-50%) scale(.56); }
       .site-header:has(#natal-faixa[data-janela]) .header-logo::after {
-        width: 26px; height: 26px; top: -7px; right: -10px;
+        width: 30px; height: 25px; top: -12px; left: 4px;
       }
     }
 

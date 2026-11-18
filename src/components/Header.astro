@@ -35,6 +35,9 @@ const isActive = (href: string) =>
   <div class="container-site header-inner">
     <a href="/" class="header-logo" aria-label="Ápice Brindes — página inicial">
       <Logo variant="cor" />
+      {/* Ramo direito do enfeite de Natal. Precisa ser elemento real: o logo
+          já usa ::before (ramo esquerdo) e ::after (gorro). */}
+      {natalAtivo && <span class="logo-ramo-dir" aria-hidden="true"></span>}
     </a>
 
     <nav class="header-nav" aria-label="Navegação principal">
