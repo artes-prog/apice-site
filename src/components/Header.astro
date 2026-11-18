@@ -1,5 +1,7 @@
 ---
 import Logo from './Logo.astro';
+import { Image } from 'astro:assets';
+import logoNatal from '../assets/img/natal/logo-natal.webp';
 import NatalApice from './NatalApice.astro';
 import site from '../data/site.json';
 
@@ -35,6 +37,9 @@ const isActive = (href: string) =>
   <div class="container-site header-inner">
     <a href="/" class="header-logo" aria-label="Ápice Brindes — página inicial">
       <Logo variant="cor" />
+      {/* Logo natalina. Fica no DOM junto com a oficial porque a janela de
+          datas e avaliada no cliente; o CSS troca uma pela outra. */}
+      {natalAtivo && <Image class="logo-natal" src={logoNatal} alt="" height={174} format="webp" loading="eager" />}
     </a>
 
     <nav class="header-nav" aria-label="Navegação principal">

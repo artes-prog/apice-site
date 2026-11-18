@@ -20,8 +20,6 @@ import garrafa from '../assets/img/natal/garrafa.png';
 import caderneta from '../assets/img/natal/caderneta.png';
 import botton from '../assets/img/natal/botton.png';
 import caneta from '../assets/img/natal/caneta.png';
-import gorroSrc from '../assets/img/natal/gorro.png';
-import ramoEsqSrc from '../assets/img/natal/logo-ramo-esq.png';
 import luzesSrc from '../assets/img/natal/luzes.png';
 
 /*
@@ -51,11 +49,7 @@ import luzesSrc from '../assets/img/natal/luzes.png';
 const natal = site.natal;
 const ativo = natal?.ativo === true;
 
-/* O gorro entra como background de ::after no logo — o logo está fora deste
-   componente, então a URL viaja por variável CSS. */
-const gorro = ativo ? await getImage({ src: gorroSrc, height: 72, format: 'webp' }) : null;
 const luzes = ativo ? await getImage({ src: luzesSrc, height: 36, format: 'webp' }) : null;
-const ramoEsq = ativo ? await getImage({ src: ramoEsqSrc, height: 120, format: 'webp' }) : null;
 
 /* A esteira roda com esta lista duplicada, para o loop fechar sem salto. */
 const naEsteira = [
@@ -79,16 +73,15 @@ const flocos = [
 
 {/*
   As URLs das imagens saem do astro:assets com hash, então viajam por variável
-  CSS. Elas moram no .site-header, e não na faixa: o gorro é um ::after do
-  .header-logo, que está FORA da faixa — variável declarada na faixa não
-  chegaria lá, porque custom property só desce na árvore.
+  CSS, declaradas no .site-header para alcancarem tambem o que esta fora da
+  faixa — custom property so desce na arvore.
   `is:inline` é obrigatório: o Astro não processa <style> dentro de expressão
   condicional, e sem isso a regra não entra no bundle.
 */}
 {ativo && (
   <style
     is:inline
-    set:html={`.site-header{--natal-gorro:url(${gorro!.src});--natal-luzes:url(${luzes!.src});--natal-ramo-esq:url(${ramoEsq!.src})}`}
+    set:html={`.site-header{--natal-luzes:url(${luzes!.src})}`}
   />
 )}
 
@@ -287,31 +280,31 @@ const flocos = [
 
     /* Gorro no logo. O logo vive fora deste componente, então a imagem chega
        por variável CSS e entra como ::after — sem tocar no Header.astro. */
-    .site-header:has(#natal-faixa[data-janela]) .header-logo { position: relative; }
-    .site-header:has(#natal-faixa[data-janela]) .header-logo::after {
-      content: ''; position: absolute;
-      /* Gorro CHAPADO, do mesmo sprite da faixa. Tentei usar o gorro
-         fotorrealista da arte enviada e ficou ruim: brilho e textura ao lado
-         de um logo vetorial chapado leem como adesivo colado por cima.
-         Discreto e no estilo da marca funciona melhor. Proporcao 1,22:1. */
-      /* 22% da largura do logo cai sobre o apice do "A". Em px o gorro
-         descolava: a borda esquerda do bloco e a ponta fina do swoosh, nao
-         uma letra, e ele flutuava no vazio. */
-      top: -12px; left: 22%;
-      width: 26px; height: 21px;
-      background-image: var(--natal-gorro);
-      background-size: contain; background-repeat: no-repeat;
-      pointer-events: none;
+    /*
+      Logo natalina. Substitui a oficial dentro da janela de datas, em vez de
+      colar um gorro por cima: o gorro solto lia como adesivo, e a arte
+      natalina ja traz gorro, ramos e bolinhas no mesmo traco.
+
+      A arte veio em SVG de 2,1 MB (3.391 paths) — peso inviavel num logo que
+      aparece em toda pagina. Entra rasterizada em 3x (15 KB), nitida em
+      retina. Antes de exportar foram removidos o grupo `fundo-branco`, os 29
+      grupos `*-luz-sombra` (relevo 3D, que destoa do site chapado) e os
+      degrades do letreiro, trocados pelo vermelho e azul exatos da marca.
+
+      Ela e 2,50:1 contra 3,96:1 da oficial, entao vai mais alta (58px contra
+      44px) para a palavra nao encolher demais. Cabe no min-height de 72px.
+    */
+    .logo-natal { display: none; }
+    .site-header:has(#natal-faixa[data-janela]) .logo-natal {
+      display: block; height: 58px; width: auto;
+    }
+    /* Sem :global() aqui: isso e sintaxe de CSS com escopo do Astro e nao vale
+       dentro de <style is:global> — o seletor inteiro era descartado e os dois
+       logos apareciam lado a lado. */
+    .site-header:has(#natal-faixa[data-janela]) .header-logo svg {
+      display: none;
     }
 
-    /* Ramos de pinheiro com bolinhas, extraidos da arte da logo de Natal.
-       Ficam para FORA do bloco do logo, espiando por tras dos cantos — dai os
-       offsets negativos. Proporcoes nativas: 1,14:1 e 0,63:1. */
-    /* O ramo ESQUERDO foi removido de proposito. Nosso logo e 3,96:1, bem mais
-       achatado que a arte de referencia (2,59:1): ramo e gorro disputavam o
-       mesmo canto e juntos engoliam o swoosh. Sobrou gorro sobre o "A" e um
-       ramo discreto no fim. O arquivo logo-ramo-esq.png fica no repo caso o
-       logo mude de proporcao. */
     /* Luzes apagadas pelo clique na árvore */
     #natal-faixa[data-luzes='0'] .natal-luzes { opacity: .28; }
     #natal-faixa[data-luzes='0'] .natal-brilho { animation: none; opacity: 0; }
