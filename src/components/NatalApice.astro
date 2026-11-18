@@ -48,6 +48,11 @@ import luzesSrc from '../assets/img/natal/luzes.png';
 */
 const natal = site.natal;
 const ativo = natal?.ativo === true;
+/* Chaves por elemento (§12 do briefing): cada peca da decoracao liga e desliga
+   sozinha no painel, sem mexer em codigo. `!== false` e proposital — campo
+   ausente no JSON conta como ligado, entao o site nao quebra se o CMS gravar
+   o objeto sem alguma chave. */
+const usarFaixa = ativo && natal.faixa !== false;
 
 const luzes = ativo ? await getImage({ src: luzesSrc, height: 36, format: 'webp' }) : null;
 
@@ -78,14 +83,14 @@ const flocos = [
   `is:inline` é obrigatório: o Astro não processa <style> dentro de expressão
   condicional, e sem isso a regra não entra no bundle.
 */}
-{ativo && (
+{usarFaixa && (
   <style
     is:inline
     set:html={`.site-header{--natal-luzes:url(${luzes!.src})}`}
   />
 )}
 
-{ativo && (
+{usarFaixa && (
   <div
     id="natal-faixa"
     class="natal-faixa"

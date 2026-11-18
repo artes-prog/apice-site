@@ -76,21 +76,43 @@ content:
           - { name: lat, label: Latitude, type: number, required: false }
           - { name: lng, label: Longitude, type: number, required: false }
       - name: natal
-        label: Decoracao de Natal (sazonal)
+        label: Decoração de Natal (sazonal)
         type: object
+        description: "Liga a decoração e define quando ela aparece. Fora da janela de datas o site volta sozinho ao normal, sem publicar nada."
         fields:
           - name: ativo
-            label: Ligar a decoracao de Natal
+            label: Ligar a decoração de Natal
             type: boolean
-            description: Liga a etiqueta de Natal no cabecalho. Desmarcado, o enfeite sai do site por completo na proxima publicacao.
+            description: "Interruptor geral. Desmarcado, nada de Natal existe no site."
           - name: inicio
-            label: Aparece a partir de (AAAA-MM-DD)
+            label: Começa em (AAAA-MM-DD)
             type: string
-            description: Primeiro dia em que a etiqueta aparece. Use ano-mes-dia, por exemplo 2026-12-01.
+            description: "Ex.: 2026-11-17"
           - name: fim
-            label: Sai depois de (AAAA-MM-DD)
+            label: Termina em (AAAA-MM-DD)
             type: string
-            description: Ultimo dia em que a etiqueta aparece. Passada essa data ela desaparece sozinha, sem precisar mexer no site.
+            description: "Ex.: 2027-01-06. Depois desta data o site volta ao normal sozinho."
+          - name: faixa
+            label: Faixa da oficina no topo
+            type: boolean
+          - name: logoNatalina
+            label: Logo com gorro
+            type: boolean
+          - name: neve
+            label: Neve caindo
+            type: boolean
+          - name: ornamentos
+            label: Bolas penduradas na home
+            type: boolean
+          - name: galhos
+            label: Galhos nos cantos
+            type: boolean
+          - name: selo
+            label: Selo "Natal Ápice 2026"
+            type: boolean
+          - name: rodape
+            label: Enfeites no rodapé
+            type: boolean
       - name: areaAtendimento
         label: Cidades atendidas
         type: string

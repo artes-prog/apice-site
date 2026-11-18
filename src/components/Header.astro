@@ -39,7 +39,7 @@ const isActive = (href: string) =>
       <Logo variant="cor" />
       {/* Logo natalina. Fica no DOM junto com a oficial porque a janela de
           datas e avaliada no cliente; o CSS troca uma pela outra. */}
-      {natalAtivo && <Image class="logo-natal" src={logoNatal} alt="" height={174} format="webp" loading="eager" />}
+      {natalAtivo && site.natal?.logoNatalina !== false && <Image class="logo-natal" src={logoNatal} alt="" height={174} format="webp" loading="eager" />}
     </a>
 
     <nav class="header-nav" aria-label="Navegação principal">
