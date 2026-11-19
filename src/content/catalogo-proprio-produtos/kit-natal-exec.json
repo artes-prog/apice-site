@@ -1,0 +1,53 @@
+{
+  "codigo": "KIT-NATAL-EXEC",
+  "nome": "Kit Natal Executivo",
+  "categoria": "kits-de-natal",
+  "subcategoria": "Executivo",
+  "descricao": "Garrafa térmica, caderneta e caneta — a combinação mais pedida por RH e departamento de compras no fim de ano. As três peças personalizadas com a marca da sua empresa e entregues embaladas para presente.",
+  "fotos": [],
+  "especificacoes": [
+    {
+      "label": "Peças",
+      "valor": "3"
+    },
+    {
+      "label": "Item 1",
+      "valor": "Garrafa Térmica 700ml (cód. 09349)"
+    },
+    {
+      "label": "Item 2",
+      "valor": "Caderneta Couro Sintético (cód. 03005P)"
+    },
+    {
+      "label": "Item 3",
+      "valor": "Caneta Metal (cód. 09321)"
+    },
+    {
+      "label": "Embalagem",
+      "valor": "Caixa ou sacola para presente, a combinar"
+    },
+    {
+      "label": "Personalização",
+      "valor": "Silk Screen ou gravação a Fiber Laser, conforme o material de cada peça"
+    }
+  ],
+  "cores": [],
+  "variacoes": [],
+  "palavrasChave": [
+    "kit",
+    "kits",
+    "natal",
+    "kit de natal",
+    "kit natal",
+    "kit corporativo",
+    "brinde de natal",
+    "presente corporativo",
+    "fim de ano",
+    "confraternizacao",
+    "garrafa",
+    "caderneta",
+    "caneta"
+  ],
+  "ordem": 1,
+  "publicar": true
+}

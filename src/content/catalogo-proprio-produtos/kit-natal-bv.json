@@ -1,0 +1,53 @@
+{
+  "codigo": "KIT-NATAL-BV",
+  "nome": "Kit Natal Boas-Vindas",
+  "categoria": "kits-de-natal",
+  "subcategoria": "Boas-vindas",
+  "descricao": "Para quem contrata em janeiro e quer que o primeiro dia já comece com a marca na mesa. Caneca de parede dupla, caderneta e caneta, os três personalizados.",
+  "fotos": [],
+  "especificacoes": [
+    {
+      "label": "Peças",
+      "valor": "3"
+    },
+    {
+      "label": "Item 1",
+      "valor": "Caneca Parede Dupla 450ml (cód. 09198)"
+    },
+    {
+      "label": "Item 2",
+      "valor": "Caderneta Kraft (cód. 09341)"
+    },
+    {
+      "label": "Item 3",
+      "valor": "Caneta Ecológica Kraft (cód. 09319)"
+    },
+    {
+      "label": "Embalagem",
+      "valor": "Caixa ou sacola para presente, a combinar"
+    },
+    {
+      "label": "Personalização",
+      "valor": "Silk Screen ou gravação a Fiber Laser, conforme o material de cada peça"
+    }
+  ],
+  "cores": [],
+  "variacoes": [],
+  "palavrasChave": [
+    "kit",
+    "kits",
+    "natal",
+    "kit de natal",
+    "kit natal",
+    "kit corporativo",
+    "brinde de natal",
+    "presente corporativo",
+    "fim de ano",
+    "confraternizacao",
+    "caneca",
+    "caderneta",
+    "caneta"
+  ],
+  "ordem": 2,
+  "publicar": true
+}

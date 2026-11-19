@@ -1,0 +1,48 @@
+{
+  "codigo": "KIT-NATAL-CAFE",
+  "nome": "Kit Natal Café e Bebidas",
+  "categoria": "kits-de-natal",
+  "subcategoria": "Café e Bebidas",
+  "descricao": "Caneca de inox e garrafa térmica, as duas gravadas a Fiber Laser. Kit enxuto e de uso diário — o tipo de brinde que fica na mesa o ano inteiro.",
+  "fotos": [],
+  "especificacoes": [
+    {
+      "label": "Peças",
+      "valor": "2"
+    },
+    {
+      "label": "Item 1",
+      "valor": "Caneca Inox 300ml (cód. E@09417)"
+    },
+    {
+      "label": "Item 2",
+      "valor": "Garrafa Térmica 800ml (cód. 09389)"
+    },
+    {
+      "label": "Embalagem",
+      "valor": "Caixa ou sacola para presente, a combinar"
+    },
+    {
+      "label": "Personalização",
+      "valor": "Silk Screen ou gravação a Fiber Laser, conforme o material de cada peça"
+    }
+  ],
+  "cores": [],
+  "variacoes": [],
+  "palavrasChave": [
+    "kit",
+    "kits",
+    "natal",
+    "kit de natal",
+    "kit natal",
+    "kit corporativo",
+    "brinde de natal",
+    "presente corporativo",
+    "fim de ano",
+    "confraternizacao",
+    "caneca",
+    "garrafa"
+  ],
+  "ordem": 4,
+  "publicar": true
+}

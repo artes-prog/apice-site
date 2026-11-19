@@ -1,0 +1,58 @@
+{
+  "codigo": "KIT-NATAL-PREMIUM",
+  "nome": "Kit Natal Premium",
+  "categoria": "kits-de-natal",
+  "subcategoria": "Premium",
+  "descricao": "Quatro peças para presentear diretoria, parceiros e clientes-chave. Garrafa térmica grande, caderneta com calculadora, caneta metálica e sacola de lona com cortiça.",
+  "fotos": [],
+  "especificacoes": [
+    {
+      "label": "Peças",
+      "valor": "4"
+    },
+    {
+      "label": "Item 1",
+      "valor": "Garrafa Térmica 1,9L (cód. 09354)"
+    },
+    {
+      "label": "Item 2",
+      "valor": "Caderneta PU com Calculadora (cód. 09330)"
+    },
+    {
+      "label": "Item 3",
+      "valor": "Caneta Metal (cód. 08160B)"
+    },
+    {
+      "label": "Item 4",
+      "valor": "Sacola de Lona e Cortiça (cód. 19281)"
+    },
+    {
+      "label": "Embalagem",
+      "valor": "Caixa ou sacola para presente, a combinar"
+    },
+    {
+      "label": "Personalização",
+      "valor": "Silk Screen ou gravação a Fiber Laser, conforme o material de cada peça"
+    }
+  ],
+  "cores": [],
+  "variacoes": [],
+  "palavrasChave": [
+    "kit",
+    "kits",
+    "natal",
+    "kit de natal",
+    "kit natal",
+    "kit corporativo",
+    "brinde de natal",
+    "presente corporativo",
+    "fim de ano",
+    "confraternizacao",
+    "garrafa",
+    "caderneta",
+    "caneta",
+    "sacola"
+  ],
+  "ordem": 5,
+  "publicar": true
+}

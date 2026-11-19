@@ -1,0 +1,53 @@
+{
+  "codigo": "KIT-NATAL-ECO",
+  "nome": "Kit Natal Sustentável",
+  "categoria": "kits-de-natal",
+  "subcategoria": "Sustentável",
+  "descricao": "Kit de materiais naturais e reciclados, para empresas com pauta ambiental. Sacola de juta, caderneta kraft e caneta ecológica, personalizados em silk ou laser.",
+  "fotos": [],
+  "especificacoes": [
+    {
+      "label": "Peças",
+      "valor": "3"
+    },
+    {
+      "label": "Item 1",
+      "valor": "Sacola de Juta (cód. 15552)"
+    },
+    {
+      "label": "Item 2",
+      "valor": "Caderneta Kraft (cód. 09341)"
+    },
+    {
+      "label": "Item 3",
+      "valor": "Caneta Ecológica Kraft (cód. 09319)"
+    },
+    {
+      "label": "Embalagem",
+      "valor": "Caixa ou sacola para presente, a combinar"
+    },
+    {
+      "label": "Personalização",
+      "valor": "Silk Screen ou gravação a Fiber Laser, conforme o material de cada peça"
+    }
+  ],
+  "cores": [],
+  "variacoes": [],
+  "palavrasChave": [
+    "kit",
+    "kits",
+    "natal",
+    "kit de natal",
+    "kit natal",
+    "kit corporativo",
+    "brinde de natal",
+    "presente corporativo",
+    "fim de ano",
+    "confraternizacao",
+    "sacola",
+    "caderneta",
+    "caneta"
+  ],
+  "ordem": 3,
+  "publicar": true
+}
