@@ -83,6 +83,12 @@ const flocos = [
   `is:inline` é obrigatório: o Astro não processa <style> dentro de expressão
   condicional, e sem isso a regra não entra no bundle.
 */}
+{/* Porta-datas: existe sempre que a decoracao esta ligada, mesmo com a faixa
+    desligada. E dele que o script le a janela para marcar o <html>. */}
+{ativo && (
+  <span id="natal-janela" hidden data-inicio={natal.inicio ?? ''} data-fim={natal.fim ?? ''} />
+)}
+
 {usarFaixa && (
   <style
     is:inline
@@ -185,7 +191,7 @@ const flocos = [
     /* A faixa só aparece dentro da janela de datas, liberada pelo JS.
        Fora dela não ocupa espaço: o header volta exatamente ao que era. */
     #natal-faixa { display: none; }
-    #natal-faixa[data-janela] { display: block; }
+    html[data-natal] #natal-faixa { display: block; }
 
     .natal-faixa {
       position: relative;
@@ -300,13 +306,13 @@ const flocos = [
       44px) para a palavra nao encolher demais. Cabe no min-height de 72px.
     */
     .logo-natal { display: none; }
-    .site-header:has(#natal-faixa[data-janela]) .logo-natal {
+    html[data-natal] .site-header .logo-natal {
       display: block; height: 58px; width: auto;
     }
     /* Sem :global() aqui: isso e sintaxe de CSS com escopo do Astro e nao vale
        dentro de <style is:global> — o seletor inteiro era descartado e os dois
        logos apareciam lado a lado. */
-    .site-header:has(#natal-faixa[data-janela]) .header-logo svg {
+    html[data-natal] .site-header .header-logo svg {
       display: none;
     }
 
@@ -343,7 +349,7 @@ const flocos = [
     @media (max-width: 900px) {
       .natal-faixa { height: 44px; }
       .natal-cena { transform: translateX(-50%) scale(.56); }
-      .site-header:has(#natal-faixa[data-janela]) .header-logo::after {
+      html[data-natal] .site-header .header-logo::after {
         width: 22px; height: 18px; top: -10px; left: 22%;
       }
     }
@@ -379,14 +385,24 @@ const flocos = [
       }
 
       function initNatal() {
+        /*
+          O marcador da janela vai no <html>, nao na faixa: decoracao de Natal
+          existe em varias partes da pagina (home, rodape) e precisa de um
+          sinal que alcance a arvore inteira. Fora da janela nada recebe a
+          marca, entao tudo fica display:none e o site volta ao normal sem
+          sobra nem deslocamento.
+        */
+        var raiz = document.documentElement;
+        var janela = document.getElementById('natal-janela');
+        if (janela && !janela.dataset.lido) {
+          janela.dataset.lido = '1';
+          if (naJanela(janela)) raiz.dataset.natal = '1';
+          else delete raiz.dataset.natal;
+        }
+
         var faixa = document.getElementById('natal-faixa');
         if (!faixa || faixa.dataset.wired) return;
         faixa.dataset.wired = '1';
-
-        // Fora da janela de datas a faixa nem aparece — e como ela é display:none,
-        // o header volta à altura original, sem sobra nem deslocamento.
-        if (!naJanela(faixa)) return;
-        faixa.dataset.janela = '1';
 
         var arvore = document.getElementById('natal-arvore');
         if (!arvore) return;

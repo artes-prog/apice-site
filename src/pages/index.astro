@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Foto from '../components/Foto.astro';
+import NatalHome from '../components/NatalHome.astro';
 import CtaWhatsApp from '../components/CtaWhatsApp.astro';
 import CategoryCard from '../components/CategoryCard.astro';
 import ProductGrid from '../components/ProductGrid.astro';
@@ -33,6 +34,7 @@ const description =
 <BaseLayout title={title} description={description} waMensagem={mensagens.home} waSemente="home">
   <!-- HERO -->
   <section class="hero">
+    <NatalHome variante="cantos" />
     <div class="container-site hero__grid">
       <div class="hero__copy">
         <p class="hero__eyebrow">Silk Screen e gravação com Fiber Laser — feitos por nós</p>
@@ -46,6 +48,7 @@ const description =
           <CtaWhatsApp variante="primario" mensagem={mensagens.home} semente="home" label="Pedir orçamento no WhatsApp" />
           <a href="/brindes-personalizados/" class="hero__link">Ver categorias de brindes</a>
         </div>
+        <NatalHome variante="selo" />
         {site.instagram && (
           <aside class="hero__instagram" aria-label={site.avisoInstagram.titulo}>
             <span class="hero__instagram-icon"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
