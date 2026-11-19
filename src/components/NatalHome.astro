@@ -48,6 +48,19 @@ const flocos = [
         <Image class="natal-galho natal-galho--dir" src={galho} alt="" width={460} format="webp" loading="eager" />
       </>
     )}
+    {usarGalhos && (
+      <div class="natal-festao">
+        <svg class="natal-festao__fio" viewBox="0 0 400 26" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0 3 Q100 24 200 12 Q300 0 400 16" fill="none" stroke="#0B3D2E" stroke-width="2" />
+        </svg>
+        {[
+          [8, 13, '#F30D0E'], [23, 21, '#C9A227'], [38, 15, '#0B3D2E'],
+          [54, 25, '#F30D0E'], [70, 17, '#C9A227'], [86, 12, '#F30D0E'],
+        ].map(([x, fio, cor], i) => (
+          <span class="natal-bolinha" style={`left:${x}%;--fio:${fio}px;--cor:${cor};animation-delay:-${i * 0.5}s`}></span>
+        ))}
+      </div>
+    )}
     {usarNeve && (
       <div class="natal-neve-home">
         {flocos.map(([x, atraso, dur]) => (
@@ -95,6 +108,48 @@ const flocos = [
      deslocamentos negativos. Assim emolduram sem disputar com o H1. */
   .natal-galho--esq { left: -46px; transform: rotate(-4deg); }
   .natal-galho--dir { right: -46px; transform: scaleX(-1) rotate(-4deg); }
+
+  /*
+    FESTÃO — decoração exclusiva do celular.
+
+    No desktop os galhos ocupam os cantos superiores, que ali são espaço morto.
+    No celular o hero empilha e aquele canto vira o começo do texto, então em
+    vez de simplesmente remover a decoração, ela muda de forma: o hero tem
+    40px de padding no topo, uma faixa de largura inteira sem nada. O festão
+    mora exatamente nela e não encosta em texto nenhum.
+
+    Desenhado em CSS e SVG, sem imagem: pesa zero e acompanha qualquer largura.
+  */
+  .natal-festao { display: none; }
+  .natal-festao__fio { position: absolute; inset: 0 0 auto; width: 100%; height: 26px; }
+  .natal-bolinha {
+    position: absolute;
+    top: 0;
+    width: 11px;
+    height: 11px;
+    transform-origin: 50% calc(-1 * var(--fio));
+    animation: natal-balanco 3.6s ease-in-out infinite;
+  }
+  /* O fio e a bola giram juntos, presos ao ponto de suspensão. */
+  .natal-bolinha::before {
+    content: '';
+    position: absolute;
+    left: 50%; bottom: 100%;
+    width: 1px; height: var(--fio);
+    background: #0B3D2E;
+  }
+  .natal-bolinha::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--cor);
+    box-shadow: inset -2px -2px 3px rgba(0, 0, 0, 0.22);
+  }
+  @keyframes natal-balanco {
+    0%, 100% { transform: rotate(-5deg); }
+    50%      { transform: rotate(5deg); }
+  }
 
   .natal-neve-home { position: absolute; inset: 0; }
   .natal-neve-home span {
@@ -152,6 +207,7 @@ const flocos = [
       O clima de Natal no celular já vem da faixa, do logo e do selo.
     */
     .natal-galho { display: none; }
+    .natal-festao { display: block; }   /* a decoracao troca de forma, nao some */
     .natal-neve-home span:nth-child(even) { display: none; }
   }
 
