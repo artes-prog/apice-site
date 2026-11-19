@@ -292,6 +292,41 @@ const flocos = [
     opacity: 0.92;
   }
 
+  /*
+    MICROINTERACOES (§7) — mao leve de proposito.
+
+    So DOIS elementos ganham efeito: o botao principal do cabecalho e os
+    cartoes de categoria. O briefing pede explicitamente para nao animar tudo
+    ao mesmo tempo, e o site ja tem hover proprio nesses dois — aqui apenas
+    um brilho dourado se soma, sem substituir nada.
+
+    O WhatsApp fica de fora, intocado: verde e o sinal de conversao do site
+    (Guia de Estilo §1.2) e nao se mexe nele.
+
+    Nada de deslocamento novo: os transforms que ja existiam continuam, e o
+    acrescimo e so box-shadow e borda, que nao causam reflow.
+  */
+  html[data-natal] .header-cta {
+    transition: background .2s ease, transform .2s ease, box-shadow .25s ease;
+  }
+  html[data-natal] .header-cta:hover {
+    box-shadow: 0 0 0 2px rgba(201, 162, 39, 0.55), 0 4px 14px rgba(201, 162, 39, 0.3);
+  }
+
+  html[data-natal] .cat-card {
+    transition: border-color .25s ease, box-shadow .25s ease;
+  }
+  html[data-natal] .cat-card:hover {
+    border-color: var(--color-natal-ouro);
+    box-shadow: 0 6px 22px rgba(201, 162, 39, 0.22);
+  }
+
+  /* Sem efeito novo para quem pediu menos movimento. */
+  @media (prefers-reduced-motion: reduce) {
+    html[data-natal] .header-cta,
+    html[data-natal] .cat-card { transition: none; }
+  }
+
   .natal-selo { display: none; }
   html[data-natal] .natal-selo {
     display: flex;
