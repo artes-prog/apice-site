@@ -94,11 +94,17 @@ const flocos = [
   <p class="natal-recado">Neste Natal, faça sua marca estar presente nos melhores momentos.</p>
 )}
 
+{/* O selo e LINK para os kits de Natal, nao so enfeite: os kits existem no
+    catalogo e ninguem os encontraria sem um caminho na home. Decoracao que
+    tambem converte. Sai do ar junto com o resto, fora da janela de datas. */}
 {variante === 'selo' && usarSelo && (
-  <p class="natal-selo">
+  <a class="natal-selo" href="/brindes/catalogo/kits-de-natal/">
     <span class="natal-selo__tag">Natal Ápice 2026</span>
-    <span class="natal-selo__texto">Personalize presentes que fazem sua marca ser lembrada.</span>
-  </p>
+    <span class="natal-selo__texto">
+      Kits corporativos de Natal prontos para personalizar.
+      <strong class="natal-selo__cta">Ver os kits →</strong>
+    </span>
+  </a>
 )}
 
 <style is:global>
@@ -330,6 +336,8 @@ const flocos = [
   .natal-selo { display: none; }
   html[data-natal] .natal-selo {
     display: flex;
+    text-decoration: none;
+    transition: border-color .2s ease, box-shadow .2s ease;
     align-items: center;
     gap: 0.7rem;
     flex-wrap: wrap;
@@ -356,6 +364,19 @@ const flocos = [
     color: var(--color-ink-soft);
     line-height: 1.45;
   }
+  .natal-selo__cta {
+    display: inline-block;
+    margin-left: 0.35rem;
+    font-weight: 700;
+    color: var(--color-apice-blue);
+    white-space: nowrap;
+  }
+  html[data-natal] .natal-selo:hover,
+  html[data-natal] .natal-selo:focus-visible {
+    border-color: var(--color-natal-ouro);
+    box-shadow: 0 4px 16px rgba(201, 162, 39, 0.22);
+  }
+  html[data-natal] .natal-selo:hover .natal-selo__cta { text-decoration: underline; }
 
   @media (max-width: 900px) {
     /*
