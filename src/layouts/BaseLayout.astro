@@ -9,6 +9,7 @@ import '@fontsource/open-sans/latin-600.css';
 
 import { ClientRouter } from 'astro:transitions';
 import Header from '../components/Header.astro';
+import NatalHome from '../components/NatalHome.astro';
 import Footer from '../components/Footer.astro';
 import CtaWhatsApp from '../components/CtaWhatsApp.astro';
 import OrcamentoFlutuante from '../components/OrcamentoFlutuante.astro';
@@ -83,6 +84,9 @@ const categorias = categoriasRaw.map((c) => ({ nome: c.data.nome, slug: c.data.s
     <a href="#conteudo" class="skip-link">Pular para o conteúdo</a>
     <Header />
     <main id="conteudo">
+      {/* Decoracao natalina do topo: galhos e neve, em todas as paginas.
+          Ancorada no <main> porque toda pagina abre com uma secao de titulo. */}
+      <NatalHome variante="topo" />
       <slot />
     </main>
     <Footer categorias={categorias} />

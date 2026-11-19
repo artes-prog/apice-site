@@ -21,7 +21,7 @@ import galho from '../assets/img/natal/galho.webp';
   Cada peça tem sua própria chave no painel (galhos / neve / selo).
 */
 interface Props {
-  variante: 'cantos' | 'selo';
+  variante: 'topo' | 'cantos' | 'selo';
 }
 const { variante } = Astro.props;
 
@@ -40,14 +40,15 @@ const flocos = [
 ];
 ---
 
-{variante === 'cantos' && (usarGalhos || usarNeve) && (
+{variante === 'cantos' && usarGalhos && (
+  <div class="natal-cantos" aria-hidden="true">
+    <Image class="natal-galho natal-galho--esq" src={galho} alt="" width={460} format="webp" loading="eager" />
+    <Image class="natal-galho natal-galho--dir" src={galho} alt="" width={460} format="webp" loading="eager" />
+  </div>
+)}
+
+{variante === 'topo' && (usarGalhos || usarNeve) && (
   <div class="natal-home" aria-hidden="true">
-    {usarGalhos && (
-      <>
-        <Image class="natal-galho natal-galho--esq" src={galho} alt="" width={460} format="webp" loading="eager" />
-        <Image class="natal-galho natal-galho--dir" src={galho} alt="" width={460} format="webp" loading="eager" />
-      </>
-    )}
     {usarGalhos && (
       <div class="natal-festao">
         <svg class="natal-festao__fio" viewBox="0 0 400 26" preserveAspectRatio="none" aria-hidden="true">
@@ -86,13 +87,38 @@ const flocos = [
     desligada o CSS viaja inerte.
   */
 
-  /* A seção do hero vira o contexto de posicionamento das camadas. */
+  /* O <main> vira o contexto de posicionamento: a camada vive em TODA pagina,
+     nao so na home. Toda pagina do site abre com uma secao de titulo, entao os
+     cantos superiores do <main> sao o mesmo lugar em todas elas. */
+  html[data-natal] main#conteudo { position: relative; }
+
+  /*
+    Banda garantida no topo de toda pagina. Sem ela o festao colidia com o
+    titulo nas paginas internas, que tem bem menos respiro no topo que o hero
+    da home. 46px e o suficiente para o fio e as bolinhas.
+  */
+  html[data-natal] main#conteudo { padding-top: 46px; }
+
+  /* Galhos: so na home, ancorados no hero. Nas paginas internas o titulo
+     comeca perto do topo e eles cobriam o H1 — medido no Portfolio. */
   html[data-natal] .hero { position: relative; }
+  .natal-cantos { display: none; }
+  html[data-natal] .natal-cantos {
+    display: block;
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
   .natal-home { display: none; }
   html[data-natal] .natal-home {
     display: block;
     position: absolute;
-    inset: 0;
+    top: 0; left: 0; right: 0;
+    /* Altura fixa, nao `inset: 0`: o <main> de uma pagina de catalogo tem
+       milhares de pixels, e neve caindo por toda essa altura seria tempestade,
+       nao delicadeza. A decoracao vive so na primeira dobra. */
+    height: 420px;
     overflow: hidden;
     pointer-events: none;  /* decoração nunca rouba clique */
   }
@@ -120,6 +146,9 @@ const flocos = [
 
     Desenhado em CSS e SVG, sem imagem: pesa zero e acompanha qualquer largura.
   */
+  /* O festao vale para toda largura e toda pagina: e a decoracao que cabe na
+     banda garantida do topo sem disputar espaco com titulo nenhum. */
+  html[data-natal] .natal-festao { display: block; }
   .natal-festao { display: none; }
   .natal-festao__fio { position: absolute; inset: 0 0 auto; width: 100%; height: 26px; }
   .natal-bolinha {
@@ -164,8 +193,12 @@ const flocos = [
     animation-iteration-count: infinite;
   }
   @keyframes natal-neve-home {
-    0%   { transform: translate3d(0, -12px, 0); }
-    100% { transform: translate3d(22px, 105%, 0); }
+    0%   { transform: translate3d(0, -12px, 0); opacity: 0; }
+    12%  { opacity: 0.5; }
+    78%  { opacity: 0.5; }
+    /* Some antes de chegar na borda da camada: cortado em seco pelo
+       overflow ficaria evidente que ha um limite invisivel. */
+    100% { transform: translate3d(22px, 420px, 0); opacity: 0; }
   }
 
   .natal-selo { display: none; }
@@ -206,8 +239,10 @@ const flocos = [
       gravação com Fiber Laser". Legibilidade ganha de enfeite.
       O clima de Natal no celular já vem da faixa, do logo e do selo.
     */
+    /* No celular o hero empilha e os cantos superiores viram o comeco do
+       texto — o galho cobria a linha "Silk Screen e gravacao com Fiber Laser".
+       O festao do topo continua, entao a home nao fica sem decoracao. */
     .natal-galho { display: none; }
-    .natal-festao { display: block; }   /* a decoracao troca de forma, nao some */
     .natal-neve-home span:nth-child(even) { display: none; }
   }
 
