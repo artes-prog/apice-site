@@ -21,7 +21,7 @@ import galho from '../assets/img/natal/galho.webp';
   Cada peça tem sua própria chave no painel (galhos / neve / selo).
 */
 interface Props {
-  variante: 'topo' | 'cantos' | 'selo';
+  variante: 'topo' | 'cantos' | 'selo' | 'rodape' | 'recado';
 }
 const { variante } = Astro.props;
 
@@ -30,6 +30,7 @@ const ativo = natal?.ativo === true;
 const usarGalhos = ativo && natal.galhos !== false;
 const usarNeve = ativo && natal.neve !== false;
 const usarSelo = ativo && natal.selo !== false;
+const usarRodape = ativo && natal.rodape !== false;
 
 /* Neve: valores fixos, não aleatórios. Sorteio no build geraria HTML diferente
    a cada deploy e sujaria o diff sem motivo. */
@@ -70,6 +71,27 @@ const flocos = [
       </div>
     )}
   </div>
+)}
+
+{variante === 'rodape' && usarRodape && (
+  <div class="natal-rodape" aria-hidden="true">
+    <svg class="natal-rodape__fio" viewBox="0 0 400 22" preserveAspectRatio="none">
+      <path d="M0 14 Q100 2 200 11 Q300 20 400 6" fill="none" stroke="#C9A227" stroke-width="1.6" opacity="0.75" />
+    </svg>
+    {[
+      [11, 11, '#C9A227'], [27, 17, '#F30D0E'], [44, 12, '#FFFFFF'],
+      [61, 19, '#C9A227'], [77, 13, '#F30D0E'], [91, 16, '#C9A227'],
+    ].map(([x, fio, cor], i) => (
+      <span class="natal-rodape__bola" style={`left:${x}%;--fio:${fio}px;--cor:${cor};animation-delay:-${i * 0.6}s`}></span>
+    ))}
+    {[[18, 36], [49, 22], [72, 44], [95, 30]].map(([x, y], i) => (
+      <span class="natal-estrela" style={`left:${x}%;top:${y}px;animation-delay:-${i * 0.9}s`}></span>
+    ))}
+  </div>
+)}
+
+{variante === 'recado' && usarRodape && (
+  <p class="natal-recado">Neste Natal, faça sua marca estar presente nos melhores momentos.</p>
 )}
 
 {variante === 'selo' && usarSelo && (
@@ -199,6 +221,75 @@ const flocos = [
     /* Some antes de chegar na borda da camada: cortado em seco pelo
        overflow ficaria evidente que ha um limite invisivel. */
     100% { transform: translate3d(22px, 420px, 0); opacity: 0; }
+  }
+
+  /*
+    RODAPÉ — fundo azul da marca, então a paleta muda: dourado, branco e
+    vermelho. O verde garrafa do festão do topo sumiria contra o azul escuro.
+
+    Mesmo gesto do topo (fio com bolinhas penduradas), para o site abrir e
+    fechar com a mesma linguagem, mais estrelas douradas piscando devagar.
+  */
+  .natal-rodape { display: none; }
+  html[data-natal] .site-footer { position: relative; }
+  html[data-natal] .natal-rodape {
+    display: block;
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 72px;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .natal-rodape__fio { position: absolute; inset: 0 0 auto; width: 100%; height: 22px; }
+  .natal-rodape__bola {
+    position: absolute;
+    top: 0;
+    width: 10px; height: 10px;
+    transform-origin: 50% calc(-1 * var(--fio));
+    animation: natal-balanco 4.2s ease-in-out infinite;
+  }
+  .natal-rodape__bola::before {
+    content: '';
+    position: absolute;
+    left: 50%; bottom: 100%;
+    width: 1px; height: var(--fio);
+    background: #C9A227;
+    opacity: 0.7;
+  }
+  .natal-rodape__bola::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--cor);
+    box-shadow: inset -2px -2px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Estrela de 4 pontas em clip-path: sem imagem, nítida em qualquer tela. */
+  .natal-estrela {
+    position: absolute;
+    width: 12px; height: 12px;
+    background: #C9A227;
+    clip-path: polygon(50% 0%, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0% 50%, 40% 40%);
+    animation: natal-brilha 3.4s ease-in-out infinite;
+  }
+  @keyframes natal-brilha {
+    0%, 100% { opacity: 0.25; transform: scale(0.8); }
+    50%      { opacity: 0.9;  transform: scale(1); }
+  }
+
+  .natal-recado { display: none; }
+  html[data-natal] .natal-recado {
+    display: block;
+    margin: 1.1rem 0 0;
+    padding-left: 0.85rem;
+    border-left: 2px solid var(--color-natal-ouro);
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-style: italic;
+    line-height: 1.5;
+    color: #FFFFFF;
+    opacity: 0.92;
   }
 
   .natal-selo { display: none; }

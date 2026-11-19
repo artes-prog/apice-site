@@ -1,5 +1,6 @@
 ---
 import Logo from './Logo.astro';
+import NatalHome from './NatalHome.astro';
 import { site, enderecoLinha } from '../data/site';
 import { linkWhatsApp, mensagens } from '../lib/whatsapp';
 
@@ -39,11 +40,13 @@ const paginas = [
 ];
 ---
 <footer class="site-footer">
+  <NatalHome variante="rodape" />
   <div class="container-site footer-grid">
     <div class="footer-brand">
       <Logo variant="branco" class="footer-logo" />
       <p class="footer-slogan">{site.slogan}</p>
       <p class="footer-selo">{site.anosDeMercado} de mercado · Produção própria de silk e Fiber Laser em Goiânia.</p>
+      <NatalHome variante="recado" />
       {site.instagram && (
         <a
           href={site.instagram}
